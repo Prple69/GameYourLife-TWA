@@ -14,7 +14,7 @@ app.add_middleware(
     CORSMiddleware,
     # Разрешаем запросы с твоего Vercel-адреса
     allow_origins=[
-        "https://gameyourlifetwa.vercel.app",
+        "https://game-your-life-twa.vercel.app/",
         "http://localhost:5173",  # для тестов локально
     ],
     allow_credentials=True,
