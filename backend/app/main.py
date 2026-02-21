@@ -12,7 +12,11 @@ app = FastAPI(title="Pixel RPG API")
 # Настройка CORS, чтобы React мог достучаться до FastAPI
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # В продакшене лучше заменить на конкретный домен
+    # Разрешаем запросы с твоего Vercel-адреса
+    allow_origins=[
+        "https://gameyourlifetwa.vercel.app",
+        "http://localhost:5173",  # для тестов локально
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
