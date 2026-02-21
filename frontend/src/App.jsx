@@ -117,8 +117,14 @@ const App = () => {
       character, 
       setCharacter,
       gold: character.gold, 
-      videos: videoUrls,
-      triggerHaptic // Пробрасываем вибрацию в компоненты
+      videos: {
+        shop: shopVideoSrc,
+        bag: bagVideoSrc,
+        camp: campVideoSrc,
+        leader: leaderVideoSrc,
+        quests: questsVideoSrc
+      },
+      triggerHaptic 
     };
 
     switch (activeTab) {
