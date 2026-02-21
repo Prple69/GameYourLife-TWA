@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://gameurlife.ru.tuna.am/api',
+  baseURL: 'https://game-your-life-twa.vercel.app/api',
 });
 
 export const userService = {
