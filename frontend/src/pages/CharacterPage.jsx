@@ -1,147 +1,139 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Header from '../components/Header';
+import AvatarSelector from '../components/AvatarSelector';
+import ProfileModal from '../components/ProfileModal';
 
-const CharacterPage = ({ 
-  character = {}, 
-  videos 
-}) => {
+import avatar1 from '../assets/avatar1.png'; 
+import avatar2 from '../assets/avatar2.png';
+import avatar3 from '../assets/avatar3.png';
+
+const CharacterPage = ({ character = {}, videos, triggerHaptic }) => {
   const {
-    name = "Странник",
     username = "Purple",
-    hp = 85,
-    max_hp = 100,
-    lvl = 999,
-    xp = 1200,
-    max_xp = 2000,
-    gold = 450
+    hp = 85, max_hp = 100,
+    lvl = 99, xp = 1200, max_xp = 2000,
+    char_class = 'knight'
   } = character;
+
+  const [isSelectorOpen, setIsSelectorOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [currentAvatar, setCurrentAvatar] = useState(avatar1);
 
   const xpPercentage = Math.min((xp / (max_xp || 100)) * 100, 100);
   const hpPercentage = Math.min((hp / (max_hp || 100)) * 100, 100);
 
+  const titles = {
+    knight: "РЫЦАРЬ СМЕРТИ",
+    mage: "ВЕРХОВНАЯ МАГИНЯ",
+    shadow: "ПРИЗРАК ПУСТОШИ"
+  };
+
+  const avatars = [{ id: 1, img: avatar1 }, { id: 2, img: avatar2 }, { id: 3, img: avatar3 }];
+
   return (
-    <div className="fixed inset-0 w-full h-full bg-black overflow-hidden flex flex-col font-mono items-center select-none touch-none">
+    <div className="fixed inset-0 w-full h-full bg-black overflow-hidden flex flex-col font-mono select-none touch-none">
       
-      {/* --- ФОН --- */}
+      {/* ФОН */}
       <div className="absolute inset-0 z-0 bg-black">
-        <video
-          src={videos?.camp || ""}
-          autoPlay loop muted playsInline
-          className="w-full h-full object-cover opacity-60"
-          style={{ imageRendering: 'pixelated' }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-transparent to-black/60 pointer-events-none" />
+        <video src={videos?.camp || ""} autoPlay loop muted playsInline className="w-full h-full object-cover" />
       </div>
 
-      {/* --- КОНТЕНТ --- */}
-      <div className="relative z-10 flex flex-col items-center w-full h-full px-4 pt-4 pb-20">
+      {/* HEADER */}
+      <Header title="ЛАГЕРЬ" subtitle="СТАТУС ГЕРОЯ" />
+
+      {/* --- АДАПТИВНЫЙ HUD --- */}
+      <div className="relative z-20 flex justify-center w-full px-3 mt-4">
         
-        <div className="w-full max-w-2xl shrink-0">
-          <Header title="ЛАГЕРЬ" subtitle="СТАТУС ПЕРСОНАЖА" />
-        </div>
-
-        {/* --- ГЛАВНАЯ ПАНЕЛЬ --- */}
-        <div className="relative mt-4 md:mt-6 w-full max-w-xl bg-black/70 backdrop-blur-xl border border-white/15 p-4 md:p-6 shadow-xl">
+        {/* ПАНЕЛЬ: items-stretch заставляет детей тянуться */}
+        <div className="flex items-stretch p-4 pr-6 sm:pr-10 bg-black/45 backdrop-blur-md border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-500 rounded-sm w-full sm:w-auto max-w-[550px] sm:max-w-none">
           
-          {/* ЗОЛОТО: Компактный шильдик */}
-          <div className="absolute -top-2 -right-2 bg-black border border-[#daa520] px-2 py-1 flex items-center gap-2 shadow-[3px_3px_0_#000] z-30">
-            <div className="w-2.5 h-2.5 bg-[#daa520] rotate-45 border border-black shadow-[0_0_5px_#daa520]" />
-            <span className="text-[#daa520] text-sm md:text-lg font-[1000] tabular-nums leading-none">
-              {gold}
-            </span>
+          {/* 1. АВАТАРКА (Эталон высоты: 144px) */}
+          <div className="relative shrink-0">
+            <div 
+              className="w-36 h-36 sm:w-40 sm:h-40 bg-black/20 border-2 border-white/20 shadow-lg cursor-pointer active:scale-95 transition-all overflow-hidden"
+              onClick={() => setIsSelectorOpen(true)}
+            >
+              <img src={currentAvatar} alt="Avatar" className="w-full h-full object-cover scale-110" />
+            </div>
           </div>
 
-          <div className="flex flex-col md:flex-row gap-4 md:gap-8">
-            
-            {/* ЛЕВАЯ ЧАСТЬ: Аватар */}
-            <div className="flex flex-row md:flex-col items-center md:items-start gap-4 md:gap-0 shrink-0">
-              
-              <div className="relative shrink-0">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-40 md:h-40 bg-[#111] border border-[#444] shadow-[4px_4px_0_#000] flex items-center justify-center overflow-hidden">
-                  <span className="text-white/5 text-5xl md:text-[8rem] font-black not-italic">?</span>
-                </div>
-                
-                {/* LVL: Теперь более соразмерный */}
-                <div className="absolute -bottom-1 -left-1 bg-[#daa520] border border-black text-black text-[11px] md:text-[15px] font-[1000] px-2 py-0.5 shadow-[2px_2px_0_#000] z-20">
+          {/* 2. ИНФОРМАЦИЯ (Высота h-36 соответствует аватарке) */}
+          <div 
+            className="flex flex-col justify-between px-5 sm:px-7 cursor-pointer group flex-1 h-36 sm:h-40 overflow-hidden"
+            onClick={() => { if(triggerHaptic) triggerHaptic('medium'); setIsProfileOpen(true); }}
+          >
+            {/* ВЕРХНИЙ КРАЙ: НИК И КЛАСС */}
+            <div className="flex flex-col pt-0.5">
+              <div className="flex items-baseline gap-4">
+                <h3 className="text-white text-2xl sm:text-3xl font-[1000] uppercase tracking-tighter drop-shadow-md group-hover:text-[#daa520] transition-colors leading-none truncate max-w-[130px] sm:max-w-none">
+                  {username}
+                </h3>
+                <span className="text-[#daa520] text-xl sm:text-2xl font-[1000] drop-shadow-md leading-none shrink-0 ml-6 sm:ml-8 tracking-tighter">
                   {lvl} LVL
-                </div>
+                </span>
               </div>
-
-              {/* Мобильный ник */}
-              <div className="md:hidden flex-1 min-w-0">
-                <h3 className="text-white text-lg font-[1000] uppercase tracking-tighter truncate leading-none">
-                  {username || name}
-                </h3>
-                <p className="text-[#daa520] text-[12px] uppercase font-[1000] mt-1.5 leading-none">
-                  Рыцарь Смерти
-                </p>
-              </div>
+              <p className="text-[#daa520] text-[12px] sm:text-[11px] font-[1000] uppercase tracking-widest mt-2 opacity-80 leading-none">
+                {titles[char_class]}
+              </p>
             </div>
 
-            {/* ПРАВАЯ ЧАСТЬ: Инфа и Статы */}
-            <div className="flex-1 min-w-0 flex flex-col justify-center self-stretch">
+            {/* НИЖНИЙ КРАЙ: БАРЫ И ТЕКСТ ПОД НИМИ */}
+            <div className="w-full sm:w-64 md:w-80 flex flex-col gap-3 pb-0.5">
               
-              {/* Десктопный ник */}
-              <div className="hidden md:block mb-4">
-                <h3 className="text-white text-3xl font-[1000] uppercase tracking-tighter leading-none truncate drop-shadow-[2px_2px_0_#000]">
-                  {username || name}
-                </h3>
-                <p className="text-[#daa520] text-[16px] uppercase tracking-[0.1em] font-[1000] mt-2 leading-none">
-                  Рыцарь Смерти
-                </p>
-              </div>
-
-              {/* ПОЛОСКИ СТАТОВ: Сбалансированный размер */}
-              <div className="flex flex-col gap-3.5 md:gap-5">
-                
-                {/* ЗДОРОВЬЕ */}
-                <div className="space-y-1.5">
-                  <div className="flex justify-between items-end px-0.5">
-                    <span className="text-[#ef4444] text-[11px] md:text-[14px] font-[1000] uppercase tracking-widest">Здоровье</span>
-                    <span className="text-white text-sm md:text-xl font-[1000] leading-none tracking-tighter">
-                      {hp}/{max_hp}
-                    </span>
-                  </div>
-                  <div className="relative w-full h-3.5 bg-black border border-white/10 overflow-hidden">
-                    <div 
-                      className="h-full bg-gradient-to-r from-[#800] via-[#ef4444] to-[#ff3030] transition-all duration-700 relative" 
-                      style={{ width: `${hpPercentage}%` }}
-                    >
-                      <div className="absolute top-0 left-0 w-full h-[30%] bg-white/20" />
-                    </div>
+              {/* HP SECTION */}
+              <div className="flex flex-col gap-1.5">
+                <div className="h-3.5 bg-black/60 border border-white/10 overflow-hidden relative shadow-inner">
+                  <div 
+                    className="h-full bg-gradient-to-r from-red-800 to-red-500 transition-all duration-700 relative" 
+                    style={{ width: `${hpPercentage}%` }} 
+                  >
+                    <div className="absolute top-0 left-0 w-full h-[35%] bg-white/20" />
                   </div>
                 </div>
+                <div className="flex justify-between items-center leading-none px-0.5">
+                  <span className="text-white/80 text-[11px] font-[1000] tabular-nums tracking-tight">
+                    {hp}/{max_hp} <span className="text-red-500 ml-0.5 font-black uppercase">HP</span>
+                  </span>
+                </div>
+              </div>
 
-                {/* ОПЫТ */}
-                <div className="space-y-1.5">
-                  <div className="flex justify-between items-end px-0.5">
-                    <span className="text-[#daa520] text-[11px] md:text-[14px] font-[1000] uppercase tracking-widest">Опыт</span>
-                    <span className="text-white text-sm md:text-xl font-[1000] leading-none tracking-tighter">
-                      {xp}/{max_xp}
-                    </span>
-                  </div>
-                  <div className="relative w-full h-3.5 bg-black border border-white/10 overflow-hidden">
-                    <div 
-                      className="h-full bg-[#daa520] transition-all duration-1000 relative shadow-[0_0_10px_rgba(218,165,32,0.3)]" 
-                      style={{ width: `${xpPercentage}%` }}
-                    >
-                      <div className="absolute inset-0 w-full h-full animate-[scan-line_4s_linear_infinite] bg-gradient-to-r from-transparent via-white/40 to-transparent translate-x-[-100%]" />
-                    </div>
+              {/* XP SECTION */}
+              <div className="flex flex-col gap-1.5">
+                <div className="h-3.5 bg-black/60 border border-white/10 overflow-hidden relative shadow-inner">
+                  <div 
+                    className="h-full bg-gradient-to-r from-[#b8860b] via-[#daa520] to-[#ffd700] transition-all duration-1000 relative shadow-[0_0_10px_rgba(218,165,32,0.3)]" 
+                    style={{ width: `${xpPercentage}%` }} 
+                  >
+                    <div className="absolute top-0 left-0 w-full h-[35%] bg-white/25" />
                   </div>
                 </div>
-
+                <div className="flex justify-between items-center leading-none px-0.5">
+                  <span className="text-white/80 text-[11px] font-[1000] tabular-nums tracking-tight">
+                    {xp}/{max_xp} <span className="text-[#daa520] ml-0.5 font-black uppercase">XP</span>
+                  </span>
+                </div>
               </div>
+
             </div>
           </div>
+          
         </div>
       </div>
 
-      <style dangerouslySetInnerHTML={{ __html: `
-        @keyframes scan-line {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(100%); }
-        }
-      `}} />
+      {/* МОДАЛКИ */}
+      <AvatarSelector 
+        isOpen={isSelectorOpen} 
+        onClose={() => setIsSelectorOpen(false)} 
+        avatars={avatars} 
+        currentAvatar={currentAvatar} 
+        onSelect={(img) => { setCurrentAvatar(img); setIsSelectorOpen(false); }} 
+      />
+
+      <ProfileModal 
+        isOpen={isProfileOpen} 
+        onClose={() => setIsProfileOpen(false)} 
+        character={character} 
+      />
     </div>
   );
 };

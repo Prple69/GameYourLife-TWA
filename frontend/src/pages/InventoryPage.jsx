@@ -27,7 +27,7 @@ const InventoryPage = ({ character, videos }) => {
       </div>
 
       {/* --- КОНТЕНТ --- */}
-      <div className="relative z-10 flex flex-col h-full px-4 pt-4 pb-24">
+      <div className="relative z-10 flex flex-col h-full px-4 pb-24">
         
         <Header 
           title="РЮКЗАК" 
