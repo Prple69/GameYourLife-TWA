@@ -47,8 +47,7 @@ const QuestsPage = ({
         {/* НОВЫЙ УНИФИЦИРОВАННЫЙ HEADER */}
         <Header 
           title="Задания" 
-          subtitle="Доска активных контрактов" 
-          pt="pt-[66px]"
+          subtitle="Доска активных контрактов"
         />
 
         <div className="flex-1 overflow-y-auto space-y-4 pr-1">
