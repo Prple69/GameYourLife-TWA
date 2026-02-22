@@ -9,7 +9,7 @@ const CharacterPage = ({
       
       {/* --- МАССИВНАЯ ВЕРХНЯЯ ПАНЕЛЬ С ОТСТУПОМ --- */}
       {/* Добавил pt-10 (примерно 40px), чтобы панель ушла ниже кнопок Telegram */}
-      <div className="relative z-20 w-full bg-[#111] border-b-4 border-[#2a1a10] shadow-[0_4px_10px_rgba(0,0,0,0.9)] px-5 pt-10 pb-4">
+      <div className="relative z-20 w-full bg-[#111] border-b-4 border-[#2a1a10] shadow-[0_4px_10px_rgba(0,0,0,0.9)] px-5 pt-20 pb-4">
         
         {/* Первый ряд: Имя и Золото */}
         <div className="flex justify-between items-center mb-3">
