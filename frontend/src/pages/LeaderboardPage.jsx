@@ -123,7 +123,6 @@ const LeaderboardPage = ({
           {/* Визуальный акцент: мягкое свечение под таблицей */}
           <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-[80%] h-6 bg-[#daa520]/10 blur-xl pointer-events-none" />
         </div>
-
       </div>
     </div>
   );

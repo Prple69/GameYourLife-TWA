@@ -89,7 +89,7 @@ const QuestsPage = ({
                   className="shrink-0 bg-[#daa520] active:bg-[#f7d51d] text-black px-6 py-4 md:px-8 md:py-5 font-black text-[12px] md:text-[14px] uppercase shadow-[3px_3px_0_#000] active:shadow-none transition-all outline-none"
                   style={{ WebkitTapHighlightColor: 'transparent' }}
                 >
-                  CLAIM
+                  ВЫПОЛНЕНО
                 </button>
               </div>
             );
@@ -98,7 +98,7 @@ const QuestsPage = ({
           {/* Адаптивная кнопка добавления */}
           <div className="w-full border-2 border-dashed border-[#daa520]/20 p-8 mt-6 text-center bg-black/30 active:bg-black/50 cursor-pointer transition-colors group">
             <span className="text-[12px] md:text-[14px] text-[#daa520]/60 group-active:text-[#daa520] tracking-[0.3em] uppercase font-black">
-              + PROPOSE NEW CONTRACT
+              + ДОБАВИТЬ ЗАДАНИЕ
             </span>
           </div>
         </div>
