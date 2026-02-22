@@ -38,7 +38,7 @@ const CharacterPage = ({
         <Header 
           title="Лагерь" 
           subtitle=""
-          pt="62" 
+          pt="60" 
         />
 
         {/* --- ЕДИНЫЙ БЛОК ПРОФИЛЯ --- */}
