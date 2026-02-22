@@ -1,24 +1,25 @@
 import React from 'react';
 
+// Добавил пропс sgap (Subtitle Gap), по умолчанию 1 (4px)
 const Header = ({ title, subtitle, gold}) => {
   return (
-    /* Контейнер с фиксированным отступом pt-[68px] */
     <div className="relative flex items-center justify-between mb-6 border-b-2 border-[#daa520]/30 pb-8 pt-[68px]">
       
-      {/* ЛЕВЫЙ БЛОК для симметрии */}
+      {/* ЛЕВЫЙ БЛОК */}
       <div className="w-16 z-0" /> 
 
       {/* ЦЕНТРАЛЬНЫЙ БЛОК */}
-      {/* Добавлен flex flex-col и items-center, чтобы margin-top у <p> работал корректно */}
-      <div className="absolute left-1/2 -translate-x-1/2 text-center w-full pointer-events-none flex flex-col items-center">
+      {/* ВАЖНО: Добавлен flex-col и sgap (динамический gap) */}
+      <div className={`absolute left-1/2 -translate-x-1/2 text-center w-full pointer-events-none flex flex-col items-center justify-center gap-1`}>
+        
         <h2 className="text-[#daa520] text-2xl font-black uppercase tracking-tighter drop-shadow-[0_2px_2px_rgba(0,0,0,1)] leading-none">
           {title}
         </h2>
         
-        {/* Теперь mt будет реально толкать текст вниз от h2 */}
-        <p className={`text-white/40 text-[8px] uppercase tracking-widest mt-[150px] leading-none`}>
+        <p className="text-white/40 text-[8px] uppercase tracking-widest leading-none">
           {subtitle}
         </p>
+
       </div>
       
       {/* ПРАВЫЙ БЛОК */}
