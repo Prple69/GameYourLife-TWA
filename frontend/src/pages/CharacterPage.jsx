@@ -27,85 +27,84 @@ const CharacterPage = ({
         <video
           src={videos?.camp || ""}
           autoPlay loop muted playsInline
-          className="w-full h-full object-cover opacity-80"
+          className="w-full h-full object-cover opacity-60"
           style={{ imageRendering: 'pixelated' }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-transparent to-black/60 pointer-events-none" />
       </div>
 
       {/* --- КОНТЕНТ --- */}
-      <div className="relative z-10 flex flex-col items-center w-full h-full px-4 overflow-y-auto pt-4 pb-20">
+      <div className="relative z-10 flex flex-col items-center w-full h-full px-4 pt-4 pb-20">
         
         <div className="w-full max-w-2xl shrink-0">
-          <Header title="ЛАГЕРЬ" subtitle="СТАТУС" />
+          <Header title="ЛАГЕРЬ" subtitle="СТАТУС ПЕРСОНАЖА" />
         </div>
 
         {/* --- ГЛАВНАЯ ПАНЕЛЬ --- */}
-        <div className="relative mt-6 md:mt-10 w-full max-w-2xl bg-black/70 backdrop-blur-2xl border-2 border-white/15 p-5 md:p-8 shadow-2xl">
+        <div className="relative mt-4 md:mt-6 w-full max-w-xl bg-black/70 backdrop-blur-xl border border-white/15 p-4 md:p-6 shadow-xl">
           
-          {/* ЗОЛОТО: Теперь это отдельный "шильдик" в углу панели */}
-          <div className="absolute -top-3 -right-3 bg-black border-2 border-[#daa520] px-3 py-1.5 flex items-center gap-2 shadow-[4px_4px_0_#000] z-30">
-            <div className="w-3 h-3 bg-[#daa520] rotate-45 border border-black shadow-[0_0_8px_#daa520]" />
-            <span className="text-[#daa520] text-lg md:text-2xl font-[1000] tabular-nums leading-none">
+          {/* ЗОЛОТО: Компактный шильдик */}
+          <div className="absolute -top-2 -right-2 bg-black border border-[#daa520] px-2 py-1 flex items-center gap-2 shadow-[3px_3px_0_#000] z-30">
+            <div className="w-2.5 h-2.5 bg-[#daa520] rotate-45 border border-black shadow-[0_0_5px_#daa520]" />
+            <span className="text-[#daa520] text-sm md:text-lg font-[1000] tabular-nums leading-none">
               {gold}
             </span>
           </div>
 
-          <div className="flex flex-col md:flex-row gap-6 md:gap-10">
+          <div className="flex flex-col md:flex-row gap-4 md:gap-8">
             
-            {/* ЛЕВАЯ ЧАСТЬ: Аватар и Ник (на мобилках) */}
-            <div className="flex flex-row md:flex-col items-center md:items-start gap-5 md:gap-0 shrink-0">
+            {/* ЛЕВАЯ ЧАСТЬ: Аватар */}
+            <div className="flex flex-row md:flex-col items-center md:items-start gap-4 md:gap-0 shrink-0">
               
-              {/* АВАТАР с увеличенным LVL */}
               <div className="relative shrink-0">
-                <div className="w-28 h-28 sm:w-32 sm:h-32 md:w-52 md:h-52 bg-[#111] border-2 border-[#555] shadow-[6px_6px_0_#000] flex items-center justify-center overflow-hidden">
-                  <span className="text-white/5 text-7xl md:text-[12rem] font-black not-italic">?</span>
+                <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-40 md:h-40 bg-[#111] border border-[#444] shadow-[4px_4px_0_#000] flex items-center justify-center overflow-hidden">
+                  <span className="text-white/5 text-5xl md:text-[8rem] font-black not-italic">?</span>
                 </div>
                 
-                {/* УВЕЛИЧЕННЫЙ LVL */}
-                <div className="absolute -bottom-2 -left-2 bg-[#daa520] border-2 border-black text-black text-[14px] md:text-[22px] font-[1000] px-3 py-1 shadow-[4px_4px_0_#000] z-20">
+                {/* LVL: Теперь более соразмерный */}
+                <div className="absolute -bottom-1 -left-1 bg-[#daa520] border border-black text-black text-[11px] md:text-[15px] font-[1000] px-2 py-0.5 shadow-[2px_2px_0_#000] z-20">
                   {lvl} LVL
                 </div>
               </div>
 
-              {/* Информация для мобилок (справа от аватара) */}
+              {/* Мобильный ник */}
               <div className="md:hidden flex-1 min-w-0">
-                <h3 className="text-white text-2xl font-[1000] uppercase tracking-tighter truncate leading-none">
+                <h3 className="text-white text-lg font-[1000] uppercase tracking-tighter truncate leading-none">
                   {username || name}
                 </h3>
-                <p className="text-[#daa520] text-[16px] uppercase font-[1000] mt-2 leading-none">
+                <p className="text-[#daa520] text-[12px] uppercase font-[1000] mt-1.5 leading-none">
                   Рыцарь Смерти
                 </p>
               </div>
             </div>
 
-            {/* ПРАВАЯ ЧАСТЬ: Полоски (и ник на десктопе) */}
-            <div className="flex-1 min-w-0 flex flex-col justify-between self-stretch">
+            {/* ПРАВАЯ ЧАСТЬ: Инфа и Статы */}
+            <div className="flex-1 min-w-0 flex flex-col justify-center self-stretch">
               
-              {/* Ник (Только десктоп) */}
-              <div className="hidden md:block mb-6">
-                <h3 className="text-white text-5xl font-[1000] uppercase tracking-tighter leading-none truncate drop-shadow-[4px_4px_0_#000]">
+              {/* Десктопный ник */}
+              <div className="hidden md:block mb-4">
+                <h3 className="text-white text-3xl font-[1000] uppercase tracking-tighter leading-none truncate drop-shadow-[2px_2px_0_#000]">
                   {username || name}
                 </h3>
-                <p className="text-[#daa520] text-[24px] uppercase tracking-[0.1em] font-[1000] mt-3 leading-none">
+                <p className="text-[#daa520] text-[16px] uppercase tracking-[0.1em] font-[1000] mt-2 leading-none">
                   Рыцарь Смерти
                 </p>
               </div>
 
-              {/* ПОЛОСКИ СТАТОВ */}
-              <div className="flex flex-col gap-5 md:gap-8">
+              {/* ПОЛОСКИ СТАТОВ: Сбалансированный размер */}
+              <div className="flex flex-col gap-3.5 md:gap-5">
                 
                 {/* ЗДОРОВЬЕ */}
-                <div className="space-y-2">
-                  <div className="flex justify-between items-end px-1">
-                    <span className="text-[#ef4444] text-[13px] md:text-[18px] font-[1000] uppercase tracking-widest">Здоровье</span>
-                    <span className="text-white text-xl md:text-3xl font-[1000] leading-none tracking-tighter">
+                <div className="space-y-1.5">
+                  <div className="flex justify-between items-end px-0.5">
+                    <span className="text-[#ef4444] text-[11px] md:text-[14px] font-[1000] uppercase tracking-widest">Здоровье</span>
+                    <span className="text-white text-sm md:text-xl font-[1000] leading-none tracking-tighter">
                       {hp}/{max_hp}
                     </span>
                   </div>
-                  <div className="relative w-full h-5 bg-black border-2 border-white/10 overflow-hidden">
+                  <div className="relative w-full h-3.5 bg-black border border-white/10 overflow-hidden">
                     <div 
-                      className="h-full bg-gradient-to-r from-[#800] via-[#ef4444] to-[#ff3030] transition-all duration-700 relative animate-[pulse-bar_3s_infinite]" 
+                      className="h-full bg-gradient-to-r from-[#800] via-[#ef4444] to-[#ff3030] transition-all duration-700 relative" 
                       style={{ width: `${hpPercentage}%` }}
                     >
                       <div className="absolute top-0 left-0 w-full h-[30%] bg-white/20" />
@@ -114,16 +113,16 @@ const CharacterPage = ({
                 </div>
 
                 {/* ОПЫТ */}
-                <div className="space-y-2">
-                  <div className="flex justify-between items-end px-1">
-                    <span className="text-[#daa520] text-[13px] md:text-[18px] font-[1000] uppercase tracking-widest">Опыт</span>
-                    <span className="text-white text-xl md:text-3xl font-[1000] leading-none tracking-tighter">
+                <div className="space-y-1.5">
+                  <div className="flex justify-between items-end px-0.5">
+                    <span className="text-[#daa520] text-[11px] md:text-[14px] font-[1000] uppercase tracking-widest">Опыт</span>
+                    <span className="text-white text-sm md:text-xl font-[1000] leading-none tracking-tighter">
                       {xp}/{max_xp}
                     </span>
                   </div>
-                  <div className="relative w-full h-5 bg-black border-2 border-white/10 overflow-hidden">
+                  <div className="relative w-full h-3.5 bg-black border border-white/10 overflow-hidden">
                     <div 
-                      className="h-full bg-[#daa520] transition-all duration-1000 relative shadow-[0_0_15px_rgba(218,165,32,0.4)]" 
+                      className="h-full bg-[#daa520] transition-all duration-1000 relative shadow-[0_0_10px_rgba(218,165,32,0.3)]" 
                       style={{ width: `${xpPercentage}%` }}
                     >
                       <div className="absolute inset-0 w-full h-full animate-[scan-line_4s_linear_infinite] bg-gradient-to-r from-transparent via-white/40 to-transparent translate-x-[-100%]" />
@@ -140,12 +139,7 @@ const CharacterPage = ({
       <style dangerouslySetInnerHTML={{ __html: `
         @keyframes scan-line {
           0% { transform: translateX(-100%); }
-          50% { transform: translateX(100%); }
           100% { transform: translateX(100%); }
-        }
-        @keyframes pulse-bar {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.85; }
         }
       `}} />
     </div>
