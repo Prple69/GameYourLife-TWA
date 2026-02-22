@@ -8,77 +8,95 @@ const CharacterPage = ({
   return (
     <div className="fixed inset-0 w-full h-full bg-black overflow-hidden flex flex-col font-mono">
       
-      {/* --- ЗАДНИЙ ФОН (ВИДЕО) --- */}
+      {/* --- ЗАДНИЙ ФОН (ВИДЕО БЕЗ ЗАТЕМНЕНИЯ) --- */}
       <div className="absolute inset-0 z-0 bg-black">
         <video
           src={videos?.camp || ""}
           autoPlay loop muted playsInline
-          className="w-full h-full object-cover opacity-60"
+          className="w-full h-full object-cover opacity-100" // Прозрачность 100%
           style={{ imageRendering: 'pixelated' }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/80" />
+        {/* Только верхний градиент, чтобы текст хедера не терялся */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-transparent to-transparent pointer-events-none" />
       </div>
 
       {/* --- КОНТЕНТ --- */}
       <div className="relative z-10 flex flex-col h-full p-5">
         
-        {/* Хедер сам задает pt-[68px] и отступ снизу */}
+        {/* Хедер с золотом */}
         <Header 
           title="Лагерь" 
           subtitle="Безопасная зона" 
-          gold={character.gold}
+          gold={character.gold} // Теперь золото отображается справа
         />
 
-        {/* --- СТАТЫ ПЕРСОНАЖА (ПРОЗРАЧНЫЙ ФОН) --- */}
-        <div className="flex gap-4 items-center mt-2 px-1">
+        {/* --- ПАНЕЛЬ СТАТОВ --- */}
+        <div className="flex gap-4 items-end mt-4 px-1">
           
-          {/* Аватарка */}
-          <div className="relative shrink-0">
-            <div className="w-14 h-14 bg-black/40 border-2 border-[#daa520]/50 flex items-center justify-center shadow-[4px_4px_0_rgba(0,0,0,0.5)]">
-              <span className="text-[#daa520] text-2xl font-black italic drop-shadow-md">R</span>
+          {/* Аватарка и Уровень */}
+          <div className="relative shrink-0 group">
+            <div className="w-16 h-16 bg-black/60 border-2 border-[#f7d51d] shadow-[0_0_15px_rgba(247,213,29,0.3)] flex items-center justify-center relative overflow-hidden">
+              <span className="text-[#f7d51d] text-4xl font-black italic z-10 drop-shadow-[2px_2px_0_#000]">R</span>
+              <div className="absolute inset-0 bg-gradient-to-tr from-[#f7d51d]/20 to-transparent" />
             </div>
-            {/* Уровень */}
-            <div className="absolute -bottom-1 -right-1 bg-[#daa520] text-black text-[9px] font-black px-1 border border-black">
-              {character.lvl}
+            {/* Уровень как отдельный шильдик */}
+            <div className="absolute -top-2 -left-2 bg-[#f7d51d] text-black text-[10px] font-black px-2 py-0.5 shadow-[2px_2px_0_#000] rotate-[-5deg]">
+              LVL {character.lvl}
             </div>
           </div>
 
-          {/* Имя и Полоски */}
-          <div className="flex-1 space-y-2">
-            <div>
-              <h3 className="text-white text-[13px] font-black uppercase tracking-tight leading-none drop-shadow-md">
-                {character.username || character.name}
-              </h3>
-              <p className="text-[#daa520]/70 text-[7px] uppercase tracking-widest mt-1 font-bold">Рыцарь ордена</p>
-            </div>
-
-            {/* Полоски без тяжелых рамок */}
-            <div className="space-y-1.5">
-              {/* HP */}
-              <div className="relative w-full h-2.5 bg-black/40 border border-white/10 overflow-hidden">
+          {/* Информационные полоски */}
+          <div className="flex-1 flex flex-col gap-3">
+            
+            {/* Блок HP */}
+            <div className="w-full">
+              <div className="flex justify-between items-end mb-1">
+                <span className="text-[#cc0000] text-[9px] font-black uppercase tracking-tighter">Vitality</span>
+                <span className="text-white text-[10px] font-bold">{character.hp}%</span>
+              </div>
+              <div className="relative w-full h-4 bg-black/80 border border-white/20 shadow-[2px_2px_0_rgba(0,0,0,0.5)]">
+                {/* Сетка делений на полоске HP */}
+                <div className="absolute inset-0 z-10 flex justify-between px-1 pointer-events-none">
+                  {[...Array(4)].map((_, i) => (
+                    <div key={i} className="w-[1px] h-full bg-black/30" />
+                  ))}
+                </div>
                 <div 
-                  className="h-full bg-[#cc0000] shadow-[0_0_8px_#cc0000] transition-all duration-500" 
+                  className="h-full bg-gradient-to-r from-[#880000] to-[#ff0000] shadow-[0_0_10px_#ff0000] transition-all duration-700" 
                   style={{ width: `${character.hp}%` }}
                 />
-                <span className="absolute inset-0 flex items-center justify-center text-[5px] text-white/90 font-black uppercase tracking-tighter">
-                  HEALTH {character.hp}%
-                </span>
               </div>
-              
-              {/* XP */}
-              <div className="relative w-full h-1 bg-black/40 border border-white/5 overflow-hidden">
+            </div>
+
+            {/* Блок XP */}
+            <div className="w-full">
+              <div className="flex justify-between items-end mb-1">
+                <span className="text-[#0070dd] text-[9px] font-black uppercase tracking-tighter">Experience</span>
+                <span className="text-white/60 text-[8px]">{character.xp} / {character.max_xp}</span>
+              </div>
+              <div className="relative w-full h-2 bg-black/80 border border-white/10">
                 <div 
-                  className="h-full bg-[#0070dd] shadow-[0_0_5px_#0070dd] transition-all duration-1000" 
+                  className="h-full bg-[#0070dd] shadow-[0_0_8px_#0070dd] transition-all duration-1000" 
                   style={{ width: `${(character.xp / (character.max_xp || 100)) * 100}%` }}
                 />
               </div>
             </div>
           </div>
+
         </div>
+
+        {/* Имя персонажа вынесено ниже для акцента */}
+        <div className="mt-4 ml-1">
+           <h3 className="text-white text-lg font-black uppercase tracking-tight leading-none drop-shadow-[2px_2px_0_rgba(0,0,0,1)]">
+             {character.username || character.name}
+           </h3>
+           <div className="h-0.5 w-12 bg-[#f7d51d] mt-1 shadow-[0_0_5px_#f7d51d]" />
+        </div>
+
       </div>
 
-      {/* Нижняя виньетка для глубины */}
-      <div className="absolute inset-0 pointer-events-none shadow-[inset_0_-100px_100px_rgba(0,0,0,0.9)]" />
+      {/* Нижняя тень для кнопок меню */}
+      <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/60 via-transparent to-transparent" />
     </div>
   );
 };
