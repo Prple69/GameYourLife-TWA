@@ -12,7 +12,6 @@ const LeaderboardPage = ({
     isMe: i === 5
   }));
 
-  // Единый стиль стекла для Android и iOS с аппаратным ускорением
   const glassStyle = {
     WebkitBackdropFilter: 'blur(10px)',
     backdropFilter: 'blur(10px)',
@@ -33,18 +32,17 @@ const LeaderboardPage = ({
         <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
       </div>
 
-      {/* --- КОНТЕНТ (Убрали pt, он теперь в Header) --- */}
+      {/* --- ОСНОВНОЙ КОНТЕНТ --- */}
       <div className="relative z-10 flex flex-col items-center w-[92%] h-full">
         
-        <div className="w-full">
-          {/* Header сам считает отступ под челку и 2vh сверху */}
+        <div className="w-full shrink-0">
           <Header title="Зал Славы" subtitle="Топ 100 героев" />
         </div>
 
-        {/* --- ПАНЕЛЬ ТВОЕГО РАНГА --- */}
+        {/* ПАНЕЛЬ РАНГА */}
         <div 
           style={glassStyle}
-          className="w-full max-w-md mb-[1.5vh] min-h-[60px] flex items-center px-4 bg-black/60 border border-[#F5F5F0]/20 shrink-0"
+          className="w-full max-w-md mb-4 min-h-[60px] flex items-center px-4 bg-black/60 border border-[#F5F5F0]/20 shrink-0 shadow-lg"
         >
            <div className="w-[12%]">
               <span className="text-[12px] text-[#daa520] font-black uppercase leading-none">Ты</span>
@@ -63,13 +61,18 @@ const LeaderboardPage = ({
         </div>
 
         {/* --- КОНТЕЙНЕР ТАБЛИЦЫ --- */}
-        {/* mb-[12vh] резервирует место под нижнюю навигацию динамически */}
-        <div className="w-full max-w-md flex flex-col overflow-hidden mb-[12vh] max-h-[calc(100vh-35vh)]">
+        {/* mb: Суммируем базовый отступ 160px и безопасную зону снизу для iPhone/Android */}
+        <div 
+          className="w-full max-w-md flex-1 flex flex-col overflow-hidden relative"
+          style={{ 
+            marginBottom: 'calc(130px + env(safe-area-inset-bottom, 0px))' 
+          }}
+        >
           
           {/* ШАПКА ТАБЛИЦЫ */}
           <div 
             style={glassStyle}
-            className="flex h-[40px] sm:h-[45px] items-center bg-black/70 border border-[#F5F5F0]/20 border-b-[#daa520]/40 shrink-0 px-4"
+            className="flex h-[40px] sm:h-[45px] items-center bg-black/80 border border-[#F5F5F0]/20 border-b-[#daa520]/40 shrink-0 px-4 z-20"
           >
             <div className="w-[10%] text-[10px] text-[#daa520] font-black uppercase">#</div>
             <div className="flex-1 text-[10px] text-[#daa520] font-black uppercase tracking-widest text-center">Герой</div>
@@ -79,7 +82,7 @@ const LeaderboardPage = ({
           {/* ТЕЛО ТАБЛИЦЫ */}
           <div 
             style={glassStyle}
-            className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar bg-black/50 border-x border-b border-white/10"
+            className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar bg-black/40 border-x border-b border-white/10 shadow-2xl"
           >
             <div className="bg-black/5 min-h-full">
               {leaders.map((user, i) => {
@@ -89,7 +92,7 @@ const LeaderboardPage = ({
                 return (
                   <div 
                     key={i} 
-                    className={`flex items-center min-h-[60px] sm:min-h-[65px] px-4 border-b border-white/5 transition-colors ${showGold ? 'bg-[#daa520]/25' : ''}`}
+                    className={`flex items-center h-[60px] sm:h-[65px] px-4 border-b border-white/5 transition-colors ${showGold ? 'bg-[#daa520]/20' : ''}`}
                   >
                     <div className="w-[10%]">
                       <span className={`text-[4vw] sm:text-[16px] font-black ${isTop3 ? 'text-[#daa520]' : 'text-[#A1A1AA]/50'}`}>
@@ -97,7 +100,7 @@ const LeaderboardPage = ({
                       </span>
                     </div>
                     
-                    <div className="flex-1 flex flex-col ml-1 py-2">
+                    <div className="flex-1 flex flex-col ml-1">
                       <span className={`text-[3.8vw] sm:text-[15px] uppercase font-black tracking-tight leading-none ${showGold ? 'text-[#daa520]' : 'text-[#F5F5F0]'}`}>
                         {user.name}
                       </span>
@@ -116,6 +119,9 @@ const LeaderboardPage = ({
               })}
             </div>
           </div>
+
+          {/* Визуальный акцент: мягкое свечение под таблицей */}
+          <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-[80%] h-6 bg-[#daa520]/10 blur-xl pointer-events-none" />
         </div>
 
       </div>
