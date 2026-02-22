@@ -7,7 +7,7 @@ const ShopPage = ({ gold = 450, videos }) => {
   ];
 
   return (
-    <div className="fixed inset-0 w-full h-full bg-black overflow-hidden flex flex-col font-mono">
+    <div className="fixed inset-0 w-full h-full bg-black overflow-hidden flex flex-col font-mono pt-28">
       
       {/* --- ЗАДНИЙ ФОН (ВИДЕО ЧЕРЕЗ BLOB) --- */}
       <div className="absolute inset-0 z-0 bg-black">
