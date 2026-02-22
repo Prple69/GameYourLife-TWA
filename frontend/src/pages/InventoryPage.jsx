@@ -13,7 +13,7 @@ const InventoryPage = ({ character, videos }) => {
   const slots = Array.from({ length: 20 });
 
   return (
-    <div className="fixed inset-0 w-full h-full bg-black overflow-hidden flex flex-col">
+    <div className="fixed inset-0 w-full h-full bg-black overflow-hidden flex flex-col pt-28">
       
       {/* --- ЗАДНИЙ ФОН (ВИДЕО ЧЕРЕЗ BLOB) --- */}
       <div className="absolute inset-0 z-0 bg-black">

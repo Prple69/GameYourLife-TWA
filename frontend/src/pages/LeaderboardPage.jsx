@@ -13,7 +13,7 @@ const LeaderboardPage = ({
   ];
 
   return (
-    <div className="fixed inset-0 w-full h-full bg-black overflow-hidden flex flex-col font-mono">
+    <div className="fixed inset-0 w-full h-full bg-black overflow-hidden flex flex-col font-mono pt-28">
       
       {/* --- ВЕРХНЯЯ ПАНЕЛЬ --- */}
       <div className="relative z-20 w-full bg-[#111111] border-b-4 border-[#2a1a10] shadow-[0_4px_10px_rgba(0,0,0,0.9)] px-5 py-4">
