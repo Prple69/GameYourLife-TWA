@@ -70,16 +70,14 @@ const CharacterPage = ({
           loop
           muted
           playsInline
-          /* Добавил playsInline и webkit-playsinline для мобилок */
           webkit-playsinline="true"
-          className="absolute inset-0 w-full h-full object-cover opacity-80"
-          style={{ imageRendering: 'pixelated', willChange: 'transform' }}
+          /* Добавили -translate-y-12, чтобы физически поднять видео на ~48px выше */
+          className="absolute inset-0 w-full h-full object-cover opacity-80 -translate-y-12"
+          style={{ imageRendering: 'pixelated', transformOrigin: 'top' }}
         />
         
-        {/* Градиенты для глубины и скрытия стыков */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black/60 pointer-events-none" />
-        
-        {/* Декоративная виньетка по краям */}
+        {/* Градиенты теперь должны быть поверх видео в его новой позиции */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-transparent pointer-events-none" />
         <div className="absolute inset-0 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)] pointer-events-none" />
       </div>
     
