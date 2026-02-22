@@ -28,7 +28,6 @@ const ShopPage = ({ gold = 450, videos }) => {
         <Header 
           title="Лавка" 
           subtitle="Торговец редкостями" 
-          pt={64} 
         />
 
         {/* --- НОВОЕ МЕСТО ДЛЯ ЗОЛОТА --- */}

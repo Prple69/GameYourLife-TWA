@@ -33,7 +33,6 @@ const InventoryPage = ({ character, videos }) => {
         <Header 
           title="Рюкзак" 
           subtitle="Вес: 4.2 / 20.0 кг" 
-          pt={64} 
         />
 
         {/* Сетка слотов */}
