@@ -48,50 +48,55 @@ const LeaderboardPage = ({
            </div>
         </div>
 
-        {/* --- ФИКСИРОВАННЫЙ КОНТЕЙНЕР ТАБЛИЦЫ --- */}
-        <div className="w-full max-w-md h-[490px] flex flex-col border border-white/10 bg-black/40 backdrop-blur-[6px]">
+        {/* --- КОНТЕЙНЕР ТАБЛИЦЫ --- */}
+        <div className="w-full max-w-md h-[490px] flex flex-col">
           
-          <div className="flex h-[45px] items-center bg-black/40 border-b border-[#daa520]/40 shrink-0 px-4 backdrop-blur-[6px]">
+          {/* ШАПКА ТАБЛИЦЫ (Стиль как у панели ранга) */}
+          <div className="flex h-[45px] items-center bg-black/60 border border-[#F5F5F0]/20 border-b-[#daa520]/40 shrink-0 px-4 backdrop-blur-[6px]">
             <div className="w-10 text-[11px] text-[#daa520] font-black uppercase">#</div>
             <div className="flex-1 text-[11px] text-[#daa520] font-black uppercase tracking-widest text-center">Герой</div>
             <div className="w-14 text-[11px] text-[#daa520] font-black uppercase text-right">Ур</div>
           </div>
 
-          <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar bg-black/10">
-            {leaders.map((user, i) => {
-              const isTop3 = i < 3;
-              const showGold = user.isMe && (character.rank <= 100);
+          {/* ТЕЛО ТАБЛИЦЫ (Твоя исходная прозрачность) */}
+          <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar bg-black/40 border-x border-b border-white/10 backdrop-blur-[6px]">
+            <div className="bg-black/10">
+              {leaders.map((user, i) => {
+                const isTop3 = i < 3;
+                const showGold = user.isMe && (character.rank <= 100);
 
-              return (
-                <div 
-                  key={i} 
-                  className={`flex items-center h-[65px] px-4 border-b border-white/5 transition-colors ${showGold ? 'bg-[#daa520]/25' : ''}`}
-                >
-                  <div className="w-10">
-                    <span className={`text-[16px] font-black ${isTop3 ? 'text-[#daa520]' : 'text-[#A1A1AA]'}`}>
-                      {i + 1}
-                    </span>
-                  </div>
-                  
-                  <div className="flex-1 flex flex-col ml-1">
-                    <span className={`text-[15px] uppercase font-black tracking-tight leading-none ${showGold ? 'text-[#daa520]' : 'text-[#F5F5F0]'}`}>
-                      {user.name}
-                    </span>
-                    <span className="text-[10px] text-[#A1A1AA] uppercase tracking-widest mt-1 font-bold">
-                      {user.class}
-                    </span>
-                  </div>
+                return (
+                  <div 
+                    key={i} 
+                    className={`flex items-center h-[65px] px-4 border-b border-white/5 transition-colors ${showGold ? 'bg-[#daa520]/25' : ''}`}
+                  >
+                    <div className="w-10">
+                      <span className={`text-[16px] font-black ${isTop3 ? 'text-[#daa520]' : 'text-[#A1A1AA]'}`}>
+                        {i + 1}
+                      </span>
+                    </div>
+                    
+                    <div className="flex-1 flex flex-col ml-1">
+                      <span className={`text-[15px] uppercase font-black tracking-tight leading-none ${showGold ? 'text-[#daa520]' : 'text-[#F5F5F0]'}`}>
+                        {user.name}
+                      </span>
+                      <span className="text-[10px] text-[#A1A1AA] uppercase tracking-widest mt-1 font-bold">
+                        {user.class}
+                      </span>
+                    </div>
 
-                  <div className="w-14 text-right">
-                    <span className={`text-[16px] font-black ${showGold ? 'text-[#daa520]' : 'text-[#F5F5F0]/80'}`}>
-                      {user.lvl}
-                    </span>
+                    <div className="w-14 text-right">
+                      <span className={`text-[16px] font-black ${showGold ? 'text-[#daa520]' : 'text-[#F5F5F0]/80'}`}>
+                        {user.lvl}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
+
       </div>
     </div>
   );
