@@ -6,6 +6,9 @@ const ShopPage = ({ gold = 450, videos }) => {
     { id: 1, name: "Перо Феникса", price: 200, icon: "🔥", desc: "Дарует вторую жизнь после смерти в бою" },
     { id: 2, name: "Клевер удачи", price: 150, icon: "🍀", desc: "Увеличивает получаемый опыт в 1.5 раза" },
     { id: 3, name: "Древний фолиант", price: 500, icon: "📖", desc: "Открывает случайное скрытое умение" },
+    { id: 4, name: "Перо Феникса", price: 200, icon: "🔥", desc: "Дарует вторую жизнь после смерти в бою" },
+    { id: 5, name: "Клевер удачи", price: 150, icon: "🍀", desc: "Увеличивает получаемый опыт в 1.5 раза" },
+    { id: 6, name: "Древний фолиант", price: 500, icon: "📖", desc: "Открывает случайное скрытое умение" },
   ];
 
   return (
@@ -76,12 +79,6 @@ const ShopPage = ({ gold = 450, videos }) => {
           ))}
         </div>
 
-        {/* НИЖНИЙ ТАЙМЕР */}
-        <div className="mt-6 py-2 bg-white/5 border-t border-b border-white/5">
-          <p className="text-white/20 text-[9px] md:text-[11px] text-center uppercase font-black tracking-[0.4em]">
-            ОБНОВЛЕНИЕ АССОРТИМЕНТА ЧЕРЕЗ <span className="text-white/40">12:44:02</span>
-          </p>
-        </div>
       </div>
 
       <div className="absolute inset-x-0 bottom-0 h-40 pointer-events-none bg-gradient-to-t from-black via-transparent to-transparent z-0" />
