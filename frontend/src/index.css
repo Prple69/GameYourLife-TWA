@@ -2,12 +2,44 @@
 @import "tailwindcss";
 
 body {
-  background-color: #1a2e1a; /* Темно-зеленый лесной */
-  background-image: radial-gradient(#2d4a2d 1px, transparent 1px);
+  background-color: #000000; /* Темно-зеленый лесной */
+  background-image: radial-gradient(#000000 1px, transparent 1px);
   background-size: 20px 20px;
+/* Запрещает выделение текста на всей странице */
+  user-select: none;
+  -webkit-user-select: none;
+  
+  /* Отключает системное меню (копировать/вставить) при долгом нажатии на мобилках */
+  -webkit-touch-callout: none;
+  
+  /* Убирает задержку перед кликом и отключает двойной тап для зума */
+  touch-action: manipulation;
+  
+  /* Запрещает браузеру автоматически масштабировать текст */
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
 }
 
 /* Убирает синюю подсветку при тапе на мобилках */
 * {
   -webkit-tap-highlight-color: transparent;
+}
+
+/* Если у тебя будут поля ввода (input), им нужно вернуть возможность выделения */
+input, textarea {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+/* Убираем синюю подсветку при тапе (ты уже добавил, но для надежности расширим) */
+* {
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
+/* Отключаем зум на iOS при фокусе в инпуты (если размер шрифта меньше 16px) */
+@media screen and (max-width: 768px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
 }

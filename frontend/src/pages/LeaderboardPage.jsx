@@ -13,8 +13,8 @@ const LeaderboardPage = ({
   }));
 
   const glassStyle = {
-    WebkitBackdropFilter: 'blur(10px)',
-    backdropFilter: 'blur(10px)',
+    WebkitBackdropFilter: 'blur(5px)',
+    backdropFilter: 'blur(5px)',
     transform: 'translateZ(0)', 
   };
 

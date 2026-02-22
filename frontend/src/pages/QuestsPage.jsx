@@ -70,7 +70,7 @@ const QuestsPage = ({
             return (
               <div 
                 key={task.id}
-                className="group relative w-full bg-black/70 backdrop-blur-lg border border-white/10 p-5 md:p-6 flex items-center justify-between shadow-[6px_6px_0px_rgba(0,0,0,0.9)] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all duration-75"
+                className="group relative w-full bg-black/70 border border-white/10 p-5 md:p-6 flex items-center justify-between shadow-[6px_6px_0px_rgba(0,0,0,0.9)] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all duration-75"
               >
                 <div className="flex flex-col gap-3 min-w-0 pr-4">
                   {/* Размер текста растет на больших экранах (md:text-xl) */}
