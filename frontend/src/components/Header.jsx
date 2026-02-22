@@ -10,7 +10,7 @@ const Header = ({ title, subtitle, gold}) => {
 
       {/* ЦЕНТРАЛЬНЫЙ БЛОК */}
       {/* ВАЖНО: Добавлен flex-col и sgap (динамический gap) */}
-      <div className={`absolute left-1/2 -translate-x-1/2 text-center w-full pointer-events-none flex flex-col items-center justify-center gap-1`}>
+      <div className={`absolute left-1/2 -translate-x-1/2 text-center w-full pointer-events-none flex flex-col items-center justify-center gap-[20px]`}>
         
         <h2 className="text-[#daa520] text-2xl font-black uppercase tracking-tighter drop-shadow-[0_2px_2px_rgba(0,0,0,1)] leading-none">
           {title}
