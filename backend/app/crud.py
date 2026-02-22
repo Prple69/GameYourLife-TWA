@@ -79,3 +79,26 @@ def complete_quest(db: Session, quest_id: int):
         quest.is_completed = True
         db.commit()
     return quest
+
+# --- ЛАВКА ---
+
+def buy_item(db: Session, user_id: int, item_id: str, price: int):
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+    
+    if user.gold < price:
+        return {"success": False, "detail": "Недостаточно золота"}
+    
+    # Списываем золото
+    user.gold -= price
+    
+    # Логика эффектов (зависит от slug предмета)
+    # В будущем можно вынести в отдельную таблицу эффектов
+    if item_id == "clover": # Клевер удачи
+        user.xp_multiplier = 1.5
+    elif item_id == "phoenix": # Перо феникса (пример)
+        # можно добавить в инвентарь или восстановить HP
+        user.hp = user.max_hp 
+        
+    db.commit()
+    db.refresh(user)
+    return {"success": True, "user": user}

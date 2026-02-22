@@ -12,36 +12,27 @@ class User(Base):
     telegram_id = Column(String, unique=True, index=True)
     username = Column(String)
     
-    # Основные статы
+    # Визуал (храним только ключи для ассетов: 'avatar1', 'knight')
+    selected_avatar = Column(String, default="avatar1")
+    char_class = Column(String, default="knight")
+    
+    # Прогресс
     lvl = Column(Integer, default=1)
     xp = Column(Integer, default=0)
     max_xp = Column(Integer, default=100)
     gold = Column(Integer, default=0)
     hp = Column(Integer, default=100)
+    max_hp = Column(Integer, default=100)
     
-    # Твои множители для гибкой экономики
+    # Экономика
     xp_multiplier = Column(Float, default=1.0)
     gold_multiplier = Column(Float, default=1.0)
     
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
-    # Связи: uselist=False делает связь 1-к-1 для настроек
-    settings = relationship("UserSettings", uselist=False, back_populates="user")
-    quests = relationship("Quest", back_populates="user")
-    inventory = relationship("Inventory", back_populates="user")
-
-
-class UserSettings(Base):
-    __tablename__ = "user_settings"
-
-    user_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
-    language = Column(String, default="ru")
-    is_muted = Column(Boolean, default=False)
-    theme = Column(String, default="classic")
-    show_in_leaderboard = Column(Boolean, default=True)
-
-    user = relationship("User", back_populates="settings")
-
+    # Связи
+    quests = relationship("Quest", back_populates="user", cascade="all, delete-orphan")
+    inventory = relationship("InventoryItem", back_populates="user", cascade="all, delete-orphan")
 
 class Quest(Base):
     __tablename__ = "quests"
@@ -49,19 +40,16 @@ class Quest(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     title = Column(String)
-    difficulty = Column(String)  # easy, medium, hard
+    difficulty = Column(String)  # easy, medium, hard, epic
     is_completed = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
-
+    
     user = relationship("User", back_populates="quests")
 
-
-class Inventory(Base):
+class InventoryItem(Base):
     __tablename__ = "inventory"
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
-    item_id = Column(String)  # Уникальный код предмета (напр. 'potion_01')
-    quantity = Column(Integer, default=1)
-
+    item_slug = Column(String)  # Например: 'clover', 'phoenix_feather'
+    
     user = relationship("User", back_populates="inventory")
