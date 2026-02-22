@@ -7,7 +7,7 @@ const LeaderboardPage = ({
 }) => {
   const leaders = Array.from({ length: 100 }, (_, i) => ({
     name: i === 5 ? "Sir Pixelot" : `Hero_${i + 1}`,
-    lvl: 101 - i,
+    lvl: 100 - i,
     class: i % 2 === 0 ? "Рыцарь" : "Маг",
     isMe: i === 5
   }));
