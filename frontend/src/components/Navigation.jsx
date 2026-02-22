@@ -10,7 +10,7 @@ const Navigation = ({
   activeTab, 
   setActiveTab, 
   width = "100%",   
-  height = "150px" 
+  height = "250px" 
 }) => {
   
   const tabs = [
