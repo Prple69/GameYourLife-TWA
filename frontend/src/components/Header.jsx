@@ -3,7 +3,7 @@ import React from 'react';
 const Header = ({ title, subtitle, gold }) => {
   return (
     /* Убрали border-b-2 и сопутствующий цвет границы */
-    <div className={`relative flex items-center justify-between mb-6 pb-4 pt-[68px]`}>
+    <div className={`relative flex items-center justify-between mb-6 pb-4 pt-[64px]`}>
       
       {/* ЛЕВЫЙ БЛОК для симметрии */}
       <div className="w-16 z-0" /> 
