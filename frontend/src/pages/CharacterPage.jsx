@@ -24,6 +24,11 @@ const CharacterPage = ({ character, videos, triggerHaptic, onAvatarChange }) => 
   const xpPercentage = Math.min((character.xp / (character.max_xp || 100)) * 100, 100);
   const hpPercentage = Math.min((character.hp / (character.max_hp || 100)) * 100, 100);
 
+  const handleAvatarChange = async (newId) => {
+    const res = await userService.updateAvatar(character.id, newId);
+    setCharacter(res.data); // Это обновит состояние во всем App
+  };
+
   const titles = {
     knight: "РЫЦАРЬ СМЕРТИ",
     mage: "ВЕРХОВНАЯ МАГИНЯ",
