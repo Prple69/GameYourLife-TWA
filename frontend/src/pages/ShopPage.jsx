@@ -1,76 +1,61 @@
 import React from 'react';
+import Header from '../components/Header';
 
 const ShopPage = ({ gold = 450, videos }) => {
   const items = [
-    { id: 1, name: "Перо Феникса", price: 200, icon: "🔥", desc: "Дарует вторую жизнь" },
-    { id: 2, name: "4-х листный клевер", price: 150, icon: "🍀", desc: "Опыт 1.5х" },
+    { id: 1, name: "Перо Феникса", price: 200, icon: "🔥", desc: "Дарует вторую жизнь после смерти" },
+    { id: 2, name: "Клевер удачи", price: 150, icon: "🍀", desc: "Увеличивает получаемый опыт в 1.5 раза" },
   ];
 
   return (
-    <div className="fixed inset-0 w-full h-full bg-black overflow-hidden flex flex-col font-mono pt-28">
+    <div className="fixed inset-0 w-full h-full bg-black overflow-hidden flex flex-col font-mono">
       
-      {/* --- ЗАДНИЙ ФОН (ВИДЕО ЧЕРЕЗ BLOB) --- */}
+      {/* --- ЗАДНИЙ ФОН --- */}
       <div className="absolute inset-0 z-0 bg-black">
         <video
           src={videos?.shop || ""}
-          autoPlay
-          loop
-          muted
-          playsInline
+          autoPlay loop muted playsInline
           className="w-full h-full object-cover opacity-60"
-          style={{ 
-            imageRendering: 'pixelated',
-            willChange: 'transform' 
-          }}
+          style={{ imageRendering: 'pixelated' }}
         />
-        {/* Градиент для читаемости без использования blur */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-black/80" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-black" />
       </div>
 
-      {/* --- КОНТЕНТ МАГАЗИНА --- */}
-      <div className="relative z-10 flex flex-col h-full p-5 pb-32">
+      {/* --- КОНТЕНТ --- */}
+      <div className="relative z-10 flex flex-col h-full p-5 pb-24">
         
-        {/* Заголовок и баланс золота */}
-        <div className="flex justify-between items-end mb-6 border-b-2 border-[#daa520]/30 pb-2">
-          <div>
-            <h2 className="text-[#daa520] text-2xl font-black uppercase tracking-tighter drop-shadow-[0_2px_2px_rgba(0,0,0,1)]">
-              Лавка
-            </h2>
-            <p className="text-white/40 text-[8px] uppercase tracking-widest">Торговец артефактами</p>
-          </div>
-          
-          {/* Баланс: убрали blur, добавили более плотный фон */}
-          <div className="flex items-center gap-2 bg-[#111] px-3 py-1 border border-[#f7d51d]/40 shadow-[4px_4px_0_#000]">
-            <span className="text-[#f7d51d] font-bold text-sm tracking-tighter">{gold}</span>
-            <div className="w-2.5 h-2.5 bg-[#f7d51d] rounded-full shadow-[0_0_8px_#f7d51d] animate-pulse" />
-          </div>
-        </div>
+        {/* Интегрированный хедер. Золото передаем сюда, отступ 64px */}
+        <Header 
+          title="Лавка" 
+          subtitle="Торговец редкостями" 
+          gold={gold} 
+          pt={64} 
+        />
 
         {/* Список товаров */}
-        <div className="flex-1 overflow-y-auto space-y-4 pr-1">
+        <div className="flex-1 overflow-y-auto space-y-4 pr-1 mt-2 custom-scrollbar">
           {items.map(item => (
             <div 
               key={item.id} 
-              className="relative bg-[#1a1a1a] border-2 border-white/5 p-3 flex items-center gap-4 active:translate-y-1 transition-all shadow-[4px_4px_0_#000]"
+              className="bg-black/60 border-2 border-white/5 p-3 flex items-center gap-4 active:scale-[0.98] transition-all shadow-[4px_4px_0_#000]"
             >
               {/* Иконка предмета */}
-              <div className="w-14 h-14 bg-black border border-[#daa520]/30 flex items-center justify-center text-2xl relative overflow-hidden">
-                <span className="z-10 drop-shadow-md">{item.icon}</span>
-                <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent" />
+              <div className="w-14 h-14 bg-[#111] border border-[#daa520]/40 flex items-center justify-center text-2xl relative shrink-0 shadow-[inset_0_0_10px_rgba(0,0,0,0.8)]">
+                <span className="z-10 drop-shadow-[0_2px_2px_rgba(0,0,0,1)]">{item.icon}</span>
               </div>
               
-              <div className="flex-1">
-                <h3 className="text-[#f7d51d] font-bold text-[13px] uppercase leading-none mb-1">
+              <div className="flex-1 min-w-0">
+                <h3 className="text-[#daa520] font-black text-[12px] uppercase leading-none mb-1 truncate">
                   {item.name}
                 </h3>
-                <p className="text-white/50 text-[9px] leading-tight font-medium">
+                <p className="text-white/40 text-[9px] leading-tight italic">
                   {item.desc}
                 </p>
               </div>
 
               {/* Кнопка купить */}
               <button 
-                className="bg-[#daa520] active:bg-[#f7d51d] text-black px-4 py-3 font-black text-[10px] uppercase shadow-[2px_2px_0_#000] active:shadow-none transition-all outline-none"
+                className="bg-[#daa520] text-black px-3 py-3 font-black text-[10px] uppercase shadow-[2px_2px_0_#000] active:shadow-none active:translate-x-0.5 active:translate-y-0.5 transition-all outline-none"
                 style={{ WebkitTapHighlightColor: 'transparent' }}
               >
                 {item.price} G
@@ -79,12 +64,14 @@ const ShopPage = ({ gold = 450, videos }) => {
           ))}
         </div>
 
-        {/* Декоративная подпись снизу */}
-        <div className="mt-4 opacity-20 text-[7px] text-center uppercase tracking-[0.3em]">
-          Goods update in 12:44:02
+        {/* Декоративная подпись */}
+        <div className="mt-4 opacity-10 text-[7px] text-center uppercase tracking-[0.4em]">
+          Обновление ассортимента через 12:44:02
         </div>
       </div>
 
+      {/* Финальное затемнение низа */}
+      <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black via-transparent to-transparent opacity-40" />
     </div>
   );
 };
