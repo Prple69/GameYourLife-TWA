@@ -48,7 +48,7 @@ const QuestsPage = ({
         <Header 
           title="Задания" 
           subtitle="Доска активных контрактов" 
-          pt="pt-10"
+          pt="pt-16"
         />
 
         <div className="flex-1 overflow-y-auto space-y-4 pr-1">
