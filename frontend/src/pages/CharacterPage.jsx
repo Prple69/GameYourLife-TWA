@@ -7,7 +7,7 @@ const CharacterPage = ({
 }) => {
   const {
     name = "Странник",
-    username,
+    username = "Purple",
     hp = 85,
     lvl = 14,
     xp = 1200,
