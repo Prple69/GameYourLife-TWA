@@ -10,7 +10,7 @@ const Navigation = ({
   activeTab, 
   setActiveTab, 
   width = "100%",   
-  height = "550px" 
+  height = "90px" 
 }) => {
   
   const tabs = [
@@ -23,7 +23,7 @@ const Navigation = ({
 
   return (
     <div 
-      className="fixed bottom-0 left-0 z-50 flex items-end justify-center pb-4"
+      className="fixed bottom-12 left-0 z-50 flex items-end justify-center pb-4"
       style={{ width: width, height: height }}
     >
       {/* МЯГКОЕ ЗАДНЕЕ ЗАТЕМНЕНИЕ (Уходит в самый низ) */}
