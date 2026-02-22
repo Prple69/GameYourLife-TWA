@@ -1,4 +1,5 @@
 import React from 'react';
+import Header from '../components/Header';
 
 const CharacterPage = ({ 
   character = { name: "Sir Pixelot", hp: 85, lvl: 14, xp: 1200, max_xp: 2000, gold: 450 },
@@ -7,57 +8,63 @@ const CharacterPage = ({
   return (
     <div className="fixed inset-0 w-full h-full bg-black overflow-hidden flex flex-col font-mono">
       
-      {/* --- МАССИВНАЯ ВЕРХНЯЯ ПАНЕЛЬ С ОТСТУПОМ --- */}
-      {/* Добавил pt-10 (примерно 40px), чтобы панель ушла ниже кнопок Telegram */}
-      <div className="relative z-20 w-full bg-[#111] border-b-4 border-[#2a1a10] shadow-[0_4px_10px_rgba(0,0,0,0.9)] px-5 pt-28 pb-4">
+      {/* --- ВЕРХНЯЯ ПАНЕЛЬ --- */}
+      <div className="relative z-20 w-full bg-[#111] border-b-4 border-[#2a1a10] shadow-[0_4px_15px_rgba(0,0,0,1)] px-5 pb-6">
         
-        {/* Первый ряд: Имя и Золото */}
-        <div className="flex justify-between items-center mb-3">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#222] border-2 border-[#daa520] flex items-center justify-center shadow-[2px_2px_0_#000]">
-              <span className="text-[#daa520] text-xs font-bold">R</span>
+        {/* Хедер теперь про локацию */}
+        <Header 
+          title="Лагерь" 
+          subtitle="Безопасная зона" 
+          gold={character.gold}
+          pt="pt-[68px]" 
+          sgap="gap-1"
+        />
+
+        {/* --- КАРТОЧКА ПЕРСОНАЖА (ОТДЕЛЬНО) --- */}
+        <div className="mt-2 bg-[#1a1a1a] border-2 border-white/5 p-3 shadow-[4px_4px_0_#000] flex gap-4 items-center">
+          
+          {/* Аватарка */}
+          <div className="relative shrink-0">
+            <div className="w-16 h-16 bg-black border-2 border-[#daa520] flex items-center justify-center shadow-[inset_0_0_10px_rgba(218,165,32,0.2)]">
+              {/* Буква или иконка */}
+              <span className="text-[#daa520] text-3xl font-black italic drop-shadow-[2px_2px_0_#000]">R</span>
             </div>
+            {/* Уровень в углу аватарки */}
+            <div className="absolute -bottom-1 -right-1 bg-[#daa520] text-black text-[10px] font-black px-1.5 border-2 border-[#1a1a1a]">
+              Lvl {character.lvl}
+            </div>
+          </div>
+
+          {/* Имя и Статы */}
+          <div className="flex-1 space-y-3">
             <div>
-              <h1 className="text-[#daa520] text-[16px] font-black uppercase tracking-tighter leading-none">
+              <h3 className="text-white text-[14px] font-black uppercase tracking-tight leading-none">
                 {character.username || character.name}
-              </h1>
-              <p className="text-white/30 text-[8px] uppercase tracking-widest mt-1">Рыцарь ордена</p>
+              </h3>
+              <p className="text-[#daa520] text-[7px] uppercase tracking-[0.2em] mt-1 font-bold">Рыцарь ордена</p>
             </div>
-          </div>
 
-          <div className="bg-black/60 px-3 py-1 border border-[#daa520]/20 flex items-center gap-2">
-            <span className="text-[#f7d51d] text-xs font-bold">{character.gold}</span>
-            <div className="w-2 h-2 bg-[#f7d51d] rounded-full shadow-[0_0_5px_#f7d51d]"></div>
-          </div>
-        </div>
-
-        {/* Второй ряд: Статы и Лвл */}
-        <div className="grid grid-cols-[1fr_50px] gap-4 items-center px-1">
-          <div className="space-y-2">
-            {/* Полоска HP */}
-            <div className="relative w-full h-4 bg-[#1a1a1a] border border-white/10 overflow-hidden">
-              <div 
-                className="h-full bg-[#cc0000] shadow-[0_0_10px_#cc0000] transition-all duration-500" 
-                style={{ width: `${character.hp}%` }}
-              />
-              <span className="absolute inset-0 flex items-center justify-center text-[7px] text-white font-black uppercase drop-shadow-[1px_1px_0_rgba(0,0,0,1)]">
-                Health {character.hp}%
-              </span>
+            {/* Полоски */}
+            <div className="space-y-2">
+              {/* HP */}
+              <div className="relative w-full h-3 bg-black border border-white/10 shadow-[2px_2px_0_rgba(0,0,0,0.5)] overflow-hidden">
+                <div 
+                  className="h-full bg-[#cc0000] shadow-[0_0_10px_#cc0000] transition-all duration-500" 
+                  style={{ width: `${character.hp}%` }}
+                />
+                <span className="absolute inset-0 flex items-center justify-center text-[6px] text-white font-black uppercase">
+                  HP {character.hp}%
+                </span>
+              </div>
+              
+              {/* XP */}
+              <div className="relative w-full h-1.5 bg-black border border-white/5 overflow-hidden">
+                <div 
+                  className="h-full bg-[#0070dd] shadow-[0_0_8px_#0070dd] transition-all duration-1000" 
+                  style={{ width: `${(character.xp / (character.max_xp || 100)) * 100}%` }}
+                />
+              </div>
             </div>
-            
-            {/* Полоска XP */}
-            <div className="relative w-full h-1.5 bg-[#1a1a1a] border border-white/5 overflow-hidden">
-              <div 
-                className="h-full bg-[#0070dd] shadow-[0_0_8px_#0070dd] transition-all duration-1000" 
-                // {/* Исправил max_xp под твой бэкенд (там через подчеркивание) */}
-                style={{ width: `${(character.xp / (character.max_xp || 100)) * 100}%` }}
-              />
-            </div>
-          </div>
-
-          <div className="flex flex-col items-center justify-center border-l border-white/10 h-full">
-            <span className="text-white/30 text-[7px] uppercase tracking-tighter">Lvl</span>
-            <span className="text-white text-lg font-black leading-none">{character.lvl}</span>
           </div>
         </div>
       </div>
@@ -66,19 +73,14 @@ const CharacterPage = ({
       <div className="flex-1 relative bg-black">
         <video
           src={videos?.camp || ""}
-          autoPlay
-          loop
-          muted
-          playsInline
-          webkit-playsinline="true"
-          /* Добавили -translate-y-12, чтобы физически поднять видео на ~48px выше */
-          className="absolute inset-0 w-full h-full object-cover opacity-80 -translate-y-12"
-          style={{ imageRendering: 'pixelated', transformOrigin: 'top' }}
+          autoPlay loop muted playsInline
+          className="absolute inset-0 w-full h-full object-cover opacity-80"
+          style={{ imageRendering: 'pixelated' }}
         />
         
-        {/* Градиенты теперь должны быть поверх видео в его новой позиции */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-transparent pointer-events-none" />
-        <div className="absolute inset-0 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)] pointer-events-none" />
+        {/* Градиенты и виньетка */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-black pointer-events-none" />
+        <div className="absolute inset-0 shadow-[inset_0_0_150px_rgba(0,0,0,0.9)] pointer-events-none" />
       </div>
     
     </div>
