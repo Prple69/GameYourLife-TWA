@@ -1,14 +1,15 @@
 import React from 'react';
 
 const CharacterPage = ({ 
-  character = { name: "Sir Pixelot", hp: 85, lvl: 14, xp: 1200, maxXp: 2000, gold: 450 },
-  videos // Принимаем объект с Blob-ссылками
+  character = { name: "Sir Pixelot", hp: 85, lvl: 14, xp: 1200, max_xp: 2000, gold: 450 },
+  videos 
 }) => {
   return (
     <div className="fixed inset-0 w-full h-full bg-black overflow-hidden flex flex-col font-mono">
       
-      {/* --- МАССИВНАЯ ВЕРХНЯЯ ПАНЕЛЬ --- */}
-      <div className="relative z-20 w-full bg-[#111] border-b-4 border-[#2a1a10] shadow-[0_4px_10px_rgba(0,0,0,0.9)] px-5 py-4">
+      {/* --- МАССИВНАЯ ВЕРХНЯЯ ПАНЕЛЬ С ОТСТУПОМ --- */}
+      {/* Добавил pt-10 (примерно 40px), чтобы панель ушла ниже кнопок Telegram */}
+      <div className="relative z-20 w-full bg-[#111] border-b-4 border-[#2a1a10] shadow-[0_4px_10px_rgba(0,0,0,0.9)] px-5 pt-10 pb-4">
         
         {/* Первый ряд: Имя и Золото */}
         <div className="flex justify-between items-center mb-3">
@@ -18,7 +19,7 @@ const CharacterPage = ({
             </div>
             <div>
               <h1 className="text-[#daa520] text-[16px] font-black uppercase tracking-tighter leading-none">
-                {character.name}
+                {character.username || character.name}
               </h1>
               <p className="text-white/30 text-[8px] uppercase tracking-widest mt-1">Рыцарь ордена</p>
             </div>
@@ -48,7 +49,8 @@ const CharacterPage = ({
             <div className="relative w-full h-1.5 bg-[#1a1a1a] border border-white/5 overflow-hidden">
               <div 
                 className="h-full bg-[#0070dd] shadow-[0_0_8px_#0070dd] transition-all duration-1000" 
-                style={{ width: `${(character.xp / character.maxXp) * 100}%` }}
+                // {/* Исправил max_xp под твой бэкенд (там через подчеркивание) */}
+                style={{ width: `${(character.xp / (character.max_xp || 100)) * 100}%` }}
               />
             </div>
           </div>
@@ -63,12 +65,13 @@ const CharacterPage = ({
       {/* --- ЦЕНТРАЛЬНАЯ ОБЛАСТЬ С ВИДЕО --- */}
       <div className="flex-1 relative bg-black">
         <video
-          // Используем Blob-ссылку из пропса videos
           src={videos?.camp || ""}
           autoPlay
           loop
           muted
           playsInline
+          /* Добавил playsInline и webkit-playsinline для мобилок */
+          webkit-playsinline="true"
           className="absolute inset-0 w-full h-full object-cover opacity-80"
           style={{ imageRendering: 'pixelated', willChange: 'transform' }}
         />
