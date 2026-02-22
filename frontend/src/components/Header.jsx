@@ -1,11 +1,14 @@
 import React from 'react';
 
-const Header = ({ title, subtitle, gold }) => {
+// По умолчанию ставим 64 (твое значение), принимаем просто число
+const Header = ({ title, subtitle, gold, pt = 64 }) => {
   return (
-    /* Убрали border-b-2 и сопутствующий цвет границы */
-    <div className={`relative flex items-center justify-between mb-6 pb-4 pt-[64px]`}>
+    <div 
+      className="relative flex items-center justify-between mb-6 pb-4" 
+      style={{ paddingTop: `${pt}px` }} // Используем инлайновый стиль для точности
+    >
       
-      {/* ЛЕВЫЙ БЛОК для симметрии */}
+      {/* ЛЕВЫЙ БЛОК */}
       <div className="w-16 z-0" /> 
 
       {/* ЦЕНТРАЛЬНЫЙ БЛОК */}
@@ -18,12 +21,12 @@ const Header = ({ title, subtitle, gold }) => {
         </p>
       </div>
       
-      {/* ПРАВЫЙ БЛОК (теперь чаще будет пустым, так как золото ушло в профиль) */}
+      {/* ПРАВЫЙ БЛОК */}
       <div className="w-16 flex justify-end"> 
         {gold !== undefined && gold !== null && (
           <div className="relative z-10 flex items-center gap-2 bg-[#111] px-3 py-1 border border-[#f7d51d]/40 shadow-[4px_4px_0_#000]">
             <span className="text-[#f7d51d] font-bold text-sm tracking-tighter">{gold}</span>
-            <div className="w-2.5 h-2.5 bg-[#f7d51d] rounded-full shadow-[0_0_8px_#f7d51d] animate-pulse" />
+            <div className="w-2.5 h-2.5 bg-[#f7d51d] shadow-[0_0_5px_#f7d51d]" />
           </div>
         )}
       </div>
