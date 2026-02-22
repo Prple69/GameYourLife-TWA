@@ -16,7 +16,7 @@ const Header = ({ title, subtitle, gold}) => {
         </h2>
         
         {/* Теперь mt будет реально толкать текст вниз от h2 */}
-        <p className={`text-white/40 text-[8px] uppercase tracking-widest mt-[15px] leading-none`}>
+        <p className={`text-white/40 text-[8px] uppercase tracking-widest mt-[150px] leading-none`}>
           {subtitle}
         </p>
       </div>
