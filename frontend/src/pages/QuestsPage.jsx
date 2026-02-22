@@ -28,7 +28,7 @@ const QuestsPage = ({
   };
 
   return (
-    <div className="fixed inset-0 w-full h-full bg-black overflow-hidden flex flex-col font-mono pt-28">
+    <div className="fixed inset-0 w-full h-full bg-black overflow-hidden flex flex-col font-mono">
       
       {/* --- ЗАДНИЙ ФОН (ВИДЕО) --- */}
       <div className="absolute inset-0 z-0 bg-black">
