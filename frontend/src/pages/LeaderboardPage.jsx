@@ -12,6 +12,13 @@ const LeaderboardPage = ({
     isMe: i === 5
   }));
 
+  // Общие стили для фикса блюра на Android
+  const glassStyle = {
+    WebkitBackdropFilter: 'blur(10px)',
+    backdropFilter: 'blur(10px)',
+    transform: 'translateZ(0)', // Включает аппаратное ускорение
+  };
+
   return (
     <div className="fixed inset-0 w-full h-full bg-black overflow-hidden flex flex-col font-mono items-center">
       
@@ -29,13 +36,15 @@ const LeaderboardPage = ({
       {/* --- ОСНОВНОЙ КОНТЕНТ --- */}
       <div className="relative z-10 flex flex-col items-center w-[92%] h-full pt-[env(safe-area-inset-top,20px)]">
         
-        <div className="w-full flex-shrink-0">
-          {/* Уменьшил pt до 20, так как safe-area уже дает отступ */}
+        <div className="w-full flex-shrink-0 text-center">
           <Header title="Зал Славы" subtitle="Топ 100 героев" pt={20} />
         </div>
 
         {/* --- ПАНЕЛЬ ТВОЕГО РАНГА --- */}
-        <div className="w-full max-w-md mt-4 mb-3 min-h-[60px] flex items-center px-4 bg-black/60 border border-[#F5F5F0]/20 backdrop-blur-[6px] flex-shrink-0">
+        <div 
+          style={glassStyle}
+          className="w-full max-w-md mt-4 mb-3 min-h-[60px] flex items-center px-4 bg-black/60 border border-[#F5F5F0]/20 flex-shrink-0"
+        >
            <div className="w-12">
               <span className="text-[12px] text-[#daa520] font-black uppercase leading-none">Ты</span>
            </div>
@@ -52,19 +61,24 @@ const LeaderboardPage = ({
            </div>
         </div>
 
-        {/* --- ГИБКИЙ КОНТЕЙНЕР ТАБЛИЦЫ --- */}
-        {/* max-h-[calc(100vh-280px)] — вычитаем хедер, панель ранга и оставляем ~100px под нижнее меню */}
+        {/* --- КОНТЕЙНЕР ТАБЛИЦЫ --- */}
         <div className="w-full max-w-md flex flex-col overflow-hidden mb-[100px] max-h-[calc(100vh-280px)]">
           
           {/* ШАПКА ТАБЛИЦЫ */}
-          <div className="flex h-[40px] sm:h-[45px] items-center bg-black/60 border border-[#F5F5F0]/20 border-b-[#daa520]/40 shrink-0 px-4 backdrop-blur-[6px]">
+          <div 
+            style={glassStyle}
+            className="flex h-[40px] sm:h-[45px] items-center bg-black/70 border border-[#F5F5F0]/20 border-b-[#daa520]/40 shrink-0 px-4"
+          >
             <div className="w-10 text-[10px] text-[#daa520] font-black uppercase">#</div>
             <div className="flex-1 text-[10px] text-[#daa520] font-black uppercase tracking-widest text-center">Герой</div>
             <div className="w-14 text-[10px] text-[#daa520] font-black uppercase text-right">Ур</div>
           </div>
 
           {/* ТЕЛО ТАБЛИЦЫ */}
-          <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar bg-black/40 border-x border-b border-white/10 backdrop-blur-[6px]">
+          <div 
+            style={glassStyle}
+            className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar bg-black/50 border-x border-b border-white/10"
+          >
             <div className="bg-black/5 min-h-full">
               {leaders.map((user, i) => {
                 const isTop3 = i < 3;
