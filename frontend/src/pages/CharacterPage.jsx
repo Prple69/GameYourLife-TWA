@@ -72,7 +72,7 @@ const CharacterPage = ({
           playsInline
           webkit-playsinline="true"
           /* Добавили -translate-y-12, чтобы физически поднять видео на ~48px выше */
-          className="absolute inset-0 w-full h-full object-cover opacity-80 -translate-y-28"
+          className="absolute inset-0 w-full h-full object-cover opacity-80 -translate-y-12"
           style={{ imageRendering: 'pixelated', transformOrigin: 'top' }}
         />
         
