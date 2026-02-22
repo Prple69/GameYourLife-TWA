@@ -49,7 +49,7 @@ const LeaderboardPage = ({
         </div>
 
         {/* --- ФИКСИРОВАННЫЙ КОНТЕЙНЕР ТАБЛИЦЫ --- */}
-        <div className="w-full max-w-md h-[390px] flex flex-col border border-white/10 bg-black/40 backdrop-blur-[6px]">
+        <div className="w-full max-w-md h-[420px] flex flex-col border border-white/10 bg-black/40 backdrop-blur-[6px]">
           
           <div className="flex h-[45px] items-center bg-black/40 border-b border-[#daa520]/40 shrink-0 px-4 backdrop-blur-[6px]">
             <div className="w-10 text-[11px] text-[#daa520] font-black uppercase">#</div>
