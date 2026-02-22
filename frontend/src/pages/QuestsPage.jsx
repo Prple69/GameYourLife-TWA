@@ -48,7 +48,8 @@ const QuestsPage = ({
         <Header 
           title="Задания" 
           subtitle="Доска активных контрактов" 
-          gold={character.gold} 
+          gold={character.gold}
+          pt="pt-10"
         />
 
         <div className="flex-1 overflow-y-auto space-y-4 pr-1">

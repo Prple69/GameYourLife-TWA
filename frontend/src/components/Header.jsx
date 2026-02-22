@@ -1,13 +1,14 @@
 import React from 'react';
 
-const Header = ({ title, subtitle, gold }) => {
+const Header = ({ title, subtitle, gold, pt = "pt-0" }) => {
   return (
-    <div className="flex justify-between items-end mb-6 border-b-2 border-[#daa520]/30 pb-2">
+    /* pt по умолчанию 0, но можно передать любой отступ */
+    <div className={`flex justify-between items-end mb-6 border-b-2 border-[#daa520]/30 pb-2 ${pt}`}>
       <div>
-        <h2 className="text-[#daa520] text-2xl font-black uppercase tracking-tighter drop-shadow-[0_2px_2px_rgba(0,0,0,1)]">
+        <h2 className="text-[#daa520] text-2xl font-black uppercase tracking-tighter drop-shadow-[0_2px_2px_rgba(0,0,0,1)] leading-none">
           {title}
         </h2>
-        <p className="text-white/40 text-[8px] uppercase tracking-widest">{subtitle}</p>
+        <p className="text-white/40 text-[8px] uppercase tracking-widest mt-1">{subtitle}</p>
       </div>
       
       {/* Баланс золота */}
