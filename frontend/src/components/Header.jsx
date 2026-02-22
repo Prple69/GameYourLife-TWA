@@ -2,7 +2,7 @@ import React from 'react';
 
 const Header = ({ title, subtitle, gold, pt = "pt-0" }) => {
   return (
-    <div className={`relative flex items-center justify-between mb-6 border-b-2 border-[#daa520]/30 pb-4 ${pt}`}>
+    <div className={`relative flex items-center justify-between mb-6 border-b-2 border-[#daa520]/30 pb-8 ${pt}`}>
       
       {/* ЛЕВЫЙ БЛОК (Всегда занимает место для симметрии центра) */}
       <div className="w-16 z-0" /> 
