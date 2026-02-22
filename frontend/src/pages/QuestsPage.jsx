@@ -101,10 +101,6 @@ const QuestsPage = ({
               + PROPOSE NEW CONTRACT
             </span>
           </div>
-
-          <div className="py-10 opacity-20 text-[10px] text-center uppercase tracking-[0.5em] font-bold">
-            Guild board v.2.4
-          </div>
         </div>
       </div>
     </div>
