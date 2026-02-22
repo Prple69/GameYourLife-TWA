@@ -20,4 +20,4 @@ const Header = ({ title, subtitle, gold, pt = "pt-0" }) => {
   );
 };
 
-export default Header;
+export default Header; 
