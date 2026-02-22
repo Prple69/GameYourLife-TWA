@@ -1,110 +1,114 @@
 import React, { useState } from 'react';
-import Header from '../components/Header'; // Импортируем твой новый Header
+import Header from '../components/Header';
 
 const QuestsPage = ({ 
-  character = { name: "Sir Pixelot", hp: 85, lvl: 14, xp: 1200, max_xp: 2000, gold: 450, stats: {} }, 
+  character = { gold: 450 }, 
   setCharacter, 
   videos 
 }) => {
   const [tasks, setTasks] = useState([
-    { id: 1, title: 'Английский 20 мин', type: 'int', difficulty: 'easy' },
-    { id: 2, title: 'Тренировка ног', type: 'str', difficulty: 'hard' },
+    { id: 1, title: 'Английский 20 мин', difficulty: 'easy' },
+    { id: 2, title: 'Тренировка ног', difficulty: 'hard' },
+    { id: 3, title: 'Чтение книги 10 стр', difficulty: 'medium' },
+    { id: 4, title: 'Пробежка 10 км', difficulty: 'epic' },
   ]);
 
-  const completeTask = (id, difficulty, type) => {
-    const rewards = { easy: 20, medium: 50, hard: 100 };
+  const getDifficultyStyles = (difficulty) => {
+    const styles = {
+      easy: { label: 'Легкий', color: 'text-[#4ade80] border-[#4ade80]/30 bg-[#4ade80]/10' },
+      medium: { label: 'Средний', color: 'text-[#facc15] border-[#facc15]/30 bg-[#facc15]/10' },
+      hard: { label: 'Тяжелый', color: 'text-[#ef4444] border-[#ef4444]/30 bg-[#ef4444]/10' },
+      epic: { label: 'Эпический', color: 'text-[#a855f7] border-[#a855f7]/30 bg-[#a855f7]/10' }
+    };
+    return styles[difficulty] || styles.easy;
+  };
+
+  const completeTask = (id, difficulty) => {
+    const rewards = { easy: 20, medium: 50, hard: 100, epic: 250 };
     const xpGain = rewards[difficulty];
-
     setTasks(prev => prev.filter(task => task.id !== id));
-
     if (setCharacter) {
       setCharacter(prev => ({
         ...prev,
-        xp: prev.xp + xpGain,
-        gold: prev.gold + (xpGain / 2), // Пример: золото за квест
-        stats: { ...prev.stats, [type]: (prev.stats[type] || 0) + 1 }
+        xp: (prev.xp || 0) + xpGain,
+        gold: (prev.gold || 0) + (xpGain / 2),
       }));
     }
   };
 
   return (
-    <div className="fixed inset-0 w-full h-full bg-black overflow-hidden flex flex-col font-mono">
+    <div className="fixed inset-0 w-full h-full bg-black overflow-hidden flex flex-col font-mono items-center">
       
-      {/* --- ЗАДНИЙ ФОН (ВИДЕО) --- */}
-      <div className="absolute inset-0 z-0 bg-black">
+      {/* --- ФОН --- */}
+      <div className="absolute inset-0 z-0">
         <video
           src={videos?.quests || ""}
           autoPlay loop muted playsInline
           className="w-full h-full object-cover opacity-60"
           style={{ imageRendering: 'pixelated' }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-black/80" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black" />
       </div>
 
-      {/* --- КОНТЕНТ КВЕСТОВ --- */}
-      <div className="relative z-10 flex flex-col h-full p-5 pb-32">
+      {/* --- КОНТЕНТ --- */}
+      {/* Увеличили общую ширину контейнера для больших экранов */}
+      <div className="relative z-10 flex flex-col items-center w-full h-full px-[4%]">
         
-        {/* НОВЫЙ УНИФИЦИРОВАННЫЙ HEADER */}
-        <Header 
-          title="Задания" 
-          subtitle="Доска активных контрактов"
-        />
-
-        <div className="flex-1 overflow-y-auto space-y-4 pr-1">
-          {tasks.map(task => (
-            <div 
-              key={task.id}
-              className="relative bg-[#1a1a1a] border-2 border-white/5 p-4 flex justify-between items-center shadow-[4px_4px_0px_rgba(0,0,0,1)] active:translate-y-1 transition-all"
-            >
-              <div className="flex flex-col gap-2">
-                <span className="text-white text-[13px] uppercase font-black tracking-tight drop-shadow-md">
-                  {task.title}
-                </span>
-                <div className="flex gap-2">
-                  <span className={`text-[7px] px-2 py-0.5 font-bold border ${getTypeColor(task.type)}`}>
-                    {task.type.toUpperCase()}
-                  </span>
-                  <span className="text-[7px] px-2 py-0.5 bg-black text-white/40 border border-white/10 uppercase">
-                    {task.difficulty}
-                  </span>
-                </div>
-              </div>
-
-              <button 
-                onClick={() => completeTask(task.id, task.difficulty, task.type)}
-                className="bg-[#daa520] active:bg-[#f7d51d] text-black px-4 py-3 font-black text-[10px] uppercase shadow-[2px_2px_0_#000] active:shadow-none transition-all outline-none"
-                style={{ WebkitTapHighlightColor: 'transparent' }}
-              >
-                CLAIM
-              </button>
-            </div>
-          ))}
-
-          {/* Кнопка нового квеста в стиле Shop карточки */}
-          <div className="mt-6 border-2 border-dashed border-[#daa520]/20 p-4 text-center bg-black/40 active:bg-black/60 cursor-pointer transition-colors group shadow-[4px_4px_0px_rgba(0,0,0,0.5)]">
-            <span className="text-[9px] text-[#daa520]/40 group-active:text-[#daa520] tracking-[0.3em] uppercase font-bold">
-              + Propose New Contract
-            </span>
+        <div className="w-full shrink-0 flex justify-center">
+          {/* Ограничиваем ширину хедера тоже, чтобы он не разъезжался слишком сильно */}
+          <div className="w-full max-w-2xl">
+            <Header title="Задания" subtitle="Активные контракты" gold={character.gold} />
           </div>
         </div>
 
-        {/* Декоративная подпись как в Лавке */}
-        <div className="mt-4 opacity-20 text-[7px] text-center uppercase tracking-[0.3em]">
-          Guild notice board v.2.4
+        {/* --- СПИСОК КВЕСТОВ --- */}
+        {/* max-w-2xl дает больше простора на планшетах */}
+        <div className="flex-1 w-full max-w-2xl overflow-y-auto space-y-4 pt-4 mb-[130px] custom-scrollbar">
+          {tasks.map(task => {
+            const diff = getDifficultyStyles(task.difficulty);
+            
+            return (
+              <div 
+                key={task.id}
+                className="group relative w-full bg-black/70 backdrop-blur-lg border border-white/10 p-5 md:p-6 flex items-center justify-between shadow-[6px_6px_0px_rgba(0,0,0,0.9)] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all duration-75"
+              >
+                <div className="flex flex-col gap-3 min-w-0 pr-4">
+                  {/* Размер текста растет на больших экранах (md:text-xl) */}
+                  <span className="text-white text-[16px] md:text-xl uppercase font-black tracking-tight leading-tight drop-shadow-md truncate">
+                    {task.title}
+                  </span>
+                  <div>
+                    <span className={`text-[10px] md:text-[12px] px-3 py-1 font-bold border rounded-sm uppercase tracking-widest ${diff.color}`}>
+                      {diff.label}
+                    </span>
+                  </div>
+                </div>
+
+                <button 
+                  onClick={() => completeTask(task.id, task.difficulty)}
+                  className="shrink-0 bg-[#daa520] active:bg-[#f7d51d] text-black px-6 py-4 md:px-8 md:py-5 font-black text-[12px] md:text-[14px] uppercase shadow-[3px_3px_0_#000] active:shadow-none transition-all outline-none"
+                  style={{ WebkitTapHighlightColor: 'transparent' }}
+                >
+                  CLAIM
+                </button>
+              </div>
+            );
+          })}
+
+          {/* Адаптивная кнопка добавления */}
+          <div className="w-full border-2 border-dashed border-[#daa520]/20 p-8 mt-6 text-center bg-black/30 active:bg-black/50 cursor-pointer transition-colors group">
+            <span className="text-[12px] md:text-[14px] text-[#daa520]/60 group-active:text-[#daa520] tracking-[0.3em] uppercase font-black">
+              + PROPOSE NEW CONTRACT
+            </span>
+          </div>
+
+          <div className="py-10 opacity-20 text-[10px] text-center uppercase tracking-[0.5em] font-bold">
+            Guild board v.2.4
+          </div>
         </div>
       </div>
     </div>
   );
-};
-
-const getTypeColor = (type) => {
-  const colors = {
-    int: 'text-[#00D1FF] border-[#00D1FF]/30 bg-[#00D1FF]/5',
-    str: 'text-[#FF4500] border-[#FF4500]/30 bg-[#FF4500]/5',
-    cha: 'text-[#FF00FF] border-[#FF00FF]/30 bg-[#FF00FF]/5',
-    will: 'text-[#f7d51d] border-[#f7d51d]/30 bg-[#f7d51d]/5'
-  };
-  return colors[type] || 'text-white border-white/10 bg-white/5';
 };
 
 export default QuestsPage;
