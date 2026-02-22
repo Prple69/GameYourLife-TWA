@@ -9,8 +9,8 @@ import leaderIcon from '../assets/icons/leaderboard_icon.png';
 const Navigation = ({ 
   activeTab, 
   setActiveTab, 
-  width = "90%",   
-  height = "90px" 
+  width = "100%",   
+  height = "150px" 
 }) => {
   
   const tabs = [
