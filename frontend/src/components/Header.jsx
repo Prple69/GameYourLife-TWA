@@ -16,7 +16,7 @@ const Header = ({ title, subtitle, gold, pt = 64 }) => {
         <h2 className="text-[#daa520] text-2xl font-black uppercase tracking-tighter drop-shadow-[0_2px_2px_rgba(0,0,0,1)] leading-none">
           {title}
         </h2>
-        <p className="text-white/40 text-[8px] uppercase tracking-widest mt-1 leading-none">
+        <p className="text-white/60 text-[12px] uppercase tracking-widest mt-1 leading-none">
           {subtitle}
         </p>
       </div>
