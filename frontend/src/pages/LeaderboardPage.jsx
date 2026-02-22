@@ -52,7 +52,7 @@ const LeaderboardPage = ({
               <span className="text-[15px] sm:text-[16px] text-[#F5F5F0] font-black uppercase tracking-tight leading-none">
                 {character.name}
               </span>
-              <span className="text-[9px] sm:text-[10px] text-[#A1A1AA] uppercase tracking-[0.1em] mt-1 font-bold italic">
+              <span className="text-[9px] sm:text-[10px] text-[#A1A1AA] uppercase tracking-[0.1em] mt-1 font-bold">
                 Твой текущий ранг
               </span>
            </div>
