@@ -8,7 +8,7 @@ export default defineConfig({
     proxy: {
       // Все запросы к /api будут перенаправлены на твой бэк на 8000 порту
       '/api': {
-        target: 'https://gameurlife.ru.tuna.am',
+        target: 'http://localhost:8000',
         changeOrigin: true,
         secure: false,
       },
