@@ -1,6 +1,7 @@
 import re
 import json
 import logging
+import os
 from typing import List
 from openai import AsyncOpenAI
 from contextlib import asynccontextmanager
@@ -15,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 client = AsyncOpenAI(
     base_url="https://openrouter.ai/api/v1",
-    api_key="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", 
+    api_key=os.getenv("OPENROUTER_API_KEY")
 )
 
 @asynccontextmanager
