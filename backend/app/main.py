@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 client = AsyncOpenAI(
     base_url="https://openrouter.ai/api/v1",
-    api_key="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", 
+    api_key="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", 
 )
 
 @asynccontextmanager
@@ -81,7 +81,7 @@ async def analyze_task(payload: dict = Body(...)):
         }} """
 
         completion = await client.chat.completions.create(
-            model="arcee-ai/trinity-large-preview:free", # Та самая модель из примера
+            model="liquid/lfm-2.5-1.2b-thinking:free", # Та самая модель из примера
             messages=[
                 {
                     "role": "user", 
