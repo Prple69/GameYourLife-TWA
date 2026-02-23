@@ -38,18 +38,11 @@ export const userService = {
    * @param {string} avatarId - Ключ аватара (avatar1, avatar2 и т.д.)
    */
   updateAvatar: async (tgId, avatarId) => {
-    try {
-      const response = await api.post('/user/update-avatar', null, {
-        params: { 
-          tg_id: tgId, 
-          avatar_id: avatarId 
-        }
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Ошибка при смене аватара:', error);
-      throw error;
-    }
+    // Обрати внимание: мы передаем tg_id и avatar_id как query params
+    const res = await api.post('/user/update-avatar', null, {
+      params: { tg_id: tgId, avatar_id: avatarId }
+    });
+    return res.data; // Возвращаем только тело ответа
   },
   
   /**

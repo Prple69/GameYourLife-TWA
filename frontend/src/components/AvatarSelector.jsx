@@ -25,15 +25,23 @@ const AvatarSelector = ({ isOpen, onClose, avatars, currentAvatar, onSelect }) =
           {avatars.map((av) => (
             <div 
               key={av.id}
-              onClick={() => onSelect(av.img)}
+              // ИСПРАВЛЕНО: Передаем av.id ("avatar1"), а не картинку
+              onClick={() => onSelect(av.id)} 
               className={`aspect-square border-2 cursor-pointer transition-all active:scale-90 relative overflow-hidden ${
-                currentAvatar === av.img 
+                // ИСПРАВЛЕНО: Сравниваем с id из базы
+                currentAvatar === av.id 
                   ? 'border-[#daa520] scale-105 shadow-[0_0_15px_#daa520] z-10' 
                   : 'border-white/10 grayscale hover:grayscale-0 hover:border-white/40'
               }`}
             >
               <img src={av.img} alt={av.label} className="w-full h-full object-cover" />
-              {currentAvatar === av.img}
+              
+              {/* Индикатор выбранного аватара (опционально) */}
+              {currentAvatar === av.id && (
+                <div className="absolute top-0 right-0 bg-[#daa520] p-0.5">
+                   <div className="w-2 h-2 bg-black" />
+                </div>
+              )}
             </div>
           ))}
         </div>
