@@ -10,7 +10,7 @@ import LoadingPage from "./pages/LoadingPage.jsx";
 // Сервис для запросов к бэкенду
 import { userService } from './services/api';
 
-// Видео-ассеты
+// Видео-ассеты (исходные пути)
 import shopVideoSrc from './assets/shop_anim.mp4';
 import bagVideoSrc from './assets/bag_anim.mp4';
 import campVideoSrc from './assets/hero_anim.mp4';
@@ -26,10 +26,10 @@ const App = () => {
   const [progress, setProgress] = useState(0);
   const [videoUrls, setVideoUrls] = useState({});
   
-  // Состояние персонажа (null пока не загрузим из БД)
+  // Состояние персонажа
   const [character, setCharacter] = useState(null);
 
-  // Получаем реальные данные из Telegram или используем заглушку для браузера
+  // Получаем данные из Telegram
   const userData = useMemo(() => {
     return {
       id: tg.initDataUnsafe?.user?.id?.toString() || "123456789",
@@ -38,9 +38,8 @@ const App = () => {
   }, [tg]);
 
   useEffect(() => {
-    // Сообщаем Telegram, что приложение готово
     tg.ready();
-    tg.expand(); // Разворачиваем на весь экран
+    tg.expand();
 
     const assets = [
       { id: 'shop', src: shopVideoSrc },
@@ -55,13 +54,12 @@ const App = () => {
       const newVideoUrls = {};
 
       try {
-        // 1. Загружаем данные игрока из FastAPI
-        // Если юзера нет в базе, бэкенд его создаст автоматически
-        const userRes = await userService.getProfile(userData.id);
-        setCharacter(userRes.data);
+        // 1. Загружаем данные игрока из FastAPI (передаем и ID, и username)
+        const userRes = await userService.getProfile(userData.id, userData.username);
+        setCharacter(userRes);
 
-        // 2. Параллельно загружаем тяжелые видео-ассеты в Blob
-        const loadPromises = assets.map(async (asset) => {
+        // 2. Параллельно загружаем видео-ассеты в Blob
+        await Promise.all(assets.map(async (asset) => {
           try {
             const response = await fetch(asset.src);
             const blob = await response.blob();
@@ -72,24 +70,22 @@ const App = () => {
             setProgress(Math.round((loadedCount / assets.length) * 100));
           } catch (e) {
             console.error(`Ошибка загрузки ассета ${asset.id}:`, e);
-            loadedCount++; // Считаем попытку, чтобы не завис лоадер
+            loadedCount++; 
           }
-        });
+        }));
 
-        await Promise.all(loadPromises);
-        
         setVideoUrls(newVideoUrls);
-        // Небольшая задержка для плавности перехода с лоадера
         setTimeout(() => setIsLoaded(true), 800);
 
       } catch (err) {
         console.error("Критическая ошибка инициализации:", err);
-        // В случае падения бэкенда ставим дефолтные статы
+        // Fallback: если бэкенд упал, ставим дефолтные статы, чтобы приложение открылось
         setCharacter({ 
           telegram_id: userData.id, 
           username: userData.username, 
           lvl: 1, xp: 0, max_xp: 100, gold: 0, hp: 100,
-          xp_multiplier: 1.0, gold_multiplier: 1.0 
+          xp_multiplier: 1.0, gold_multiplier: 1.0,
+          selected_avatar: 'avatar1', char_class: 'knight'
         });
         setIsLoaded(true);
       }
@@ -97,13 +93,14 @@ const App = () => {
 
     initializeApp();
 
-    // Очистка Blob-ссылок из памяти при закрытии
+    // Очистка Blob-ссылок при размонтировании
     return () => {
-      Object.values(videoUrls).forEach(url => URL.revokeObjectURL(url));
+      Object.values(newVideoUrls).forEach(url => URL.revokeObjectURL(url));
     };
-  }, [userData, tg]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userData]); // Зависим только от userData
 
-  // Функция для вызова вибрации в Telegram (Haptic Feedback)
+  // Вибрация
   const triggerHaptic = (style = 'light') => {
     if (tg.HapticFeedback) {
       tg.HapticFeedback.impactOccurred(style);
@@ -117,13 +114,7 @@ const App = () => {
       character, 
       setCharacter,
       gold: character.gold, 
-      videos: {
-        shop: shopVideoSrc,
-        bag: bagVideoSrc,
-        camp: campVideoSrc,
-        leader: leaderVideoSrc,
-        quests: questsVideoSrc
-      },
+      videos: videoUrls, // Передаем Blob-ссылки для мгновенного воспроизведения
       triggerHaptic 
     };
 
@@ -139,12 +130,10 @@ const App = () => {
 
   return (
     <div className="fixed inset-0 bg-black text-white font-mono overflow-hidden select-none">
-      {/* Контент приложения */}
       <main className="w-full h-full relative z-10">
         {isLoaded && character ? renderPage() : null}
       </main>
 
-      {/* Навигация */}
       <Navigation 
         activeTab={activeTab} 
         setActiveTab={(tab) => {
@@ -153,7 +142,7 @@ const App = () => {
         }} 
       />
 
-      {/* Экран загрузки (перекрывает всё, пока не загрузим данные) */}
+      {/* Показываем лоадер, пока isLoaded false ИЛИ character еще не пришел */}
       <LoadingPage progress={progress} isLoaded={isLoaded && !!character} />
     </div>
   );
