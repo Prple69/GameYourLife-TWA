@@ -1,27 +1,32 @@
-// api/analyze.js
 export default async function handler(req, res) {
-  const { title } = req.body;
-  const API_KEY = process.env.GEMINI_API_KEY; // Ключ хранится в настройках Vercel
+  // Проверка метода (только POST)
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
 
-  const prompt = `Ты геймдизайнер. Оцени сложность задания: "${title}". 
-  Верни JSON: {"difficulty": "easy"|"medium"|"hard"|"epic", "xp": число, "gold": число}. 
-  Будь краток, только JSON.`;
+  const { title } = req.body;
+  const apiKey = process.env.GEMINI_API_KEY;
 
   try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }]
+        contents: [{ parts: [{ 
+          text: `Ты RPG геймдизайнер. Оцени задание: "${title}". 
+          Верни ТОЛЬКО JSON: {"difficulty": "easy"|"medium"|"hard"|"epic", "xp": число 20-500, "gold": число}.` 
+        }] }]
       })
     });
 
     const data = await response.json();
-    const text = data.candidates[0].content.parts[0].text;
-    const jsonResponse = JSON.parse(text.replace(/```json|```/g, ""));
+    const aiText = data.candidates[0].content.parts[0].text;
     
-    res.status(200).json(jsonResponse);
+    // Очищаем текст от возможных Markdown-меток и парсим в JSON
+    const cleanJson = JSON.parse(aiText.replace(/```json|```/g, "").trim());
+    
+    return res.status(200).json(cleanJson);
   } catch (error) {
-    res.status(500).json({ difficulty: "medium", xp: 50, gold: 25 });
+    return res.status(500).json({ error: "AI failed to respond" });
   }
 }
