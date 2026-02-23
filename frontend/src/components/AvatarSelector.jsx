@@ -4,11 +4,16 @@ const AvatarSelector = ({ isOpen, onClose, avatars, currentAvatar, onSelect }) =
   if (!isOpen) return null;
 
   return (
-    <div className="absolute inset-0 z-[100] flex items-center justify-center p-6 animate-in fade-in zoom-in duration-200">
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black/90 backdrop-blur-md" onClick={onClose} />
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+      {/* Overlay — просто темный фон без блюра и анимаций */}
+      <div 
+        className="absolute inset-0 bg-black/90" 
+        onClick={onClose} 
+      />
       
+      {/* Modal Container */}
       <div className="relative w-full max-w-sm bg-[#0a0a0a] border-2 border-white/20 p-6 shadow-[10px_10px_0_#000]">
+        
         {/* КРЕСТИК */}
         <button 
           onClick={onClose}
@@ -25,19 +30,23 @@ const AvatarSelector = ({ isOpen, onClose, avatars, currentAvatar, onSelect }) =
           {avatars.map((av) => (
             <div 
               key={av.id}
-              // ИСПРАВЛЕНО: Передаем av.id ("avatar1"), а не картинку
               onClick={() => onSelect(av.id)} 
-              className={`aspect-square border-2 cursor-pointer transition-all active:scale-90 relative overflow-hidden ${
-                // ИСПРАВЛЕНО: Сравниваем с id из базы
+              className={`aspect-square border-2 cursor-pointer transition-all active:scale-95 relative overflow-hidden ${
                 currentAvatar === av.id 
-                  ? 'border-[#daa520] scale-105 shadow-[0_0_15px_#daa520] z-10' 
-                  : 'border-white/10 grayscale hover:grayscale-0 hover:border-white/40'
+                  ? 'border-[#daa520] shadow-[0_0_15px_rgba(218,165,32,0.4)] z-10' 
+                  : 'border-white/10 grayscale hover:grayscale-0'
               }`}
             >
-              <img src={av.img} alt={av.label} className="w-full h-full object-cover" />
+              <img 
+                src={av.img} 
+                alt={av.label} 
+                className="w-full h-full object-cover" 
+              />
               
-              {/* Индикатор выбранного аватара (опционально) */}
-              {currentAvatar === av.id}
+              {/* Индикатор выбранного */}
+              {currentAvatar === av.id && (
+                <div className="absolute inset-0 border-2 border-[#daa520] pointer-events-none" />
+              )}
             </div>
           ))}
         </div>
