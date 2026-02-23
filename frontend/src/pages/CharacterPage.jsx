@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback } from 'react';
 import Header from '../components/Header';
 import AvatarSelector from '../components/AvatarSelector';
 import ProfileModal from '../components/ProfileModal';
@@ -6,10 +6,11 @@ import ProgressBar from '../components/ProgressBar';
 import CharacterCard from '../components/CharacterCard';
 import { userService } from '../services/api';
 
-// Ассеты выносим за пределы компонента, чтобы не пересоздавать объект
+// Ассеты
 import avatar1 from '../assets/avatar1.png'; 
 import avatar2 from '../assets/avatar2.png';
 import avatar3 from '../assets/avatar3.png';
+
 const avatarMap = { avatar1, avatar2, avatar3 };
 
 const TITLES = {
@@ -18,7 +19,7 @@ const TITLES = {
   shadow: "ПРИЗРАК ПУСТОШИ"
 };
 
-const AVATAR_OPTIONS = [
+const AVATARS = [
   { id: 'avatar1', img: avatar1, label: 'Рыцарь' }, 
   { id: 'avatar2', img: avatar2, label: 'Маг' }, 
   { id: 'avatar3', img: avatar3, label: 'Тень' }
@@ -28,17 +29,16 @@ const CharacterPage = ({ character, setCharacter, videos, triggerHaptic }) => {
   const [isSelectorOpen, setIsSelectorOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
-  // Оптимизация функций через useCallback
+  // Оптимизированная функция смены аватара
   const handleAvatarChange = useCallback(async (avatarId) => {
     const oldAvatar = character.selected_avatar;
     try {
       if (triggerHaptic) triggerHaptic('medium');
-      // Оптимистичное обновление UI
       setCharacter(prev => ({ ...prev, selected_avatar: avatarId }));
       setIsSelectorOpen(false);
       
       const updatedUser = await userService.updateAvatar(character.telegram_id, avatarId);
-      setCharacter(updatedUser); 
+      if (updatedUser) setCharacter(updatedUser); 
     } catch (err) {
       console.error(err);
       setCharacter(prev => ({ ...prev, selected_avatar: oldAvatar }));
@@ -50,7 +50,7 @@ const CharacterPage = ({ character, setCharacter, videos, triggerHaptic }) => {
   return (
     <div className="fixed inset-0 w-full h-full bg-black overflow-hidden flex flex-col font-mono select-none touch-none">
       
-      {/* BACKGROUND VIDEO (GPU Optimized) */}
+      {/* ФОНОВОЕ ВИДЕО */}
       <div className="absolute inset-0 z-0 bg-black">
         {videos?.camp && (
           <video 
@@ -67,6 +67,7 @@ const CharacterPage = ({ character, setCharacter, videos, triggerHaptic }) => {
 
       <div className="relative z-20 flex flex-col items-center w-full px-6 mt-4">
         
+        {/* КАРТОЧКА ПЕРСОНАЖА */}
         <CharacterCard 
           character={character}
           titles={TITLES}
@@ -75,32 +76,35 @@ const CharacterPage = ({ character, setCharacter, videos, triggerHaptic }) => {
           onInfoClick={() => { triggerHaptic?.('medium'); setIsProfileOpen(true); }}
         />
 
+        {/* СТАТУС-БАРЫ (Цвета передаются полными классами для Tailwind) */}
         <div className="w-full max-w-[400px] mt-3 px-2 space-y-4">
           <ProgressBar 
             label="Жизнь" 
             value={character.hp} 
             max={character.max_hp} 
-            colorClass="text-red-500" 
+            labelColor="text-red-500" 
+            barClass="bg-gradient-to-r from-red-600 to-red-400" 
             shadowColor="rgba(239,68,68,0.5)" 
           />
           <ProgressBar 
             label="Опыт" 
             value={character.xp} 
             max={character.max_xp} 
-            colorClass="text-[#daa520]" 
+            labelColor="text-[#daa520]" 
+            barClass="bg-gradient-to-r from-[#b8860b] to-[#ffd700]" 
             shadowColor="rgba(218,165,32,0.5)" 
           />
         </div>
       </div>
 
+      {/* МОДАЛЬНЫЕ ОКНА */}
       <AvatarSelector 
         isOpen={isSelectorOpen} 
         onClose={() => setIsSelectorOpen(false)} 
-        avatars={AVATAR_OPTIONS} 
+        avatars={AVATARS} 
         currentAvatar={character.selected_avatar} 
         onSelect={handleAvatarChange} 
       />
-
       <ProfileModal 
         isOpen={isProfileOpen} 
         onClose={() => setIsProfileOpen(false)} 
