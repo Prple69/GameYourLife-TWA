@@ -38,16 +38,28 @@ const CharacterPage = ({ character, setCharacter, videos, triggerHaptic }) => {
   ];
 
   const handleAvatarChange = async (avatarId) => {
+    // 1. Сохраняем старый аватар на случай ошибки сервера
+    const oldAvatar = character.selected_avatar;
+
     try {
-      setIsUpdating(true);
       triggerHaptic('medium');
-      const updatedUser = await userService.updateAvatar(character.telegram_id, avatarId);
-      setCharacter({ ...updatedUser }); 
+      
+      // 2. МГНОВЕННОЕ ОБНОВЛЕНИЕ (Optimistic)
+      // Мы не ждем ответа, а сразу обновляем стейт
+      setCharacter(prev => ({ ...prev, selected_avatar: avatarId }));
       setIsSelectorOpen(false);
+
+      // 3. Отправляем запрос в фоне
+      const updatedUser = await userService.updateAvatar(character.telegram_id, avatarId);
+      
+      // 4. Синхронизируем финальные данные от сервера
+      setCharacter({ ...updatedUser }); 
+      
     } catch (err) {
       console.error("Ошибка при смене аватара:", err);
-    } finally {
-      setIsUpdating(false);
+      // Если сервер упал — возвращаем как было
+      setCharacter(prev => ({ ...prev, selected_avatar: oldAvatar }));
+      alert("Не удалось сохранить аватар. Попробуйте позже.");
     }
   };
 
