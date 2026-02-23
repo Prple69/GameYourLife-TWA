@@ -58,7 +58,7 @@ const CharacterPage = ({ character, setCharacter, videos, triggerHaptic }) => {
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black" />
       </div>
 
-      <Header title="ЛАГЕРЬ" subtitle="ПРОФИЛЬ" gold={character.gold} />
+      <Header title="ЛАГЕРЬ" subtitle="ПРОФИЛЬ"/>
 
       <div className="relative z-20 flex flex-col items-center w-full px-6 mt-4">
         
