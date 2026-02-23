@@ -1,9 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, DeclarativeBase
 from datetime import datetime, timedelta, timezone
-
-Base = declarative_base()
 
 # Смещение для МСК (UTC+3)
 offset = timezone(timedelta(hours=3))
@@ -11,6 +8,10 @@ offset = timezone(timedelta(hours=3))
 def get_msk_now():
     """Функция для получения текущего времени по МСК"""
     return datetime.now(offset)
+
+# В SQLAlchemy 2.0 рекомендуется наследоваться от DeclarativeBase
+class Base(DeclarativeBase):
+    pass
 
 class User(Base):
     __tablename__ = "users"
@@ -37,8 +38,8 @@ class User(Base):
     xp_multiplier = Column(Float, default=1.0)
     gold_multiplier = Column(Float, default=1.0)
     
-    # Используем get_msk_now без скобок, чтобы SQLAlchemy вызывала её в момент создания записи
-    created_at = Column(DateTime, default=get_msk_now)
+    # Добавляем timezone=True для корректной работы с Postgres
+    created_at = Column(DateTime(timezone=True), default=get_msk_now)
 
     quests = relationship("Quest", back_populates="owner", cascade="all, delete-orphan")
 
@@ -56,7 +57,7 @@ class Quest(Base):
     gold_reward = Column(Integer)
     
     deadline = Column(String) # Формат YYYY-MM-DD
-    created_at = Column(DateTime, default=get_msk_now)
+    created_at = Column(DateTime(timezone=True), default=get_msk_now)
     
     is_completed = Column(Boolean, default=False)
     is_failed = Column(Boolean, default=False)

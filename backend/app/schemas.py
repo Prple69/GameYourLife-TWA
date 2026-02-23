@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional, List
 from datetime import datetime
 
@@ -19,28 +19,28 @@ class UserSchema(BaseModel):
     xp_multiplier: float
     gold_multiplier: float
 
-    class Config:
-        from_attributes = True
+    # В Pydantic V2 используется model_config вместо class Config
+    model_config = ConfigDict(from_attributes=True)
 
 
 # --- Схемы Квестов ---
 
 class QuestBase(BaseModel):
     title: str
-    deadline: str  # Храним как строку YYYY-MM-DD для синхрона с фронтом
+    deadline: str  # Формат YYYY-MM-DD
 
 class QuestCreate(QuestBase):
     """Данные для отправки на анализ ИИ"""
     today: str
 
 class QuestSave(QuestBase):
-    """Данные для сохранения в БД после того, как ИИ выдал результат"""
+    """Данные для сохранения в БД после ИИ анализа"""
     difficulty: str
     xp_reward: int
     gold_reward: int
 
 class QuestSchema(QuestBase):
-    """Полная схема квеста для отдачи фронтенду"""
+    """Полная схема квеста для фронтенда"""
     id: int
     user_id: int
     difficulty: str
@@ -48,22 +48,21 @@ class QuestSchema(QuestBase):
     gold_reward: int
     is_completed: bool
     is_failed: bool
-    created_at: datetime  # Здесь FastAPI автоматически применит МСК при выдаче
+    created_at: datetime  
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # --- Схемы для ответов API ---
 
 class AnalysisResponse(BaseModel):
-    """То, что фронт получает от Gemini и крутит в рулетке"""
+    """Результат от ИИ для фронтовой 'рулетки'"""
     difficulty: str
-    xp: int  # Мапим xp_reward -> xp для фронта
-    gold: int # Мапим gold_reward -> gold для фронта
+    xp: int  
+    gold: int 
 
 class UserUpdate(BaseModel):
-    """Для синхронизации прогресса при завершении квеста"""
+    """Для синхронизации прогресса"""
     xp: int
     gold: int
     lvl: Optional[int] = None

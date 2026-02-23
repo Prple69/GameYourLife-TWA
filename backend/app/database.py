@@ -1,24 +1,42 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from .models import Base
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.orm import sessionmaker, declarative_base
+import asyncio
 
-# Файл базы создастся сам в той же папке
-SQLALCHEMY_DATABASE_URL = "sqlite:///./game.db"
+# Используем 127.0.0.1 вместо localhost для исключения задержек DNS (пинг)
+# Формат: postgresql+asyncpg://user:password@127.0.0.1:5432/db_name
+SQLALCHEMY_DATABASE_URL = "postgresql+asyncpg://postgres:purple666@127.0.0.1:5432/game_db"
 
-engine = create_engine(
+# Создаем асинхронный движок
+engine = create_async_engine(
     SQLALCHEMY_DATABASE_URL, 
-    connect_args={"check_same_thread": False} # Нужно только для SQLite
+    echo=True,  # Выводит SQL-запросы в консоль (удобно для дебага)
+    future=True
 )
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+# Настройка фабрики сессий
+AsyncSessionLocal = sessionmaker(
+    engine, 
+    class_=AsyncSession, 
+    expire_on_commit=False
+)
 
-def init_db():
-    # Создает таблицы, если их еще нет
-    Base.metadata.create_all(bind=engine)
+Base = declarative_base()
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+# Зависимость для FastAPI эндпоинтов
+async def get_db():
+    async with AsyncSessionLocal() as session:
+        try:
+            yield session
+            await session.commit()
+        except Exception:
+            await session.rollback()
+            raise
+        finally:
+            await session.close()
+
+# Функция для создания таблиц (вызывается при старте приложения)
+async def init_db():
+    async with engine.begin() as conn:
+        # Импортируй модели здесь перед созданием, чтобы SQLAlchemy их увидела
+        # from models import Base 
+        await conn.run_sync(Base.metadata.create_all)
