@@ -14,24 +14,22 @@ const RollingValue = ({ isAnalyzing, value, colorClass, label, prefix = "+" }) =
     let interval;
     if (isAnalyzing) {
       interval = setInterval(() => {
-        setDisplayValue(Math.floor(Math.random() * 100));
-      }, 300);
+        setDisplayValue(Math.floor(Math.random() * 99));
+      }, 200);
     } else {
-      // Принудительно к числу, чтобы не выбивало NaN
       setDisplayValue(Number(value) || 0); 
     }
     return () => clearInterval(interval);
   }, [isAnalyzing, value]);
 
   return (
-    <span className={`${colorClass} text-[9px] font-black uppercase transition-all duration-700 ${!isAnalyzing ? 'scale-110' : ''}`}>
+    <span className={`${colorClass} text-[9px] font-black uppercase`}>
       {prefix}{displayValue} {label}
     </span>
   );
 };
 
 const QuestsPage = ({ character, setCharacter, videos, triggerHaptic }) => {
-  // Гарантируем, что начальное состояние — массив
   const [tasks, setTasks] = useState([]);
   const [confirmTask, setConfirmTask] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -45,12 +43,9 @@ const QuestsPage = ({ character, setCharacter, videos, triggerHaptic }) => {
 
   useEffect(() => {
     const fetchQuests = async () => {
-      // Если данных о персонаже еще нет (загрузка из ТГ), выходим
       if (!character?.telegram_id) return;
-
       try {
         const res = await axios.get(`/api/quests/${character.telegram_id}`);
-        // ЗАЩИТА: проверяем, что бэкенд прислал именно список
         if (res.data && Array.isArray(res.data)) {
           setTasks(res.data);
         } else {
@@ -58,15 +53,14 @@ const QuestsPage = ({ character, setCharacter, videos, triggerHaptic }) => {
         }
       } catch (e) { 
         console.error("Ошибка загрузки", e); 
-        setTasks([]); // Сбрасываем в массив при ошибке
+        setTasks([]); 
       }
     };
     fetchQuests();
-  }, [character?.telegram_id]); // Следим конкретно за id
+  }, [character?.telegram_id]);
 
   const getDifficultyStyles = (task) => {
     if (!task) return { label: '???', color: 'text-white' };
-
     const styles = {
       easy: { label: 'Легкий', color: 'text-[#4ade80] border-[#4ade80]/30 bg-[#4ade80]/10' },
       medium: { label: 'Средний', color: 'text-[#facc15] border-[#facc15]/30 bg-[#facc15]/10' },
@@ -90,7 +84,7 @@ const QuestsPage = ({ character, setCharacter, videos, triggerHaptic }) => {
       title: basicData.title,
       deadline: basicData.deadline,
       isAnalyzing: true,
-      xp: 0, gold: 0, hp_penalty: 0
+      xp_reward: 0, gold_reward: 0, hp_penalty: 0
     };
 
     setTasks(prev => [...prev, newTask]);
@@ -127,21 +121,15 @@ const QuestsPage = ({ character, setCharacter, videos, triggerHaptic }) => {
         hp_penalty: analyzedData.hp_penalty
       });
 
-      setTimeout(() => {
-        setTasks(prev => (Array.isArray(prev) ? prev : []).map(t => t.id === tempId ? {
-          ...saveRes.data,
-          isAnalyzing: false,
-          isSettling: true 
-        } : t));
-        
-        triggerHaptic?.('success');
-
-        setTimeout(() => {
-          setTasks(prev => (Array.isArray(prev) ? prev : []).map(t => t.id === tempId ? { ...t, isSettling: false } : t));
-        }, 1000);
-      }, 1500);
+      // Мгновенное обновление без анимаций оседания
+      setTasks(prev => (Array.isArray(prev) ? prev : []).map(t => 
+        t.id === tempId ? { ...saveRes.data, isAnalyzing: false } : t
+      ));
+      
+      triggerHaptic?.('success');
 
     } catch (error) {
+      console.error("Ошибка при создании", error);
       setTasks(prev => (Array.isArray(prev) ? prev : []).filter(t => t.id !== tempId));
     }
   };
@@ -158,7 +146,7 @@ const QuestsPage = ({ character, setCharacter, videos, triggerHaptic }) => {
   };
 
   return (
-<div className="fixed inset-0 w-full h-full bg-black overflow-x-hidden overflow-y-auto flex flex-col font-mono items-center">
+    <div className="fixed inset-0 w-full h-full bg-black overflow-x-hidden overflow-y-auto flex flex-col font-mono items-center">
       <div className="absolute inset-0 z-0">
         <video src={videos?.quests || ""} autoPlay loop muted playsInline className="w-full h-full object-cover opacity-60" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black" />
@@ -167,7 +155,6 @@ const QuestsPage = ({ character, setCharacter, videos, triggerHaptic }) => {
       <div className="relative z-10 flex flex-col items-center w-full h-full px-[4%] max-w-full">
         <Header title="Задания" subtitle={DEBUG_MODE ? "DEBUG ACTIVE" : "Контракты"}/>
 
-        {/* Убрали overflow-y-auto отсюда, так как он на родителе, либо оставили, но жестко overflow-x-hidden */}
         <div className="flex-1 w-full max-w-2xl overflow-y-auto overflow-x-hidden space-y-4 pt-4 mb-[130px] custom-scrollbar">
           {Array.isArray(tasks) && tasks.length > 0 ? (
             tasks.map(task => {
@@ -175,13 +162,10 @@ const QuestsPage = ({ character, setCharacter, videos, triggerHaptic }) => {
               return (
                 <div 
                   key={task.id} 
-                  // Добавили max-w-full и overflow-hidden для карточки
-                  className={`group relative w-full max-w-full overflow-hidden bg-black/80 border p-4 flex items-center justify-between shadow-[6px_6px_0px_rgba(0,0,0,0.9)] transition-all duration-700 gap-3 
-                  ${task.isSettling ? 'scale-[1.02] border-[#daa520]' : 'border-white/10'}`}
+                  className="group relative w-full max-w-full overflow-hidden bg-black/80 border border-white/10 p-4 flex items-center justify-between shadow-[6px_6px_0px_rgba(0,0,0,0.9)] gap-3 active:bg-white/5 transition-colors"
                   onClick={() => !task.isAnalyzing && setSelectedDetails(task)}
                 >
                   <div className="flex flex-col gap-2 min-w-0 flex-1">
-                    {/* truncate уже есть, это хорошо */}
                     <span className="text-white text-[14px] uppercase font-black truncate">{task.title}</span>
                     
                     <div className="flex flex-wrap gap-2 items-center">

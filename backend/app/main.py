@@ -9,14 +9,21 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app import models, crud, database, schemas
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Depends, HTTPException, Body
+from dotenv import load_dotenv
+
 
 # Настройка логирования для отладки
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+load_dotenv() # Загружает данные из файла .env, если он есть
+
+# Извлекаем именно твою переменную
+my_key = os.getenv("OPENAI_API_KEY")
+
 client = AsyncOpenAI(
     base_url="https://openrouter.ai/api/v1",
-    api_key=os.getenv("OPENROUTER_API_KEY")
+    api_key=my_key
 )
 
 @asynccontextmanager
