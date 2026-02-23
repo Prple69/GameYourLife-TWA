@@ -17,12 +17,12 @@ const LoadingPage = ({ progress, isLoaded }) => {
       visibility: isLoaded ? 'hidden' : 'visible',
       pointerEvents: 'none'
     }}>
-      <div style={{ width: '200px' }}>
+      <div style={{ width: '300px' }}>
         <div style={{ 
           display: 'flex', 
           justifyContent: 'space-between', 
           color: '#daa520', 
-          fontSize: '10px', 
+          fontSize: '14px', 
           marginBottom: '8px',
           fontWeight: 'bold',
           letterSpacing: '1px'
@@ -30,7 +30,7 @@ const LoadingPage = ({ progress, isLoaded }) => {
           <span>СИНХРОНИЗАЦИЯ</span>
           <span>{progress}%</span>
         </div>
-        <div style={{ width: '100%', height: '2px', backgroundColor: '#1a1a1a' }}>
+        <div style={{ width: '100%', height: '8px', backgroundColor: '#1a1a1a' }}>
           <div style={{ 
             width: `${progress}%`, 
             height: '100%', 
