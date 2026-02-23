@@ -35,8 +35,10 @@ async def get_db():
             await session.close()
 
 # Функция для создания таблиц (вызывается при старте приложения)
+# database.py
 async def init_db():
+    from .models import Base  # Импорт строго здесь, чтобы избежать круговых зависимостей
     async with engine.begin() as conn:
-        # Импортируй модели здесь перед созданием, чтобы SQLAlchemy их увидела
-        # from models import Base 
+        # Это удалит всё и создаст заново (полезно для первого раза)
+        # await conn.run_sync(Base.metadata.drop_all) 
         await conn.run_sync(Base.metadata.create_all)
