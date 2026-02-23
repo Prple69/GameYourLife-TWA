@@ -1,18 +1,19 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.orm import sessionmaker
+from .models import Base
 
+# Файл базы создастся сам в той же папке
 SQLALCHEMY_DATABASE_URL = "sqlite:///./game.db"
 
-# check_same_thread=False нужен только для SQLite
 engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+    SQLALCHEMY_DATABASE_URL, 
+    connect_args={"check_same_thread": False} # Нужно только для SQLite
 )
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = declarative_base()
 
 def init_db():
-    # Импортируем модели здесь, чтобы Base их увидел перед созданием
-    from . import models
+    # Создает таблицы, если их еще нет
     Base.metadata.create_all(bind=engine)
 
 def get_db():
