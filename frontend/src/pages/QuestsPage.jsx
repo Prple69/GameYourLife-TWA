@@ -40,12 +40,25 @@ const QuestsPage = ({ character, setCharacter, videos, triggerHaptic }) => {
     const fetchQuests = async () => {
       try {
         const res = await axios.get(`/api/quests/${character.telegram_id}`);
-        setTasks(res.data);
+        
+        // ПРОВЕРКА: Если пришел массив — ставим его, если нет — пустой массив
+        if (Array.isArray(res.data)) {
+          setTasks(res.data);
+        } else {
+          console.error("Бэкенд вернул не массив:", res.data);
+          setTasks([]); 
+        }
       } catch (e) {
-        console.error("Ошибка синхронизации списка задач");
+        console.error("Ошибка синхронизации списка задач:", e);
+        // В случае ошибки (сервер лежит или 404) ставим пустой список, чтобы .map не падал
+        setTasks([]);
       }
     };
-    if (character?.telegram_id) fetchQuests();
+
+    // Запускаем только если есть ID пользователя
+    if (character?.telegram_id) {
+      fetchQuests();
+    }
   }, [character?.telegram_id]);
 
   // 2. Логика открытия истории (загрузка из БД)
