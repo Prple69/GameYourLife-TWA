@@ -9,7 +9,6 @@ SQLALCHEMY_DATABASE_URL = "postgresql+asyncpg://postgres:purple666@127.0.0.1:543
 # Создаем асинхронный движок
 engine = create_async_engine(
     SQLALCHEMY_DATABASE_URL, 
-    echo=True,  # Выводит SQL-запросы в консоль (удобно для дебага)
     future=True
 )
 

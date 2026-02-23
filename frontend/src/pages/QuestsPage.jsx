@@ -118,7 +118,8 @@ const QuestsPage = ({ character, setCharacter, videos, triggerHaptic }) => {
       }
 
       const saveRes = await axios.post(`/api/quests/save/${character.telegram_id}`, {
-        ...basicData,
+        title: basicData.title,
+        deadline: basicData.deadline,
         difficulty: analyzedData.difficulty,
         xp_reward: analyzedData.xp,
         gold_reward: analyzedData.gold,

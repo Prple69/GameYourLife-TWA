@@ -43,6 +43,14 @@ async def get_profile(tg_id: str, username: str = "Hero", db: AsyncSession = Dep
         logger.error(f"Error getting profile: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
+@app.post("/api/user/update-avatar", response_model=schemas.UserSchema)
+async def update_avatar(tg_id: str, avatar_id: str, db: AsyncSession = Depends(database.get_db)):
+    print(f"Update request: tg_id={tg_id}, avatar={avatar_id}") # Лог для проверки
+    user = await crud.update_user_avatar(db, tg_id, avatar_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
 # --- КОНТРАКТЫ (КВЕСТЫ) ---
 
 @app.get("/api/quests/{tg_id}", response_model=List[schemas.QuestSchema])
@@ -61,14 +69,20 @@ async def get_quests(tg_id: str, db: AsyncSession = Depends(database.get_db)):
 
 @app.post("/api/quests/save/{tg_id}", response_model=schemas.QuestSchema)
 async def save_quest(tg_id: str, quest_data: schemas.QuestSave, db: AsyncSession = Depends(database.get_db)):
+    """
+    Сохранение контракта. 
+    Важно: tg_id берется из пути, а данные квеста из BODY (JSON).
+    """
     try:
+        logger.info(f"Saving quest for user {tg_id}: {quest_data.title}")
         quest = await crud.create_quest(db, tg_id, quest_data)
         if not quest:
-            raise HTTPException(status_code=404, detail="User not found")
+            # Если crud вернул None, значит юзера нет в базе
+            raise HTTPException(status_code=404, detail="User not found in database")
         return quest
     except Exception as e:
-        logger.error(f"Error saving quest: {e}")
-        raise HTTPException(status_code=400, detail="Could not save quest")
+        logger.error(f"CRITICAL ERROR SAVING QUEST: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/quests/complete/{quest_id}")
 async def complete_quest(quest_id: int, tg_id: str, db: AsyncSession = Depends(database.get_db)):
