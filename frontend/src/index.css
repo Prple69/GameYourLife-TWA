@@ -100,6 +100,27 @@ input, textarea {
   animation: fadeIn 0.8s ease-out forwards;
 }
 
+/* Убирает иконку календаря в Chrome/Safari, чтобы всё поле вызывало выбор даты */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    background: transparent;
+    bottom: 0;
+    color: transparent;
+    cursor: pointer;
+    height: auto;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: auto;
+}
+
+/* Фикс для iOS: чтобы текст в инпуте даты не съезжал */
+input[type="date"] {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; transform: scale(0.98); }
   to { opacity: 1; transform: scale(1); }
