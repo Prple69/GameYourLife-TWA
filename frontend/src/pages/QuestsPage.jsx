@@ -1,32 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import Header from '../components/Header';
 import ConfirmModal from '../components/ConfirmModal';
 import AddTaskModal from '../components/AddTaskModal';
-
-// Вспомогательный компонент для "бегающих" цифр
-const RollingValue = ({ value, isAnalyzing, colorClass }) => {
-  const [displayValue, setDisplayValue] = useState(value);
-
-  useEffect(() => {
-    let interval;
-    if (isAnalyzing) {
-      interval = setInterval(() => {
-        // Генерируем случайные числа для эффекта подбора
-        setDisplayValue(Math.floor(Math.random() * 200));
-      }, 80); // Скорость перебора
-    } else {
-      setDisplayValue(value);
-    }
-    return () => clearInterval(interval);
-  }, [isAnalyzing, value]);
-
-  return (
-    <span className={`${colorClass} text-[9px] font-black uppercase transition-all duration-300 ${!isAnalyzing ? 'scale-110' : ''}`}>
-      +{displayValue}
-    </span>
-  );
-};
 
 const QuestsPage = ({ setCharacter, videos, triggerHaptic }) => {
   const [tasks, setTasks] = useState([]);
@@ -36,16 +12,7 @@ const QuestsPage = ({ setCharacter, videos, triggerHaptic }) => {
   const requestAnalysis = async (tempId, taskData) => {
     try {
       const { data } = await axios.post('/api/analyze', taskData);
-      // Добавляем небольшую задержку, чтобы юзер успел насладиться анимацией
-      setTimeout(() => {
-        setTasks(prev => prev.map(t => t.id === tempId ? { 
-          ...t, 
-          ...data, 
-          isAnalyzing: false,
-          isNew: true // Флаг для финального "прыжка"
-        } : t));
-        triggerHaptic?.('light');
-      }, 1000);
+      setTasks(prev => prev.map(t => t.id === tempId ? { ...t, ...data, isAnalyzing: false } : t));
     } catch (err) {
       setTasks(prev => prev.map(t => t.id === tempId ? { ...t, error: true, isAnalyzing: false } : t));
     }
@@ -57,8 +24,8 @@ const QuestsPage = ({ setCharacter, videos, triggerHaptic }) => {
       id: tempId,
       ...basicData,
       difficulty: 'analyzing',
-      xp: 0,
-      gold: 0,
+      xp: '??',
+      gold: '??',
       isAnalyzing: true,
       error: false
     };
@@ -70,8 +37,8 @@ const QuestsPage = ({ setCharacter, videos, triggerHaptic }) => {
   const finalizeTask = () => {
     setCharacter(prev => ({
       ...prev,
-      xp: (prev.xp || 0) + (parseInt(confirmTask.xp) || 0),
-      gold: (prev.gold || 0) + (parseInt(confirmTask.gold) || 0),
+      xp: (prev.xp || 0) + confirmTask.xp,
+      gold: (prev.gold || 0) + confirmTask.gold,
     }));
     setTasks(prev => prev.filter(t => t.id !== confirmTask.id));
     setConfirmTask(null);
@@ -80,15 +47,8 @@ const QuestsPage = ({ setCharacter, videos, triggerHaptic }) => {
 
   const getDifficultyStyles = (task) => {
     if (task.error) return { label: 'Ошибка', color: 'text-red-500 border-red-500/30 bg-red-500/10' };
-    
-    // Эффект перебора текста сложности
-    if (task.isAnalyzing) {
-      const labels = ['EASY?', 'MED?', 'HARD?', 'EPIC?'];
-      const randomLabel = labels[Math.floor((Date.now() / 100) % labels.length)];
-      return { label: randomLabel, color: 'text-white/20 border-white/5 bg-white/5' };
-    }
-
     const styles = {
+      analyzing: { label: 'Оценка...', color: 'text-white/20 border-white/5 bg-white/5 animate-pulse' },
       easy: { label: 'Легкий', color: 'text-[#4ade80] border-[#4ade80]/30 bg-[#4ade80]/10' },
       medium: { label: 'Средний', color: 'text-[#facc15] border-[#facc15]/30 bg-[#facc15]/10' },
       hard: { label: 'Тяжелый', color: 'text-[#ef4444] border-[#ef4444]/30 bg-[#ef4444]/10' },
@@ -115,47 +75,28 @@ const QuestsPage = ({ setCharacter, videos, triggerHaptic }) => {
           {tasks.map(task => {
             const diff = getDifficultyStyles(task);
             return (
-              <div 
-                key={task.id} 
-                className={`w-full bg-black/70 border ${task.error ? 'border-red-500/50' : 'border-white/10'} p-4 flex items-center justify-between shadow-[6px_6px_0px_rgba(0,0,0,0.9)] transition-all gap-3
-                ${task.isNew ? 'animate-[bounce_0.5s_ease-in-out]' : ''}`} // Финальный прыжок всей карточки
-              >
+              <div key={task.id} className={`w-full bg-black/70 border ${task.error ? 'border-red-500/50' : 'border-white/10'} p-4 flex items-center justify-between shadow-[6px_6px_0px_rgba(0,0,0,0.9)] transition-all gap-3`}>
                 <div className="flex flex-col gap-2 min-w-0 flex-1">
                   <span className="text-white text-[14px] uppercase font-black tracking-tight leading-tight break-words">{task.title}</span>
                   <div className="flex flex-wrap gap-2 items-center">
-                    <span className={`text-[9px] px-2 py-0.5 font-bold border rounded-sm uppercase tracking-widest transition-all duration-100 ${diff.color}`}>
-                      {diff.label}
-                    </span>
-                    
+                    <span className={`text-[9px] px-2 py-0.5 font-bold border rounded-sm uppercase tracking-widest ${diff.color}`}>{diff.label}</span>
                     <div className="flex items-center gap-2 border-l border-white/10 pl-2">
-                      <RollingValue 
-                        value={task.gold} 
-                        isAnalyzing={task.isAnalyzing} 
-                        colorClass="text-[#daa520]" 
-                      />
-                      <span className="text-white/20 text-[8px]">GOLD</span>
-                      
-                      <RollingValue 
-                        value={task.xp} 
-                        isAnalyzing={task.isAnalyzing} 
-                        colorClass="text-[#a855f7]" 
-                      />
-                      <span className="text-white/20 text-[8px]">XP</span>
+                      <span className={`text-[#daa520] text-[9px] font-black uppercase ${task.isAnalyzing && 'animate-bounce'}`}>+{task.gold} Gold</span>
+                      <span className={`text-[#a855f7] text-[9px] font-black uppercase ${task.isAnalyzing && 'animate-bounce [animation-delay:0.2s]'}`}>+{task.xp} XP</span>
                     </div>
-                    
                     <span className="text-white/30 text-[9px] font-bold uppercase ml-auto">{task.deadline}</span>
                   </div>
                 </div>
 
                 {task.error ? (
-                  <button onClick={() => onAddTask(task)} className="bg-red-500 text-white px-3 py-2 text-[9px] font-black uppercase shadow-[2px_2px_0_#000]">Повтор</button>
+                  <button onClick={() => onAddTask(task)} className="bg-red-500 text-white px-3 py-2 text-[9px] font-black uppercase">Повтор</button>
                 ) : (
                   <button 
                     disabled={task.isAnalyzing}
                     onClick={() => { triggerHaptic?.('medium'); setConfirmTask(task); }}
-                    className={`shrink-0 ${task.isAnalyzing ? 'bg-white/5 text-white/20' : 'bg-[#daa520] text-black'} px-3 py-2.5 font-black text-[10px] uppercase shadow-[2px_2px_0_#000] active:shadow-none transition-all`}
+                    className={`shrink-0 ${task.isAnalyzing ? 'bg-white/5 text-white/20' : 'bg-[#daa520] text-black'} px-3 py-2.5 font-black text-[10px] uppercase shadow-[2px_2px_0_#000] transition-all`}
                   >
-                    {task.isAnalyzing ? '???' : 'Выполнить'}
+                    {task.isAnalyzing ? '...' : 'Выполнить'}
                   </button>
                 )}
               </div>
