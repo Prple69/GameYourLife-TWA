@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import BrutalDatePicker from './BrutalDatePicker';
 
 const AddTaskModal = ({ onAdd, onClose }) => {
   const [title, setTitle] = useState('');
-  const [deadline, setDeadline] = useState(new Date().toISOString().split('T')[0]);
+  const [deadline, setDeadline] = useState('');
 
   const handleSubmit = () => {
     if (!title.trim() || !deadline) return;
@@ -22,13 +21,30 @@ const AddTaskModal = ({ onAdd, onClose }) => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className="w-full bg-white/5 border border-white/10 p-3 text-white font-mono text-sm focus:border-[#daa520] outline-none"
-              placeholder="Введите текст..."
+              placeholder="Напр: Прочитать 20 страниц..."
             />
           </div>
 
           <div>
-            <label className="text-white/40 text-[9px] uppercase font-black mb-2 block tracking-widest">Дедлайн (Барабан ИИ)</label>
-            <BrutalDatePicker value={deadline} onChange={setDeadline} />
+            <label className="text-white/40 text-[9px] uppercase font-black mb-2 block tracking-widest">Выполнить до</label>
+            {/* Важно: используем специальные классы для Safari.
+                Класс 'relative' и 'appearance-none' помогают корректно обработать нажатие в TWA.
+            */}
+            <input 
+              type="date"
+              value={deadline}
+              onChange={(e) => setDeadline(e.target.value)}
+              className="
+                w-full bg-white/5 border border-white/10 p-3 
+                text-white font-mono text-sm outline-none 
+                focus:border-[#daa520] 
+                appearance-none
+                min-h-[48px] /* Увеличиваем зону нажатия для пальца */
+              "
+              style={{ 
+                colorScheme: 'dark', // Инвертирует календарь в темную тему
+              }} 
+            />
           </div>
         </div>
 
@@ -36,7 +52,7 @@ const AddTaskModal = ({ onAdd, onClose }) => {
           <button onClick={onClose} className="py-3 text-white/40 font-black uppercase text-[10px]">НАЗАД</button>
           <button 
             onClick={handleSubmit}
-            className="py-3 bg-white text-black font-black uppercase text-[10px] shadow-[3px_3px_0px_#daa520] active:translate-y-0.5 active:shadow-none transition-all"
+            className="py-3 bg-white text-black font-black uppercase text-[10px] shadow-[3px_3px_0px_#daa520]"
           >
             АНАЛИЗ ИИ
           </button>
