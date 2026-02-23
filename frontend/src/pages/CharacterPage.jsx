@@ -43,11 +43,12 @@ const CharacterPage = ({ character, setCharacter, videos, triggerHaptic }) => {
       setIsUpdating(true);
       triggerHaptic('medium');
       
-      // Отправляем на бэкенд (FastAPI)
-      const res = await userService.updateAvatar(character.id, avatarId);
+      // 1. Ждем ответа от сервера
+      const updatedUser = await userService.updateAvatar(character.telegram_id, avatarId);
       
-      // Обновляем глобальное состояние в App.js
-      setCharacter(res.data);
+      // 2. ВАЖНО: Разворачиваем объект через спред (...), 
+      // чтобы React увидел новую ссылку и перерисовал экран
+      setCharacter({ ...updatedUser }); 
       
       setIsSelectorOpen(false);
     } catch (err) {
