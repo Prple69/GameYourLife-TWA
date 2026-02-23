@@ -54,4 +54,27 @@ export const userService = {
   }
 };
 
+export const questService = {
+  // Получить список всех квестов с текущим прогрессом юзера
+  getQuests: async (userId) => {
+    try {
+      const response = await fetch(`${API_URL}/quests?userId=${userId}`);
+      return await response.json();
+    } catch (e) {
+      console.error("Fetch quests error", e);
+      return [];
+    }
+  },
+
+  // Отправить запрос на проверку выполнения
+  verifyQuest: async (userId, questId) => {
+    const response = await fetch(`${API_URL}/quests/verify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, questId })
+    });
+    return await response.json();
+  }
+};
+
 export default api;
