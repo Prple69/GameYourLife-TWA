@@ -1,32 +1,33 @@
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
 export default async function handler(req, res) {
-  // Проверка метода (только POST)
+  // Разрешаем только POST запросы
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   const { title } = req.body;
-  const apiKey = process.env.GEMINI_API_KEY;
+
+  // Инициализация ИИ (ключ берем из переменных окружения Vercel)
+  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+  // Используем gemini-1.5-flash (она бесплатная и быстрая)
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+  const prompt = `Ты RPG геймдизайнер. Оцени задание: "${title}". 
+  Верни ТОЛЬКО чистый JSON без разметок и лишних слов: 
+  {"difficulty": "easy"|"medium"|"hard"|"epic", "xp": 100, "gold": 50}`;
 
   try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ 
-          text: `Ты RPG геймдизайнер. Оцени задание: "${title}". 
-          Верни ТОЛЬКО JSON: {"difficulty": "easy"|"medium"|"hard"|"epic", "xp": число 20-500, "gold": число}.` 
-        }] }]
-      })
-    });
-
-    const data = await response.json();
-    const aiText = data.candidates[0].content.parts[0].text;
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
     
-    // Очищаем текст от возможных Markdown-меток и парсим в JSON
-    const cleanJson = JSON.parse(aiText.replace(/```json|```/g, "").trim());
+    // Очищаем от возможных Markdown-кавычек, если ИИ их добавит
+    const cleanJson = JSON.parse(text.replace(/```json|```/g, "").trim());
     
     return res.status(200).json(cleanJson);
   } catch (error) {
-    return res.status(500).json({ error: "AI failed to respond" });
+    console.error(error);
+    return res.status(500).json({ error: "Ошибка ИИ", details: error.message });
   }
 }
