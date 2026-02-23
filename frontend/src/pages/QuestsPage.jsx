@@ -7,7 +7,6 @@ import QuestDetailsModal from '../components/QuestDetailsModal';
 
 const DEBUG_MODE = true; 
 
-// Универсальный компонент рулетки для Gold, XP и HP
 const RollingValue = ({ isAnalyzing, value, colorClass, label, prefix = "+" }) => {
   const [displayValue, setDisplayValue] = useState(0);
 
@@ -15,11 +14,10 @@ const RollingValue = ({ isAnalyzing, value, colorClass, label, prefix = "+" }) =
     let interval;
     if (isAnalyzing) {
       interval = setInterval(() => {
-        // Рандомные числа для эффекта перебора
         setDisplayValue(Math.floor(Math.random() * 100));
       }, 300);
     } else {
-      setDisplayValue(value);
+      setDisplayValue(value || 0); // Защита от NaN/undefined
     }
     return () => clearInterval(interval);
   }, [isAnalyzing, value]);
@@ -32,6 +30,7 @@ const RollingValue = ({ isAnalyzing, value, colorClass, label, prefix = "+" }) =
 };
 
 const QuestsPage = ({ character, setCharacter, videos, triggerHaptic }) => {
+  // Гарантируем, что начальное состояние — массив
   const [tasks, setTasks] = useState([]);
   const [confirmTask, setConfirmTask] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -45,21 +44,35 @@ const QuestsPage = ({ character, setCharacter, videos, triggerHaptic }) => {
 
   useEffect(() => {
     const fetchQuests = async () => {
+      // Если данных о персонаже еще нет (загрузка из ТГ), выходим
+      if (!character?.telegram_id) return;
+
       try {
         const res = await axios.get(`/api/quests/${character.telegram_id}`);
-        setTasks(res.data);
-      } catch (e) { console.error("Ошибка загрузки", e); }
+        // ЗАЩИТА: проверяем, что бэкенд прислал именно список
+        if (res.data && Array.isArray(res.data)) {
+          setTasks(res.data);
+        } else {
+          setTasks([]);
+        }
+      } catch (e) { 
+        console.error("Ошибка загрузки", e); 
+        setTasks([]); // Сбрасываем в массив при ошибке
+      }
     };
-    if (character?.telegram_id) fetchQuests();
-  }, [character.telegram_id]);
+    fetchQuests();
+  }, [character?.telegram_id]); // Следим конкретно за id
 
   const getDifficultyStyles = (task) => {
+    if (!task) return { label: '???', color: 'text-white' };
+
     const styles = {
       easy: { label: 'Легкий', color: 'text-[#4ade80] border-[#4ade80]/30 bg-[#4ade80]/10' },
       medium: { label: 'Средний', color: 'text-[#facc15] border-[#facc15]/30 bg-[#facc15]/10' },
       hard: { label: 'Тяжелый', color: 'text-[#ef4444] border-[#ef4444]/30 bg-[#ef4444]/10' },
       epic: { label: 'Эпический', color: 'text-[#a855f7] border-[#a855f7]/30 bg-[#a855f7]/10' }
     };
+
     if (task.isAnalyzing) {
       const keys = ['easy', 'medium', 'hard', 'epic'];
       return styles[keys[visualTick % 4]];
@@ -68,6 +81,8 @@ const QuestsPage = ({ character, setCharacter, videos, triggerHaptic }) => {
   };
 
   const onAddTask = async (basicData) => {
+    if (!character) return;
+    
     const tempId = Date.now();
     const newTask = {
       id: tempId,
@@ -111,26 +126,26 @@ const QuestsPage = ({ character, setCharacter, videos, triggerHaptic }) => {
       });
 
       setTimeout(() => {
-        setTasks(prev => prev.map(t => t.id === tempId ? {
+        setTasks(prev => (Array.isArray(prev) ? prev : []).map(t => t.id === tempId ? {
           ...saveRes.data,
           isAnalyzing: false,
           isSettling: true 
         } : t));
         
         triggerHaptic?.('success');
-        // setSelectedDetails(null); // Убрано автоматическое открытие
 
         setTimeout(() => {
-          setTasks(prev => prev.map(t => t.id === tempId ? { ...t, isSettling: false } : t));
+          setTasks(prev => (Array.isArray(prev) ? prev : []).map(t => t.id === tempId ? { ...t, isSettling: false } : t));
         }, 1000);
       }, 1500);
 
     } catch (error) {
-      setTasks(prev => prev.filter(t => t.id !== tempId));
+      setTasks(prev => (Array.isArray(prev) ? prev : []).filter(t => t.id !== tempId));
     }
   };
 
   const finalizeTask = async () => {
+    if (!confirmTask || !character) return;
     try {
       const res = await axios.post(`/api/quests/complete/${confirmTask.id}?tg_id=${character.telegram_id}`);
       setTasks(prev => prev.filter(t => t.id !== confirmTask.id));
@@ -151,55 +166,57 @@ const QuestsPage = ({ character, setCharacter, videos, triggerHaptic }) => {
         <Header title="Задания" subtitle={DEBUG_MODE ? "DEBUG ACTIVE" : "Контракты"}/>
 
         <div className="flex-1 w-full max-w-2xl overflow-y-auto space-y-4 pt-4 mb-[130px] custom-scrollbar">
-          {tasks.map(task => {
-            const diff = getDifficultyStyles(task);
-            return (
-              <div 
-                key={task.id} 
-                className={`group relative w-full bg-black/80 border p-4 flex items-center justify-between shadow-[6px_6px_0px_rgba(0,0,0,0.9)] transition-all duration-700 gap-3 
-                ${task.isSettling ? 'scale-[1.02] border-[#daa520]' : 'border-white/10'}`}
-                onClick={() => !task.isAnalyzing && setSelectedDetails(task)} // Открытие по клику на карточку
-              >
-                <div className="flex flex-col gap-2 min-w-0 flex-1">
-                  <span className="text-white text-[14px] uppercase font-black truncate">{task.title}</span>
-                  
-                  <div className="flex flex-wrap gap-2 items-center">
-                    <span className={`text-[8px] px-1.5 py-0.5 font-bold border rounded-sm uppercase ${diff.color}`}>
-                      {diff.label}
-                    </span>
+          {/* ЗАЩИТА: Проверяем наличие массива и его длину */}
+          {Array.isArray(tasks) && tasks.length > 0 ? (
+            tasks.map(task => {
+              const diff = getDifficultyStyles(task);
+              return (
+                <div 
+                  key={task.id} 
+                  className={`group relative w-full bg-black/80 border p-4 flex items-center justify-between shadow-[6px_6px_0px_rgba(0,0,0,0.9)] transition-all duration-700 gap-3 
+                  ${task.isSettling ? 'scale-[1.02] border-[#daa520]' : 'border-white/10'}`}
+                  onClick={() => !task.isAnalyzing && setSelectedDetails(task)}
+                >
+                  <div className="flex flex-col gap-2 min-w-0 flex-1">
+                    <span className="text-white text-[14px] uppercase font-black truncate">{task.title}</span>
                     
-                    <div className="flex items-center gap-3 border-l border-white/10 pl-2">
-                      <RollingValue isAnalyzing={task.isAnalyzing} value={task.gold_reward || 0} colorClass="text-[#daa520]" label="G" />
-                      <RollingValue isAnalyzing={task.isAnalyzing} value={task.xp_reward || 0} colorClass="text-[#a855f7]" label="XP" />
-                      {/* Рулетка штрафа */}
-                      <RollingValue isAnalyzing={task.isAnalyzing} value={task.hp_penalty || 0} colorClass="text-red-500" label="HP" prefix="-" />
+                    <div className="flex flex-wrap gap-2 items-center">
+                      <span className={`text-[8px] px-1.5 py-0.5 font-bold border rounded-sm uppercase ${diff.color}`}>
+                        {diff.label}
+                      </span>
+                      
+                      <div className="flex items-center gap-3 border-l border-white/10 pl-2">
+                        <RollingValue isAnalyzing={task.isAnalyzing} value={task.gold_reward || 0} colorClass="text-[#daa520]" label="G" />
+                        <RollingValue isAnalyzing={task.isAnalyzing} value={task.xp_reward || 0} colorClass="text-[#a855f7]" label="XP" />
+                        <RollingValue isAnalyzing={task.isAnalyzing} value={task.hp_penalty || 0} colorClass="text-red-500" label="HP" prefix="-" />
+                      </div>
                     </div>
                   </div>
+
+                  <button 
+                    disabled={task.isAnalyzing}
+                    onClick={(e) => { e.stopPropagation(); triggerHaptic?.('medium'); setConfirmTask(task); }}
+                    className={`shrink-0 px-4 py-2 font-black text-[10px] uppercase shadow-[2px_2px_0_#000] 
+                      ${task.isAnalyzing ? 'bg-white/5 text-white/10' : 'bg-[#daa520] text-black active:shadow-none'}`}
+                  >
+                    {task.isAnalyzing ? '???' : 'OK'}
+                  </button>
                 </div>
+              );
+            })
+          ) : (
+            <div className="text-center py-10 opacity-30 text-[10px] uppercase tracking-widest">
+              Список контрактов пуст
+            </div>
+          )}
 
-                <button 
-                  disabled={task.isAnalyzing}
-                  onClick={(e) => { e.stopPropagation(); triggerHaptic?.('medium'); setConfirmTask(task); }}
-                  className={`shrink-0 px-4 py-2 font-black text-[10px] uppercase shadow-[2px_2px_0_#000] 
-                    ${task.isAnalyzing ? 'bg-white/5 text-white/10' : 'bg-[#daa520] text-black active:shadow-none'}`}
-                >
-                  {task.isAnalyzing ? '???' : 'OK'}
-                </button>
-              </div>
-            );
-          })}
-
-          <div onClick={() => { setIsAddModalOpen(true); triggerHaptic?.('light'); }} className="w-full border-2 border-dashed border-[#daa520]/20 p-6 mt-4 text-center bg-black/30 active:bg-black/50 transition-all">
+          <div onClick={() => { setIsAddModalOpen(true); triggerHaptic?.('light'); }} className="w-full border-2 border-dashed border-[#daa520]/20 p-6 mt-4 text-center bg-black/30 active:bg-black/50 transition-all cursor-pointer">
             <span className="text-[11px] text-[#daa520]/60 uppercase font-black tracking-widest">+ НОВЫЙ КОНТРАКТ</span>
           </div>
         </div>
       </div>
 
-      <QuestDetailsModal 
-        task={selectedDetails} 
-        character={character} // <--- Передаем объект персонажа сюда
-        onClose={() => setSelectedDetails(null)} 
-      />
+      <QuestDetailsModal task={selectedDetails} character={character} onClose={() => setSelectedDetails(null)} />
       <ConfirmModal task={confirmTask} onConfirm={finalizeTask} onCancel={() => setConfirmTask(null)} />
       {isAddModalOpen && <AddTaskModal onAdd={onAddTask} onClose={() => setIsAddModalOpen(false)} triggerHaptic={triggerHaptic} />}
     </div>
