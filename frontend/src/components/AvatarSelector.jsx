@@ -37,11 +37,7 @@ const AvatarSelector = ({ isOpen, onClose, avatars, currentAvatar, onSelect }) =
               <img src={av.img} alt={av.label} className="w-full h-full object-cover" />
               
               {/* Индикатор выбранного аватара (опционально) */}
-              {currentAvatar === av.id && (
-                <div className="absolute top-0 right-0 bg-[#daa520] p-0.5">
-                   <div className="w-2 h-2 bg-black" />
-                </div>
-              )}
+              {currentAvatar === av.id}
             </div>
           ))}
         </div>
