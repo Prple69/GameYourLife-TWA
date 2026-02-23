@@ -8,24 +8,36 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ message: 'Method not allowed' });
 
-  // Добавляем today из тела запроса, чтобы не было рассинхрона с фронтом
-  const { title, deadline, today } = req.body;
+  // Получаем данные о задаче и состоянии персонажа
+  const { title, deadline, today, current_hp, max_hp, lvl } = req.body;
   
   // Если фронт забыл прислать, берем серверную, но приоритет на today из body
   const currentDay = today || new Date().toISOString().split('T')[0];
-  const prompt = `Ты RPG мастер. Оцени контракт: "${title}".
+const prompt = `Ты RPG мастер. Оцени контракт: "${title}".
   Сегодня: ${currentDay}. Дедлайн: ${deadline}.
+  
+  СТАТУС ИГРОКА:
+  - Уровень: ${lvl || 1}
+  - Текущее HP: ${current_hp || 100} / ${max_hp || 100}
 
-  КРИТЕРИИ СЛОЖНОСТИ:
-  - easy: Рутина, до 30 мин. Награда: gold 5-15, xp 10-30.
-  - medium: Усилия, 1-3 часа. Награда: gold 20-45, xp 40-80.
-  - hard: Тяжелая работа, весь день или сложный проект. Награда: gold 50-120, xp 100-250.
-  - epic: Жизненное достижение или экстремальный дедлайн. Награда: gold 150-300, xp 300-500.
+  КРИТЕРИИ СЛОЖНОСТИ И НАГРАД:
+  - easy: Рутина. Награда: gold 5-15, xp 10-30. Штраф при провале: 5-8 HP.
+  - medium: Усилия. Награда: gold 20-45, xp 40-80. Штраф при провале: 10-15 HP.
+  - hard: Тяжелая работа. Награда: gold 50-120, xp 100-250. Штраф при провале: 20-30 HP.
+  - epic: Жизненное достижение. Награда: gold 150-300, xp 300-500. Штраф при провале: 40-60 HP.
 
-  Если дедлайн очень близко (сегодня/завтра) для сложной задачи — повышай категорию до hard/epic.
+  ПРАВИЛА МАСТЕРА:
+  1. Если дедлайн критический (сегодня), сложность и награда растут.
+  2. Оцени "hp_penalty" (штраф за провал) исходя из сложности. 
+  3. Если у игрока критически мало HP (${current_hp}), сделай штраф чуть мягче, но не ниже минимального для категории, чтобы оставить шанс на выживание, но сохранить азарт.
 
-  Верни ТОЛЬКО JSON: 
-  {"difficulty": "easy"|"medium"|"hard"|"epic", "xp": number, "gold": number}`;
+  Верни ТОЛЬКО чистый JSON: 
+  {
+    "difficulty": "easy"|"medium"|"hard"|"epic", 
+    "xp": number, 
+    "gold": number, 
+    "hp_penalty": number
+  }`;
 
   const ai = new GoogleGenAI({ 
     apiKey: process.env.GEMINI_API_KEY 

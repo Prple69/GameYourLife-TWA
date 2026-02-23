@@ -55,6 +55,7 @@ class Quest(Base):
     
     xp_reward = Column(Integer)
     gold_reward = Column(Integer)
+    hp_penalty = Column(Integer)
     
     deadline = Column(String) # Формат YYYY-MM-DD
     created_at = Column(DateTime(timezone=True), default=get_msk_now)

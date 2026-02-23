@@ -3,6 +3,7 @@ import axios from 'axios';
 import Header from '../components/Header';
 import ConfirmModal from '../components/ConfirmModal';
 import AddTaskModal from '../components/AddTaskModal';
+import QuestDetailsModal from '../components/QuestDetailsModal'; // Создай этот файл из предыдущего сообщения
 
 // Компонент для рулетки Gold и XP
 const RollingValue = ({ isAnalyzing, value, colorClass, label }) => {
@@ -13,7 +14,7 @@ const RollingValue = ({ isAnalyzing, value, colorClass, label }) => {
     if (isAnalyzing) {
       interval = setInterval(() => {
         setDisplayValue(Math.floor(Math.random() * 150));
-      }, 150); // Плавная скорость перебора
+      }, 150);
     } else {
       setDisplayValue(value);
     }
@@ -28,18 +29,21 @@ const RollingValue = ({ isAnalyzing, value, colorClass, label }) => {
 };
 
 const QuestsPage = ({ character, setCharacter, videos, triggerHaptic }) => {
-  const [tasks, setTasks] = useState([
-    { id: 1, title: 'Английский 20 мин', difficulty: 'easy', deadline: '2024-05-20', xp: 20, gold: 10, isAnalyzing: false },
-  ]);
-
-  const [tick, setTick] = useState(0);
-  useEffect(() => {
-    const timer = setInterval(() => setTick(t => t + 1), 300);
-    return () => clearInterval(timer);
-  }, []);
-
+  const [tasks, setTasks] = useState([]);
   const [confirmTask, setConfirmTask] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [selectedDetails, setSelectedDetails] = useState(null);
+
+  // Загрузка квестов при старте
+  useEffect(() => {
+    const fetchQuests = async () => {
+      try {
+        const res = await axios.get(`/api/quests/${character.telegram_id}`);
+        setTasks(res.data);
+      } catch (e) { console.error("Ошибка загрузки квестов", e); }
+    };
+    if (character?.telegram_id) fetchQuests();
+  }, [character.telegram_id]);
 
   const getDifficultyStyles = (task) => {
     const styles = {
@@ -51,8 +55,7 @@ const QuestsPage = ({ character, setCharacter, videos, triggerHaptic }) => {
 
     if (task.isAnalyzing) {
       const keys = ['easy', 'medium', 'hard', 'epic'];
-      const currentKey = keys[Math.floor((Date.now() / 500) % keys.length)];
-      return styles[currentKey];
+      return styles[keys[Math.floor((Date.now() / 500) % 4)]];
     }
     return styles[task.difficulty] || styles.easy;
   };
@@ -63,10 +66,8 @@ const QuestsPage = ({ character, setCharacter, videos, triggerHaptic }) => {
       id: tempId,
       title: basicData.title,
       deadline: basicData.deadline,
-      difficulty: 'easy',
-      xp: 0,
-      gold: 0,
-      isAnalyzing: true
+      isAnalyzing: true,
+      xp: 0, gold: 0
     };
 
     setTasks(prev => [...prev, newTask]);
@@ -74,34 +75,62 @@ const QuestsPage = ({ character, setCharacter, videos, triggerHaptic }) => {
     triggerHaptic?.('medium');
 
     try {
-      const response = await axios.post('/api/analyze', basicData);
-      
-      setTimeout(() => {
-        setTasks(prev => prev.map(t => t.id === tempId ? {
-          ...t,
-          ...response.data,
-          isAnalyzing: false,
-          isSettling: true // Флаг для анимации увеличения
-        } : t));
-        triggerHaptic?.('success');
+      // ПЕРЕДАЕМ ДАННЫЕ ПЕРСОНАЖА ДЛЯ ИИ
+      const analysisPayload = {
+        ...basicData,
+        current_hp: character.hp,
+        max_hp: character.max_hp,
+        lvl: character.lvl
+      };
 
-        // Убираем эффект увеличения через 1 секунду
-        setTimeout(() => {
-          setTasks(prev => prev.map(t => t.id === tempId ? { ...t, isSettling: false } : t));
-        }, 1000);
-      }, 2000);
+      const response = await axios.post('/api/analyze', analysisPayload);
+      
+      // Бэкенд должен вернуть: { difficulty, xp, gold, hp_penalty }
+      const analyzedData = response.data;
+
+      // Сохраняем в БД
+      const saveRes = await axios.post(`/api/quests/save/${character.telegram_id}`, {
+        ...basicData,
+        difficulty: analyzedData.difficulty,
+        xp_reward: analyzedData.xp,
+        gold_reward: analyzedData.gold,
+        hp_penalty: analyzedData.hp_penalty // Новое поле
+      });
+
+      setTasks(prev => prev.map(t => t.id === tempId ? {
+        ...saveRes.data,
+        isAnalyzing: false,
+        isSettling: true 
+      } : t));
+
+      triggerHaptic?.('success');
+      
+      // Показываем детали контракта (новую модалку)
+      setSelectedDetails({ ...saveRes.data, hp_penalty: analyzedData.hp_penalty });
+
+      setTimeout(() => {
+        setTasks(prev => prev.map(t => t.id === tempId ? { ...t, isSettling: false } : t));
+      }, 1000);
+
     } catch (error) {
+      console.error("Анализ провален", error);
       setTasks(prev => prev.filter(t => t.id !== tempId));
     }
   };
 
-  const finalizeTask = () => {
-    const xpGain = confirmTask.xp || 0;
-    const goldGain = confirmTask.gold || 0;
-    setTasks(prev => prev.filter(t => t.id !== confirmTask.id));
-    setCharacter?.(prev => ({ ...prev, xp: (prev.xp || 0) + xpGain, gold: (prev.gold || 0) + goldGain }));
-    setConfirmTask(null);
-    triggerHaptic?.('success');
+  const finalizeTask = async () => {
+    try {
+      const res = await axios.post(`/api/quests/complete/${confirmTask.id}?tg_id=${character.telegram_id}`);
+      setTasks(prev => prev.filter(t => t.id !== confirmTask.id));
+      
+      // Обновляем глобальный стейт персонажа (XP, Gold, Lvl Up)
+      setCharacter(res.data.user);
+      
+      setConfirmTask(null);
+      triggerHaptic?.('success');
+    } catch (e) {
+      console.error("Ошибка завершения", e);
+    }
   };
 
   return (
@@ -121,34 +150,30 @@ const QuestsPage = ({ character, setCharacter, videos, triggerHaptic }) => {
               <div 
                 key={task.id} 
                 className={`group relative w-full bg-black/70 border p-4 flex items-center justify-between shadow-[6px_6px_0px_rgba(0,0,0,0.9)] transition-all duration-700 gap-3 
-                ${task.isSettling 
-                  ? 'scale-[1.03] border-[#daa520] shadow-[0_0_20px_rgba(218,165,32,0.3)]' 
-                  : 'scale-100 border-white/10'}`}
+                ${task.isSettling ? 'scale-[1.03] border-[#daa520] shadow-[0_0_20px_rgba(218,165,32,0.3)]' : 'border-white/10'}`}
               >
-                
                 <div className="flex flex-col gap-2 min-w-0 flex-1">
                   <span className="text-white text-[14px] uppercase font-black tracking-tight leading-tight break-words">{task.title}</span>
                   
                   <div className="flex flex-wrap gap-2 items-center">
-                    <span className={`text-[9px] px-2 py-0.5 font-bold border rounded-sm uppercase tracking-widest transition-all duration-500 ${diff.color}`}>
+                    <span className={`text-[9px] px-2 py-0.5 font-bold border rounded-sm uppercase tracking-widest ${diff.color}`}>
                       {diff.label}
                     </span>
                     
                     <div className="flex items-center gap-2 border-l border-white/10 pl-2">
-                      <RollingValue isAnalyzing={task.isAnalyzing} value={task.gold} colorClass="text-[#daa520]" label="Gold" />
-                      <RollingValue isAnalyzing={task.isAnalyzing} value={task.xp} colorClass="text-[#a855f7]" label="XP" />
+                      <RollingValue isAnalyzing={task.isAnalyzing} value={task.gold_reward || task.gold} colorClass="text-[#daa520]" label="G" />
+                      <RollingValue isAnalyzing={task.isAnalyzing} value={task.xp_reward || task.xp} colorClass="text-[#a855f7]" label="XP" />
                     </div>
-                    <span className="text-white/30 text-[9px] font-bold uppercase ml-auto">{task.deadline}</span>
                   </div>
                 </div>
 
                 <button 
                   disabled={task.isAnalyzing}
                   onClick={() => { triggerHaptic?.('medium'); setConfirmTask(task); }}
-                  className={`shrink-0 px-3 py-2.5 font-black text-[10px] uppercase shadow-[2px_2px_0_#000] transition-all 
-                    ${task.isAnalyzing ? 'bg-white/5 text-white/10 opacity-50' : 'bg-[#daa520] text-black active:translate-x-0.5 active:translate-y-0.5 active:shadow-none'}`}
+                  className={`shrink-0 px-3 py-2.5 font-black text-[10px] uppercase shadow-[2px_2px_0_#000] 
+                    ${task.isAnalyzing ? 'bg-white/5 text-white/10' : 'bg-[#daa520] text-black active:translate-x-0.5 active:translate-y-0.5 active:shadow-none'}`}
                 >
-                  {task.isAnalyzing ? '???' : 'ВЫПОЛНЕНО'}
+                  {task.isAnalyzing ? '???' : 'OK'}
                 </button>
               </div>
             );
@@ -159,6 +184,11 @@ const QuestsPage = ({ character, setCharacter, videos, triggerHaptic }) => {
           </div>
         </div>
       </div>
+
+      <QuestDetailsModal 
+        task={selectedDetails} 
+        onClose={() => setSelectedDetails(null)} 
+      />
 
       <ConfirmModal task={confirmTask} onConfirm={finalizeTask} onCancel={() => setConfirmTask(null)} />
       {isAddModalOpen && <AddTaskModal onAdd={onAddTask} onClose={() => setIsAddModalOpen(false)} triggerHaptic={triggerHaptic} />}

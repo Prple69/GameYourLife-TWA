@@ -19,7 +19,6 @@ class UserSchema(BaseModel):
     xp_multiplier: float
     gold_multiplier: float
 
-    # В Pydantic V2 используется model_config вместо class Config
     model_config = ConfigDict(from_attributes=True)
 
 
@@ -30,14 +29,18 @@ class QuestBase(BaseModel):
     deadline: str  # Формат YYYY-MM-DD
 
 class QuestCreate(QuestBase):
-    """Данные для отправки на анализ ИИ"""
+    """Данные для отправки на анализ ИИ (включая состояние юзера)"""
     today: str
+    current_hp: int
+    max_hp: int
+    lvl: int
 
 class QuestSave(QuestBase):
     """Данные для сохранения в БД после ИИ анализа"""
     difficulty: str
     xp_reward: int
     gold_reward: int
+    hp_penalty: int  # <--- Добавлено
 
 class QuestSchema(QuestBase):
     """Полная схема квеста для фронтенда"""
@@ -46,6 +49,7 @@ class QuestSchema(QuestBase):
     difficulty: str
     xp_reward: int
     gold_reward: int
+    hp_penalty: int  # <--- Добавлено
     is_completed: bool
     is_failed: bool
     created_at: datetime  
@@ -53,13 +57,14 @@ class QuestSchema(QuestBase):
     model_config = ConfigDict(from_attributes=True)
 
 
-# --- Схемы для ответов API ---
+# --- Схемы для ответов API (Gemini) ---
 
 class AnalysisResponse(BaseModel):
     """Результат от ИИ для фронтовой 'рулетки'"""
     difficulty: str
     xp: int  
     gold: int 
+    hp_penalty: int # <--- Добавлено
 
 class UserUpdate(BaseModel):
     """Для синхронизации прогресса"""
