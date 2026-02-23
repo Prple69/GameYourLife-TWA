@@ -4,7 +4,7 @@ import Header from '../components/Header';
 import ConfirmModal from '../components/ConfirmModal';
 import AddTaskModal from '../components/AddTaskModal';
 
-// Компонент для рулетки Gold и XP (дизайн не меняем, только логику цифр)
+// Компонент для рулетки Gold и XP
 const RollingValue = ({ isAnalyzing, value, colorClass, label }) => {
   const [displayValue, setDisplayValue] = useState(0);
 
@@ -13,7 +13,7 @@ const RollingValue = ({ isAnalyzing, value, colorClass, label }) => {
     if (isAnalyzing) {
       interval = setInterval(() => {
         setDisplayValue(Math.floor(Math.random() * 150));
-      }, 150);
+      }, 150); // Плавная скорость перебора
     } else {
       setDisplayValue(value);
     }
@@ -21,7 +21,7 @@ const RollingValue = ({ isAnalyzing, value, colorClass, label }) => {
   }, [isAnalyzing, value]);
 
   return (
-    <span className={`${colorClass} text-[9px] font-black uppercase`}>
+    <span className={`${colorClass} text-[9px] font-black uppercase transition-all duration-700 ${!isAnalyzing ? 'scale-110' : ''}`}>
       +{displayValue} {label}
     </span>
   );
@@ -32,7 +32,6 @@ const QuestsPage = ({ character, setCharacter, videos, triggerHaptic }) => {
     { id: 1, title: 'Английский 20 мин', difficulty: 'easy', deadline: '2024-05-20', xp: 20, gold: 10, isAnalyzing: false },
   ]);
 
-  // Этот стейт нужен только для того, чтобы React перерисовывал страницу и рулетка крутилась
   const [tick, setTick] = useState(0);
   useEffect(() => {
     const timer = setInterval(() => setTick(t => t + 1), 300);
@@ -51,12 +50,10 @@ const QuestsPage = ({ character, setCharacter, videos, triggerHaptic }) => {
     };
 
     if (task.isAnalyzing) {
-      // ВОТ ТУТ МАГИЯ: берем массив ключей и выбираем один на основе времени
       const keys = ['easy', 'medium', 'hard', 'epic'];
       const currentKey = keys[Math.floor((Date.now() / 300) % keys.length)];
-      return styles[currentKey]; // Возвращаем ПОЛНЫЙ стиль (цвет + текст)
+      return styles[currentKey];
     }
-
     return styles[task.difficulty] || styles.easy;
   };
 
@@ -79,15 +76,19 @@ const QuestsPage = ({ character, setCharacter, videos, triggerHaptic }) => {
     try {
       const response = await axios.post('/api/analyze', basicData);
       
-      // Имитируем "обдумывание" 2 секунды, пока крутится рулетка
       setTimeout(() => {
         setTasks(prev => prev.map(t => t.id === tempId ? {
           ...t,
           ...response.data,
           isAnalyzing: false,
-          isNew: true 
+          isSettling: true // Флаг для анимации увеличения
         } : t));
         triggerHaptic?.('success');
+
+        // Убираем эффект увеличения через 1 секунду
+        setTimeout(() => {
+          setTasks(prev => prev.map(t => t.id === tempId ? { ...t, isSettling: false } : t));
+        }, 1000);
       }, 2000);
     } catch (error) {
       setTasks(prev => prev.filter(t => t.id !== tempId));
@@ -117,15 +118,19 @@ const QuestsPage = ({ character, setCharacter, videos, triggerHaptic }) => {
           {tasks.map(task => {
             const diff = getDifficultyStyles(task);
             return (
-              <div key={task.id} className={`group relative w-full bg-black/70 border border-white/10 p-4 flex items-center justify-between shadow-[6px_6px_0px_rgba(0,0,0,0.9)] transition-all gap-3 
-                ${task.isNew ? 'animate-bounce border-[#daa520]/50' : ''}`}>
+              <div 
+                key={task.id} 
+                className={`group relative w-full bg-black/70 border p-4 flex items-center justify-between shadow-[6px_6px_0px_rgba(0,0,0,0.9)] transition-all duration-700 gap-3 
+                ${task.isSettling 
+                  ? 'scale-[1.03] border-[#daa520] shadow-[0_0_20px_rgba(218,165,32,0.3)]' 
+                  : 'scale-100 border-white/10'}`}
+              >
                 
                 <div className="flex flex-col gap-2 min-w-0 flex-1">
                   <span className="text-white text-[14px] uppercase font-black tracking-tight leading-tight break-words">{task.title}</span>
                   
                   <div className="flex flex-wrap gap-2 items-center">
-                    {/* ТЕПЕРЬ ЯЧЕЙКА МЕНЯЕТСЯ ЦЕЛИКОМ: И ТЕКСТ И ЦВЕТ */}
-                    <span className={`text-[9px] px-2 py-0.5 font-bold border rounded-sm uppercase tracking-widest transition-all duration-300 ${diff.color}`}>
+                    <span className={`text-[9px] px-2 py-0.5 font-bold border rounded-sm uppercase tracking-widest transition-all duration-500 ${diff.color}`}>
                       {diff.label}
                     </span>
                     
@@ -141,15 +146,15 @@ const QuestsPage = ({ character, setCharacter, videos, triggerHaptic }) => {
                   disabled={task.isAnalyzing}
                   onClick={() => { triggerHaptic?.('medium'); setConfirmTask(task); }}
                   className={`shrink-0 px-3 py-2.5 font-black text-[10px] uppercase shadow-[2px_2px_0_#000] transition-all 
-                    ${task.isAnalyzing ? 'bg-white/5 text-white/10' : 'bg-[#daa520] text-black'}`}
+                    ${task.isAnalyzing ? 'bg-white/5 text-white/10 opacity-50' : 'bg-[#daa520] text-black active:translate-x-0.5 active:translate-y-0.5 active:shadow-none'}`}
                 >
-                  {task.isAnalyzing ? '...' : 'ВЫПОЛНЕНО'}
+                  {task.isAnalyzing ? '???' : 'ВЫПОЛНЕНО'}
                 </button>
               </div>
             );
           })}
 
-          <div onClick={() => { setIsAddModalOpen(true); triggerHaptic?.('light'); }} className="w-full border-2 border-dashed border-[#daa520]/20 p-6 mt-4 text-center bg-black/30 active:bg-black/50 cursor-pointer group">
+          <div onClick={() => { setIsAddModalOpen(true); triggerHaptic?.('light'); }} className="w-full border-2 border-dashed border-[#daa520]/20 p-6 mt-4 text-center bg-black/30 active:bg-black/50 cursor-pointer group transition-all">
             <span className="text-[11px] text-[#daa520]/60 group-active:text-[#daa520] tracking-[0.3em] uppercase font-black">+ ДОБАВИТЬ КОНТРАКТ</span>
           </div>
         </div>
