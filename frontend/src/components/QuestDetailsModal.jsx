@@ -15,91 +15,95 @@ const QuestDetailsModal = ({ task, character, onClose }) => {
   };
 
   const currentDiff = difficultyStyles[task.difficulty] || difficultyStyles.easy;
-
-  // Имя без символа @ и италика
   const signatoryName = character?.username || `ID_${character?.telegram_id?.slice(-5) || 'Unknown'}`;
+  
+  const deadlineDate = task.deadline || new Date().toLocaleDateString('ru-RU');
   const todayDate = new Date().toLocaleDateString('ru-RU');
 
   return (
     <div 
-      className="fixed inset-0 z-[120] flex items-center justify-center p-6 bg-black/80 backdrop-blur-md animate-in fade-in duration-300"
+      className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-in fade-in duration-300"
       onClick={handleOverlayClick}
     >
-      <div className="relative w-full max-w-sm bg-[#0d0d0d] border border-[#daa520]/60 p-1 shadow-[0_0_60px_rgba(0,0,0,1)]">
+      <div className="relative w-full max-w-sm bg-[#0a0a0a] border border-[#daa520]/60 shadow-[0_0_60px_rgba(0,0,0,1)]">
         
-        <div className="border border-[#daa520]/20 p-7 flex flex-col gap-8 relative">
+        <div className="border border-[#daa520]/20 p-5 flex flex-col gap-6 relative">
           
-          {/* Шапка контракта */}
+          {/* Заголовок */}
           <div className="text-center">
-            <h2 className="text-[#daa520] font-black text-[12px] uppercase tracking-[0.4em] mb-4">
+            <h2 className="text-[#daa520] font-black text-[10px] uppercase tracking-[0.3em] mb-2 opacity-70">
               Контракт на выполнение
             </h2>
-            <p className="text-white font-black text-2xl uppercase tracking-tight leading-tight px-2 break-words">
+            <p className="text-white font-black text-xl uppercase tracking-tight leading-none break-words">
               {task.title}
             </p>
           </div>
 
-          {/* Параметры */}
-          <div className="space-y-6 font-mono">
-            <div className="flex justify-between items-center border-b border-white/10 pb-3">
-              <span className="text-white/40 uppercase tracking-widest text-[9px]">Уровень угрозы:</span>
-              <span className={`px-3 py-1 font-black border rounded-sm uppercase tracking-widest text-[10px] ${currentDiff.color}`}>
+          {/* Инфо-панель */}
+          <div className="space-y-3 font-mono">
+            <div className="flex justify-between items-center border-b border-white/5 pb-2">
+              <span className="text-white/30 uppercase text-[8px]">Уровень сложности:</span>
+              <span className={`px-2 py-0.5 font-black border rounded-sm uppercase text-[9px] ${currentDiff.color}`}>
                 {currentDiff.label}
               </span>
             </div>
 
-            <div className="flex justify-between items-center border-b border-white/10 pb-3">
-              <span className="text-white/40 uppercase tracking-widest text-[9px]">Срок завершения:</span>
-              <span className="text-white font-black text-[11px] uppercase tracking-tighter">
-                ДО 23:59 (МСК)
+            <div className="flex justify-between items-center border-b border-white/5 pb-2">
+              <span className="text-white/30 uppercase text-[8px]">Срок завершения:</span>
+              <span className="text-white font-black text-[10px]">
+                {deadlineDate} 23:59 (МСК)
               </span>
             </div>
 
-            <div className="space-y-4">
-              <span className="text-white/40 uppercase block text-center tracking-[0.3em] text-[9px]">Вознаграждение</span>
-              <div className="flex justify-center gap-8 py-4 bg-white/5 border-y border-white/10">
-                <div className="flex flex-col items-center">
-                   <span className="text-[#daa520] font-black text-lg">+{task.gold_reward || task.gold}</span>
-                   <span className="text-[#daa520]/50 text-[8px] font-bold">GOLD</span>
-                </div>
-                <div className="flex flex-col items-center">
-                   <span className="text-[#a855f7] font-black text-lg">+{task.xp_reward || task.xp}</span>
-                   <span className="text-[#a855f7]/50 text-[8px] font-bold">XP</span>
-                </div>
+            {/* Блок параметров (Золото, Опыт, Штраф) */}
+            <div className="grid grid-cols-3 gap-2 py-4 bg-white/[0.03] border-y border-white/10">
+              <div className="flex flex-col items-center border-r border-white/5">
+                <span className="text-[#daa520] font-black text-2xl leading-none">
+                  {task.gold_reward || task.gold || 0}
+                </span>
+                <span className="text-[#daa520]/60 text-[8px] font-black mt-1 uppercase">Gold</span>
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <span className="text-red-500/50 uppercase block text-center tracking-[0.3em] text-[9px]">Штраф при провале</span>
-              <div className="text-center bg-red-500/10 py-4 border border-red-500/30">
-                <span className="text-red-500 font-black text-3xl tracking-tighter">-{task.hp_penalty} HP</span>
+              <div className="flex flex-col items-center border-r border-white/5">
+                <span className="text-[#a855f7] font-black text-2xl leading-none">
+                  {task.xp_reward || task.xp || 0}
+                </span>
+                <span className="text-[#a855f7]/60 text-[8px] font-black mt-1 uppercase">XP</span>
+              </div>
+
+              <div className="flex flex-col items-center">
+                <span className="text-red-500 font-black text-2xl leading-none">
+                  -{task.hp_penalty || 0}
+                </span>
+                <span className="text-red-500/60 text-[8px] font-black mt-1 uppercase">HP</span>
               </div>
             </div>
           </div>
 
-            {/* Блок подписи - Справа внизу */}
-            <div className="mt-6 flex flex-col items-end">
-            <div className="flex flex-col items-end">
-                <span className="text-[#daa520]/40 text-[9px] uppercase tracking-widest mb-2">Исполнитель:</span>
-                <span className="text-white font-mono font-black text-xl uppercase tracking-wider">
+          {/* Блок подписи с адаптивной полоской */}
+          <div className="flex flex-col items-end mt-2">
+            <span className="text-[#daa520]/40 text-[8px] uppercase tracking-widest mb-1">Исполнитель:</span>
+            
+            {/* Обертка, которая подстраивается под ширину текста */}
+            <div className="inline-flex flex-col items-center w-fit">
+              <span className="text-white font-mono font-black text-lg uppercase tracking-widest px-1">
                 {signatoryName}
-                </span>
-                {/* Линия подписи */}
-                <div className="h-[2px] w-40 bg-[#daa520]/40 mt-1 shadow-[0_1px_10px_rgba(218,165,32,0.3)]" />
-                
-                {/* Блок с датой вместо ID */}
-                <div className="flex justify-center w-40 mt-1 text-white/20 text-[8px] uppercase tracking-[0.2em]">
-                <span>Дата: {todayDate}</span>
-                </div>
-            </div>
+              </span>
+              {/* Полоска теперь всегда равна ширине ника выше */}
+              <div className="h-[1.5px] w-full bg-[#daa520]/40 shadow-[0_1px_8px_rgba(218,165,32,0.2)]" />
             </div>
 
-          {/* Кнопка закрытия */}
+            <span className="text-white/20 text-[8px] mt-2 uppercase font-mono tracking-tighter">
+              Дата: {todayDate}
+            </span>
+          </div>
+
+          {/* Закрыть */}
           <button 
             onClick={onClose}
-            className="absolute top-2 right-2 p-2 text-white/20 hover:text-[#daa520] transition-colors"
+            className="absolute top-1 right-1 p-2 text-white/10 hover:text-white transition-colors"
           >
-            <span className="font-mono text-2xl">×</span>
+            <span className="font-mono text-xl">×</span>
           </button>
         </div>
       </div>
