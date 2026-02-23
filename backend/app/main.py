@@ -1,14 +1,22 @@
-from fastapi import FastAPI, Depends, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List
-from contextlib import asynccontextmanager
-from app import models, crud, database, schemas
+import re
+import json
 import logging
+from typing import List
+from openai import AsyncOpenAI
+from contextlib import asynccontextmanager
+from sqlalchemy.ext.asyncio import AsyncSession
+from app import models, crud, database, schemas
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, Depends, HTTPException, Body
 
 # Настройка логирования для отладки
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+client = AsyncOpenAI(
+    base_url="https://openrouter.ai/api/v1",
+    api_key="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", 
+)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -28,6 +36,80 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# --- ИИ ОЦЕНКА КВЕСТОВ ---
+
+@app.post("/api/analyze")
+async def analyze_task(payload: dict = Body(...)):
+    """
+    Анализ квеста через Gemini AI. 
+    Принимает те же данные, что и твоя Vercel-функция.
+    """
+    try:
+        title = payload.get("title", "Без названия")
+        deadline = payload.get("deadline", "Не указан")
+        current_day = payload.get("today", "сегодня")
+        lvl = payload.get("lvl", 1)
+        current_hp = payload.get("current_hp", 100)
+        max_hp = payload.get("max_hp", 100)
+
+        # Твой промпт, перенесенный из JS
+        prompt = f""" Ты RPG мастер. Оцени контракт: "{title}".
+        Сегодня: {current_day}. Дедлайн: {deadline}.
+        
+        СТАТУС ИГРОКА:
+        - Уровень: {lvl}
+        - Текущее HP: {current_hp} / {max_hp}
+
+        КРИТЕРИИ СЛОЖНОСТИ И НАГРАД:
+        - easy: Рутина. Награда: gold 5-15, xp 10-30. Штраф при провале: 5-8 HP.
+        - medium: Усилия. Награда: gold 20-45, xp 40-80. Штраф при провале: 10-15 HP.
+        - hard: Тяжелая работа. Награда: gold 50-120, xp 100-250. Штраф при провале: 20-30 HP.
+        - epic: Жизненное достижение. Награда: gold 150-300, xp 300-500. Штраф при провале: 40-60 HP.
+
+        ПРАВИЛА МАСТЕРА:
+        1. Если дедлайн критический (сегодня), сложность и награда растут.
+        2. Оцени "hp_penalty" (штраф за провал) исходя из сложности. 
+        3. Если у игрока критически мало HP ({current_hp}), сделай штраф чуть мягче, но не ниже минимального для категории.
+
+        Верни ТОЛЬКО чистый JSON (без разметки markdown): 
+        {{
+            "difficulty": "easy"|"medium"|"hard"|"epic", 
+            "xp": number, 
+            "gold": number, 
+            "hp_penalty": number
+        }} """
+
+        completion = await client.chat.completions.create(
+            model="arcee-ai/trinity-large-preview:free", # Та самая модель из примера
+            messages=[
+                {
+                    "role": "user", 
+                    "content": prompt
+                }
+            ]
+        )
+
+        # 3. Обрабатываем ответ
+        content = completion.choices[0].message.content
+
+        # Чистка от ```json ... ``` если ИИ их добавил
+        clean_json = re.sub(r"```json|```", "", content).strip()
+        
+        # Парсим строку в словарь и возвращаем
+        result = json.loads(clean_json)
+        return result
+
+    except Exception as e:
+        logger.error(f"AI Analysis Error: {e}")
+        # Фаллбек, если ИИ упал или выдал невалидный JSON
+        return {
+            "difficulty": "medium",
+            "xp": 40,
+            "gold": 20,
+            "hp_penalty": 12,
+            "fallback": True
+        }
 
 # --- ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ ---
 

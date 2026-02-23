@@ -158,36 +158,38 @@ const QuestsPage = ({ character, setCharacter, videos, triggerHaptic }) => {
   };
 
   return (
-    <div className="fixed inset-0 w-full h-full bg-black overflow-hidden flex flex-col font-mono items-center">
+<div className="fixed inset-0 w-full h-full bg-black overflow-x-hidden overflow-y-auto flex flex-col font-mono items-center">
       <div className="absolute inset-0 z-0">
         <video src={videos?.quests || ""} autoPlay loop muted playsInline className="w-full h-full object-cover opacity-60" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black" />
       </div>
 
-      <div className="relative z-10 flex flex-col items-center w-full h-full px-[4%]">
+      <div className="relative z-10 flex flex-col items-center w-full h-full px-[4%] max-w-full">
         <Header title="Задания" subtitle={DEBUG_MODE ? "DEBUG ACTIVE" : "Контракты"}/>
 
-        <div className="flex-1 w-full max-w-2xl overflow-y-auto space-y-4 pt-4 mb-[130px] custom-scrollbar">
-          {/* ЗАЩИТА: Проверяем наличие массива и его длину */}
+        {/* Убрали overflow-y-auto отсюда, так как он на родителе, либо оставили, но жестко overflow-x-hidden */}
+        <div className="flex-1 w-full max-w-2xl overflow-y-auto overflow-x-hidden space-y-4 pt-4 mb-[130px] custom-scrollbar">
           {Array.isArray(tasks) && tasks.length > 0 ? (
             tasks.map(task => {
               const diff = getDifficultyStyles(task);
               return (
                 <div 
                   key={task.id} 
-                  className={`group relative w-full bg-black/80 border p-4 flex items-center justify-between shadow-[6px_6px_0px_rgba(0,0,0,0.9)] transition-all duration-700 gap-3 
+                  // Добавили max-w-full и overflow-hidden для карточки
+                  className={`group relative w-full max-w-full overflow-hidden bg-black/80 border p-4 flex items-center justify-between shadow-[6px_6px_0px_rgba(0,0,0,0.9)] transition-all duration-700 gap-3 
                   ${task.isSettling ? 'scale-[1.02] border-[#daa520]' : 'border-white/10'}`}
                   onClick={() => !task.isAnalyzing && setSelectedDetails(task)}
                 >
                   <div className="flex flex-col gap-2 min-w-0 flex-1">
+                    {/* truncate уже есть, это хорошо */}
                     <span className="text-white text-[14px] uppercase font-black truncate">{task.title}</span>
                     
                     <div className="flex flex-wrap gap-2 items-center">
-                      <span className={`text-[8px] px-1.5 py-0.5 font-bold border rounded-sm uppercase ${diff.color}`}>
+                      <span className={`text-[8px] px-1.5 py-0.5 font-bold border rounded-sm uppercase ${diff.color} whitespace-nowrap`}>
                         {diff.label}
                       </span>
                       
-                      <div className="flex items-center gap-3 border-l border-white/10 pl-2">
+                      <div className="flex items-center gap-3 border-l border-white/10 pl-2 overflow-hidden">
                         <RollingValue isAnalyzing={task.isAnalyzing} value={task.gold_reward || 0} colorClass="text-[#daa520]" label="G" />
                         <RollingValue isAnalyzing={task.isAnalyzing} value={task.xp_reward || 0} colorClass="text-[#a855f7]" label="XP" />
                         <RollingValue isAnalyzing={task.isAnalyzing} value={task.hp_penalty || 0} colorClass="text-red-500" label="HP" prefix="-" />
