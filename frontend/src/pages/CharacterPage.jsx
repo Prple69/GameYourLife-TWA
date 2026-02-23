@@ -9,18 +9,13 @@ import avatar1 from '../assets/avatar1.png';
 import avatar2 from '../assets/avatar2.png';
 import avatar3 from '../assets/avatar3.png';
 
-const avatarMap = {
-  avatar1: avatar1,
-  avatar2: avatar2,
-  avatar3: avatar3
-};
+const avatarMap = { avatar1, avatar2, avatar3 };
 
 const CharacterPage = ({ character, setCharacter, videos, triggerHaptic }) => {
   if (!character) return null;
 
   const [isSelectorOpen, setIsSelectorOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
 
   const xpPercentage = Math.min((character.xp / (character.max_xp || 100)) * 100, 100);
   const hpPercentage = Math.min((character.hp / (character.max_hp || 100)) * 100, 100);
@@ -38,28 +33,16 @@ const CharacterPage = ({ character, setCharacter, videos, triggerHaptic }) => {
   ];
 
   const handleAvatarChange = async (avatarId) => {
-    // 1. Сохраняем старый аватар на случай ошибки сервера
     const oldAvatar = character.selected_avatar;
-
     try {
       triggerHaptic('medium');
-      
-      // 2. МГНОВЕННОЕ ОБНОВЛЕНИЕ (Optimistic)
-      // Мы не ждем ответа, а сразу обновляем стейт
       setCharacter(prev => ({ ...prev, selected_avatar: avatarId }));
       setIsSelectorOpen(false);
-
-      // 3. Отправляем запрос в фоне
       const updatedUser = await userService.updateAvatar(character.telegram_id, avatarId);
-      
-      // 4. Синхронизируем финальные данные от сервера
       setCharacter({ ...updatedUser }); 
-      
     } catch (err) {
-      console.error("Ошибка при смене аватара:", err);
-      // Если сервер упал — возвращаем как было
+      console.error(err);
       setCharacter(prev => ({ ...prev, selected_avatar: oldAvatar }));
-      alert("Не удалось сохранить аватар. Попробуйте позже.");
     }
   };
 
@@ -70,88 +53,76 @@ const CharacterPage = ({ character, setCharacter, videos, triggerHaptic }) => {
         <video 
           src={videos?.camp || ""} 
           autoPlay loop muted playsInline 
-          className="w-full h-full object-cover opacity-70" 
+          className="w-full h-full object-cover opacity-80" 
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black" />
       </div>
 
-      <Header title="ЛАГЕРЬ" subtitle="СТАТУС ГЕРОЯ" gold={character.gold} />
+      <Header title="ЛАГЕРЬ" subtitle="ПРОФИЛЬ" gold={character.gold} />
 
-      <div className="relative z-20 flex flex-col items-center w-full px-4 mt-6">
+      <div className="relative z-20 flex flex-col items-center w-full px-6 mt-4">
         
-        {/* КАРТОЧКА ПЕРСОНАЖА (ВЕРХНЯЯ ЧАСТЬ) */}
-        <div className={`flex items-start p-4 bg-black/60 backdrop-blur-xl border border-white/10 rounded-sm w-full max-w-[500px] transition-opacity ${isUpdating ? 'opacity-50' : 'opacity-100'}`}>
+        {/* МИНИ-КАРТОЧКА (Стеклянная) */}
+        <div className="flex items-center p-3 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-xl w-full max-w-[400px] shadow-2xl">
           
-          {/* ЛЕВО: АВАТАР */}
-          <div className="relative shrink-0">
-            <div 
-              className="w-24 h-24 sm:w-32 sm:h-32 bg-black/40 border-2 border-[#daa520]/40 cursor-pointer active:scale-95 transition-all overflow-hidden shadow-[0_0_20px_rgba(218,165,32,0.2)]"
-              onClick={() => { triggerHaptic('light'); setIsSelectorOpen(true); }}
-            >
-              <img 
-                src={avatarMap[character.selected_avatar] || avatar1} 
-                alt="Avatar" 
-                className="w-full h-full object-cover" 
-              />
-              <div className="absolute bottom-0 inset-x-0 bg-black/80 text-[7px] text-center py-0.5 text-[#daa520] font-black uppercase tracking-tighter">
-                ИЗМЕНИТЬ
-              </div>
+          {/* АВАТАР */}
+          <div 
+            className="relative w-20 h-20 sm:w-24 sm:h-24 shrink-0 cursor-pointer active:scale-95 transition-transform"
+            onClick={() => { triggerHaptic('light'); setIsSelectorOpen(true); }}
+          >
+            <div className="absolute inset-0 rounded-lg border border-[#daa520]/30 shadow-[0_0_15px_rgba(218,165,32,0.1)]" />
+            <img 
+              src={avatarMap[character.selected_avatar] || avatar1} 
+              alt="Avatar" 
+              className="w-full h-full object-cover rounded-lg" 
+            />
+            <div className="absolute -bottom-1 -right-1 bg-[#daa520] p-1 rounded-md shadow-lg">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="black"><path d="M21 13h-8v8h-2v-8H3v-2h8V3h2v8h8v2z"/></svg>
             </div>
           </div>
 
-          {/* ПРАВО: ИНФО */}
+          {/* ИНФО */}
           <div 
-            className="flex flex-col ml-4 flex-1 cursor-pointer"
+            className="ml-4 flex-1 cursor-pointer"
             onClick={() => { triggerHaptic('medium'); setIsProfileOpen(true); }}
           >
-            <div className="flex items-baseline gap-2">
-              <h3 className="text-white text-xl sm:text-2xl font-[1000] uppercase tracking-tighter truncate">
-                {character.username}
-              </h3>
-              <span className="text-[#daa520] text-sm font-black">
-                Lvl {character.lvl}
-              </span>
-            </div>
-            
-            <p className="text-white/40 text-[9px] font-black uppercase tracking-widest -mt-1 mb-2">
+            <h3 className="text-white text-lg font-black uppercase tracking-tighter leading-none">
+              {character.username}
+            </h3>
+            <p className="text-[#daa520] text-[10px] font-black mt-1 tracking-widest">
               {titles[character.char_class] || titles.knight}
             </p>
-
-            {/* ЗОЛОТО В ПАНЕЛИ */}
-            <div className="flex items-center gap-2 bg-white/5 border border-white/10 w-fit px-3 py-1 rounded-sm">
-              <span className="text-lg">🪙</span>
-              <span className="text-[#daa520] font-[1000] text-lg tracking-tighter">
-                {character.gold.toLocaleString()}
-              </span>
+            <div className="mt-2 inline-block bg-white/10 px-2 py-0.5 rounded text-[10px] text-white/60 font-bold">
+              LVL {character.lvl}
             </div>
           </div>
         </div>
 
-        {/* НИЖНЯЯ ЧАСТЬ: ПОЛОСКИ СТАТУСА (ВЫНЕСЕНЫ НИЖЕ) */}
-        <div className="w-full max-w-[500px] mt-4 space-y-3 bg-black/40 p-4 border-x border-b border-white/5">
-          {/* HP Bar */}
+        {/* СТАТУС-БАРЫ (Ультра-прозрачные) */}
+        <div className="w-full max-w-[400px] mt-3 px-2 space-y-4">
+          {/* HP */}
           <div className="space-y-1">
-            <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
-              <span className="text-red-500/80">Здоровье</span>
-              <span className="text-white">{character.hp} / {character.max_hp}</span>
+            <div className="flex justify-between text-[9px] font-black uppercase text-white/40 tracking-[0.2em]">
+              <span>Жизнь</span>
+              <span className="text-red-500/80">{character.hp}</span>
             </div>
-            <div className="h-2 bg-white/5 border border-white/10 overflow-hidden p-[1px]">
+            <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
               <div 
-                className="h-full bg-gradient-to-r from-red-800 to-red-500 transition-all duration-1000 shadow-[0_0_10px_rgba(239,68,68,0.4)]" 
+                className="h-full bg-gradient-to-r from-red-600 to-red-400 transition-all duration-1000 shadow-[0_0_8px_rgba(239,68,68,0.5)]" 
                 style={{ width: `${hpPercentage}%` }} 
               />
             </div>
           </div>
 
-          {/* XP Bar */}
+          {/* XP */}
           <div className="space-y-1">
-            <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
-              <span className="text-[#daa520]/80">Опыт</span>
-              <span className="text-white">{character.xp} / {character.max_xp}</span>
+            <div className="flex justify-between text-[9px] font-black uppercase text-white/40 tracking-[0.2em]">
+              <span>Опыт</span>
+              <span className="text-[#daa520]/80">{character.xp} / {character.max_xp}</span>
             </div>
-            <div className="h-2 bg-white/5 border border-white/10 overflow-hidden p-[1px]">
+            <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
               <div 
-                className="h-full bg-gradient-to-r from-[#b8860b] to-[#ffd700] transition-all duration-1000 shadow-[0_0_10px_rgba(218,165,32,0.4)]" 
+                className="h-full bg-gradient-to-r from-[#b8860b] to-[#ffd700] transition-all duration-1000 shadow-[0_0_8px_rgba(218,165,32,0.5)]" 
                 style={{ width: `${xpPercentage}%` }} 
               />
             </div>
@@ -160,7 +131,7 @@ const CharacterPage = ({ character, setCharacter, videos, triggerHaptic }) => {
 
       </div>
 
-      {/* МОДАЛЬНЫЕ ОКНА */}
+      {/* МОДАЛКИ */}
       <AvatarSelector 
         isOpen={isSelectorOpen} 
         onClose={() => setIsSelectorOpen(false)} 
@@ -168,7 +139,6 @@ const CharacterPage = ({ character, setCharacter, videos, triggerHaptic }) => {
         currentAvatar={character.selected_avatar} 
         onSelect={handleAvatarChange} 
       />
-
       <ProfileModal 
         isOpen={isProfileOpen} 
         onClose={() => setIsProfileOpen(false)} 
