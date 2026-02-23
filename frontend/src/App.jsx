@@ -8,11 +8,11 @@ import InventoryPage from "./pages/InventoryPage.jsx";
 import LoadingPage from "./pages/LoadingPage.jsx";
 import { userService } from './services/api';
 
-// Авто-импорт всех файлов из папки assets
+// Автоматический импорт всех ассетов из папки
 const allVideoFiles = import.meta.glob('./assets/*.mp4', { eager: true });
 const allImageFiles = import.meta.glob('./assets/*.{png,jpg,jpeg,gif}', { eager: true });
 
-// Карта соответствия: "как пишем в коде": "как называется файл"
+// Карта соответствия для сохранения старых имен в коде
 const assetNamingMap = {
   'shop':   'shop_anim',
   'bag':    'bag_anim',
@@ -41,15 +41,11 @@ const App = () => {
     tg.expand();
 
     const initializeApp = async () => {
-      // Подготовка списка видео с учетом алиасов
+      // Подготовка списка видео
       const videosToLoad = Object.entries(allVideoFiles).map(([path, module]) => {
         const fileName = path.split('/').pop().split('.')[0];
-        // Ищем, нет ли для этого файла короткого имени (например, camp для hero_anim)
         const alias = Object.keys(assetNamingMap).find(key => assetNamingMap[key] === fileName);
-        return {
-          id: alias || fileName,
-          src: module.default
-        };
+        return { id: alias || fileName, src: module.default };
       });
 
       const imagesToLoad = Object.values(allImageFiles).map(module => module.default);
@@ -64,45 +60,41 @@ const App = () => {
       };
 
       try {
-        // 1. Загрузка данных юзера (Критично)
+        // 1. Загрузка профиля
         const userRes = await userService.getProfile(userData.id, userData.username);
-        if (!userRes) throw new Error("USER_PROFILE_NOT_FOUND");
+        if (!userRes) throw new Error("CRITICAL_API_ERROR");
         increment();
 
-        // 2. Загрузка ВИДЕО (Blob)
+        // 2. Загрузка Видео в Blob
         const videoPromises = videosToLoad.map(async (v) => {
           const response = await fetch(v.src);
-          if (!response.ok) throw new Error(`VIDEO_FETCH_FAILED: ${v.id}`);
+          if (!response.ok) throw new Error(`FAILED_TO_FETCH_VIDEO: ${v.id}`);
           const blob = await response.blob();
           tempVideoUrls[v.id] = URL.createObjectURL(blob);
           increment();
         });
 
-        // 3. Загрузка КАРТИНОК
+        // 3. Кеширование Картинок
         const imagePromises = imagesToLoad.map((src) => {
           return new Promise((resolve, reject) => {
             const img = new Image();
             img.src = src;
             img.onload = () => { increment(); resolve(); };
-            img.onerror = () => reject(new Error("IMAGE_LOAD_FAILED"));
+            img.onerror = () => reject(new Error("IMAGE_PRELOAD_FAILED"));
           });
         });
 
-        // Ждем завершения абсолютно всех процессов
         await Promise.all([...videoPromises, ...imagePromises]);
 
-        // Финальная синхронизация состояний
         setVideoUrls(tempVideoUrls);
         setCharacter(userRes);
         
-        // Даем браузеру 600мс на «утряску» ресурсов перед скрытием лоадера
-        setTimeout(() => {
-          setIsLoaded(true);
-        }, 600);
+        // Пауза для GPU, чтобы отрисовать первый кадр видео в памяти
+        setTimeout(() => setIsLoaded(true), 800);
 
       } catch (err) {
-        console.error("Critical Load Error:", err);
-        setError(err.message || "DATABASE_OFFLINE");
+        console.error("Initialization Failed:", err);
+        setError(err.message);
       }
     };
 
@@ -117,64 +109,62 @@ const App = () => {
     if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred(style);
   };
 
-  // Экран фатальной ошибки
   if (error) {
     return (
-      <div className="fixed inset-0 bg-black flex flex-col items-center justify-center p-10 text-center z-[100000]">
-        <div className="border border-red-600 p-8 bg-red-950/20 backdrop-blur-md">
-          <div className="text-red-500 font-black text-3xl mb-2 tracking-tighter">FATAL_ERROR</div>
-          <div className="text-white/40 text-[8px] uppercase tracking-[0.5em] mb-8">{error}</div>
-          <button 
-            onClick={() => window.location.reload()} 
-            className="px-8 py-3 bg-white text-black font-black text-[10px] uppercase tracking-widest active:scale-95 transition-transform"
-          >
-            REBOOT SYSTEM
-          </button>
+      <div className="fixed inset-0 bg-black flex flex-col items-center justify-center p-10 z-[100000]">
+        <div className="border border-red-500 p-6 bg-red-500/10 text-center">
+          <h1 className="text-red-500 font-black text-xl mb-2">SYSTEM FAILURE</h1>
+          <p className="text-white/40 text-[10px] uppercase mb-6">{error}</p>
+          <button onClick={() => window.location.reload()} className="bg-white text-black px-6 py-2 font-bold text-xs italic">RETRY</button>
         </div>
       </div>
     );
   }
 
-  const renderPage = () => {
-    // Двойная проверка: если данных нет, не рендерим ничего
-    if (!character || Object.keys(videoUrls).length === 0) return null;
-
-    const props = { 
-      character, 
-      setCharacter, 
-      videos: videoUrls, 
-      triggerHaptic 
-    };
-
-    switch (activeTab) {
-      case 'inventory': return <InventoryPage {...props} />;
-      case 'shop':      return <ShopPage {...props} />;
-      case 'camp':      return <CharacterPage {...props} />;
-      case 'quests':    return <QuestsPage {...props} />;
-      case 'leaderboard': return <LeaderboardPage {...props} />;
-      default:          return <CharacterPage {...props} />;
-    }
+  // Общие пропсы для всех страниц
+  const pageProps = { 
+    character, 
+    setCharacter, 
+    videos: videoUrls, 
+    triggerHaptic 
   };
 
   return (
     <div className="fixed inset-0 bg-black text-white font-mono overflow-hidden select-none touch-none">
-      {/* Контент монтируется только когда ВСЁ загружено */}
-      {isLoaded && character && (
-        <>
-          <main className="w-full h-full relative z-10 animate-in fade-in duration-1000">
-            {renderPage()}
-          </main>
-          <Navigation 
-            activeTab={activeTab} 
-            setActiveTab={(tab) => {
-              triggerHaptic('soft');
-              setActiveTab(tab);
-            }} 
-          />
-        </>
-      )}
+      
+      {/* Плавный контейнер с GPU-ускорением */}
+      <main 
+        className={`w-full h-full relative z-10 transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+        style={{ transform: 'translateZ(0)' }}
+      >
+        {isLoaded && character && (
+          <div className="w-full h-full relative">
+            {/* Рендерим все страницы сразу, переключаем видимость через hidden */}
+            <div className={activeTab === 'camp' ? 'block h-full' : 'hidden h-full'}>
+              <CharacterPage {...pageProps} />
+            </div>
+            <div className={activeTab === 'quests' ? 'block h-full' : 'hidden h-full'}>
+              <QuestsPage {...pageProps} />
+            </div>
+            <div className={activeTab === 'shop' ? 'block h-full' : 'hidden h-full'}>
+              <ShopPage {...pageProps} />
+            </div>
+            <div className={activeTab === 'inventory' ? 'block h-full' : 'hidden h-full'}>
+              <InventoryPage {...pageProps} />
+            </div>
+            <div className={activeTab === 'leaderboard' ? 'block h-full' : 'hidden h-full'}>
+              <LeaderboardPage {...pageProps} />
+            </div>
 
-      {/* Лоадер перекрывает всё, пока isLoaded = false */}
+            <Navigation 
+              activeTab={activeTab} 
+              setActiveTab={(tab) => { triggerHaptic('soft'); setActiveTab(tab); }} 
+            />
+          </div>
+        )}
+      </main>
+
+      {/* Лоадер перекрывает всё, пока не загрузимся */}
       <LoadingPage progress={progress} isLoaded={isLoaded} />
     </div>
   );

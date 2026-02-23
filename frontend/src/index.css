@@ -37,6 +37,11 @@ input, textarea {
   outline: none;
 }
 
+video {
+  -webkit-transform-style: preserve-3d;
+  transform: translateZ(0); /* Принудительное ускорение GPU */
+}
+
 /* Отключаем зум на iOS при фокусе в инпуты (если размер шрифта меньше 16px) */
 @media screen and (max-width: 768px) {
   input, select, textarea {
