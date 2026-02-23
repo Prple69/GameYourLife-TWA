@@ -17,7 +17,8 @@ const RollingValue = ({ isAnalyzing, value, colorClass, label, prefix = "+" }) =
         setDisplayValue(Math.floor(Math.random() * 100));
       }, 300);
     } else {
-      setDisplayValue(value || 0); // Защита от NaN/undefined
+      // Принудительно к числу, чтобы не выбивало NaN
+      setDisplayValue(Number(value) || 0); 
     }
     return () => clearInterval(interval);
   }, [isAnalyzing, value]);
