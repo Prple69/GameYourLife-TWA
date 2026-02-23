@@ -1,33 +1,27 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export default async function handler(req, res) {
-  // Разрешаем только POST запросы
+  // 1. Проверяем, что это POST
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ message: 'Only POST allowed' });
   }
 
-  const { title } = req.body;
-
-  // Инициализация ИИ (ключ берем из переменных окружения Vercel)
-  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-  // Используем gemini-1.5-flash (она бесплатная и быстрая)
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-  const prompt = `Ты RPG геймдизайнер. Оцени задание: "${title}". 
-  Верни ТОЛЬКО чистый JSON без разметок и лишних слов: 
-  {"difficulty": "easy"|"medium"|"hard"|"epic", "xp": 100, "gold": 50}`;
-
   try {
+    const { title } = req.body;
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+    const prompt = `RPG difficulty rater. Task: "${title}". Return JSON: {"difficulty":"easy"|"medium"|"hard"|"epic", "xp":number, "gold":number}`;
+
     const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
-    
-    // Очищаем от возможных Markdown-кавычек, если ИИ их добавит
+    const text = result.response.text();
     const cleanJson = JSON.parse(text.replace(/```json|```/g, "").trim());
-    
+
+    // 2. Обязательно возвращаем ответ
     return res.status(200).json(cleanJson);
+    
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: "Ошибка ИИ", details: error.message });
+    console.error("API Error:", error);
+    return res.status(500).json({ error: error.message });
   }
 }
