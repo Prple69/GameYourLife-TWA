@@ -15,7 +15,7 @@ async def lifespan(app: FastAPI):
     await database.init_db()
     yield
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(lifespan=lifespan, redirect_slashes=False)
 
 app.add_middleware(
     CORSMiddleware,
@@ -53,35 +53,19 @@ async def update_avatar(tg_id: str, avatar_id: str, db: AsyncSession = Depends(d
 
 # --- КОНТРАКТЫ (КВЕСТЫ) ---
 
-@app.get("/api/quests/{tg_id}", response_model=List[schemas.QuestSchema])
-async def get_quests(tg_id: str, db: AsyncSession = Depends(database.get_db)):
-    """Гарантированно возвращает список, чтобы .map() на фронте не падал"""
-    try:
-        quests = await crud.get_active_quests(db, tg_id)
-        # Если crud вернул None или что-то еще, возвращаем []
-        if quests is None:
-            return []
-        return quests
-    except Exception as e:
-        logger.error(f"Error fetching quests for {tg_id}: {e}")
-        # Вместо падения возвращаем пустой список, чтобы фронт выжил
-        return []
-
 @app.post("/api/quests/save/{tg_id}", response_model=schemas.QuestSchema)
 async def save_quest(tg_id: str, quest_data: schemas.QuestSave, db: AsyncSession = Depends(database.get_db)):
-    """
-    Сохранение контракта. 
-    Важно: tg_id берется из пути, а данные квеста из BODY (JSON).
-    """
+    """Сохранение квеста. Обязательно метод POST"""
     try:
-        logger.info(f"Saving quest for user {tg_id}: {quest_data.title}")
+        # Логируем, чтобы видеть запрос в терминале
+        print(f"DEBUG: Saving quest for {tg_id}. Data: {quest_data.title}")
+        
         quest = await crud.create_quest(db, tg_id, quest_data)
         if not quest:
-            # Если crud вернул None, значит юзера нет в базе
-            raise HTTPException(status_code=404, detail="User not found in database")
+            raise HTTPException(status_code=404, detail="User not found")
         return quest
     except Exception as e:
-        logger.error(f"CRITICAL ERROR SAVING QUEST: {e}")
+        print(f"ERROR: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/quests/complete/{quest_id}")
@@ -106,6 +90,20 @@ async def complete_quest(quest_id: int, tg_id: str, db: AsyncSession = Depends(d
     except Exception as e:
         logger.error(f"Error completing quest: {e}")
         raise HTTPException(status_code=500, detail="Error during completion")
+
+@app.get("/api/quests/{tg_id}", response_model=List[schemas.QuestSchema])
+async def get_quests(tg_id: str, db: AsyncSession = Depends(database.get_db)):
+    """Гарантированно возвращает список, чтобы .map() на фронте не падал"""
+    try:
+        quests = await crud.get_active_quests(db, tg_id)
+        # Если crud вернул None или что-то еще, возвращаем []
+        if quests is None:
+            return []
+        return quests
+    except Exception as e:
+        logger.error(f"Error fetching quests for {tg_id}: {e}")
+        # Вместо падения возвращаем пустой список, чтобы фронт выжил
+        return []
 
 @app.get("/api/quests/history/{tg_id}", response_model=List[schemas.QuestSchema])
 async def get_history(tg_id: str, db: AsyncSession = Depends(database.get_db)):

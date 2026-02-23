@@ -7,7 +7,10 @@ import ShopPage from "./pages/ShopPage.jsx";
 import InventoryPage from "./pages/InventoryPage.jsx";
 import LoadingPage from "./pages/LoadingPage.jsx";
 import { userService } from './services/api';
+import axios from 'axios';
 
+// Замени на актуальный адрес из Tuna
+axios.defaults.baseURL = 'https://gameurlife.ru.tuna.am';
 // Оптимизируем компоненты страниц, чтобы они не перерисовывались в скрытом состоянии
 const MemoCamp = memo(CharacterPage);
 const MemoQuests = memo(QuestsPage);
