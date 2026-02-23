@@ -5,46 +5,37 @@ const AddTaskModal = ({ onAdd, onClose, triggerHaptic }) => {
   const [title, setTitle] = useState('');
   const [deadline, setDeadline] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null); // Новое состояние для ошибки
 
   const handleSubmit = async () => {
-    // Валидация
     if (!title.trim() || !deadline || isLoading) return;
 
     setIsLoading(true);
+    setError(null); // Сбрасываем старую ошибку перед новым запросом
     if (triggerHaptic) triggerHaptic('medium');
 
     try {
-      // 1. Отправляем запрос на наш серверлесс-эндпоинт Vercel
-      // Мы передаем только title, ИИ сам решит сложность и награду
       const response = await axios.post('/api/analyze', { 
         title: title.trim() 
       });
 
       const aiResult = response.data;
 
-      // 2. Вызываем onAdd с данными от ИИ
+      // Если все ок — добавляем и закрываем
       onAdd({
         title: title.trim(),
         deadline: deadline,
-        difficulty: aiResult.difficulty, // easy, medium, hard, epic
-        xp: aiResult.xp,
-        gold: aiResult.gold
+        difficulty: aiResult.difficulty || 'medium',
+        xp: aiResult.xp || 50,
+        gold: aiResult.gold || 25
       });
 
       if (triggerHaptic) triggerHaptic('success');
       
-    } catch (error) {
-      console.error("AI Analysis failed:", error);
-      
-      // 3. Запасной вариант (Fallback), если ИИ недоступен
-      onAdd({
-        title: title.trim(),
-        deadline: deadline,
-        difficulty: 'medium',
-        xp: 50,
-        gold: 25
-      });
-      
+    } catch (err) {
+      console.error("AI Analysis failed:", err);
+      // Вместо скрытого фоллбека — показываем ошибку юзеру
+      setError("ИИ не смог оценить контракт. Проверь связь или попробуй позже.");
       if (triggerHaptic) triggerHaptic('error');
     } finally {
       setIsLoading(false);
@@ -55,7 +46,6 @@ const AddTaskModal = ({ onAdd, onClose, triggerHaptic }) => {
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 backdrop-blur-md bg-black/80">
       <div className="w-full max-w-sm bg-[#111] border-2 border-white/10 p-6 shadow-[10px_10px_0px_#000]">
         
-        {/* Хедер модалки с индикатором загрузки */}
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-white text-xl font-black uppercase tracking-tighter">
             Новый контракт
@@ -66,21 +56,22 @@ const AddTaskModal = ({ onAdd, onClose, triggerHaptic }) => {
         </div>
         
         <div className="space-y-6">
-          {/* ПОЛЕ: НАЗВАНИЕ */}
           <div className={isLoading ? "opacity-50 pointer-events-none" : ""}>
             <label className="text-white/40 text-[9px] uppercase font-black mb-2 block tracking-widest">
               Суть задания
             </label>
             <input 
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e) => {
+                setTitle(e.target.value);
+                if(error) setError(null); // Убираем ошибку, когда юзер начал править текст
+              }}
               className="w-full bg-white/5 border border-white/10 p-3 text-white font-mono text-sm focus:border-[#daa520] outline-none transition-colors"
               placeholder="Напр: Прочитать 20 страниц..."
               disabled={isLoading}
             />
           </div>
 
-          {/* ПОЛЕ: ДАТА */}
           <div className={isLoading ? "opacity-50 pointer-events-none" : ""}>
             <label className="text-white/40 text-[9px] uppercase font-black mb-2 block tracking-widest">
               Выполнить до
@@ -96,7 +87,13 @@ const AddTaskModal = ({ onAdd, onClose, triggerHaptic }) => {
           </div>
         </div>
 
-        {/* КНОПКИ */}
+        {/* БЛОК ОШИБКИ */}
+        {error && (
+          <div className="mt-6 p-3 border border-red-500/50 bg-red-500/10 text-red-500 text-[10px] font-bold uppercase tracking-tight">
+            ⚠ {error}
+          </div>
+        )}
+
         <div className="grid grid-cols-2 gap-4 mt-10">
           <button 
             onClick={onClose} 
@@ -122,7 +119,6 @@ const AddTaskModal = ({ onAdd, onClose, triggerHaptic }) => {
           </button>
         </div>
 
-        {/* Подсказка для юзера */}
         {isLoading && (
           <p className="text-[8px] text-[#daa520] font-bold uppercase mt-4 text-center animate-pulse tracking-widest">
             Магический ИИ оценивает сложность контракта...
