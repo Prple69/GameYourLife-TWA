@@ -67,7 +67,6 @@ async def add_reward(db: AsyncSession, tg_id: str, xp_amount: int, gold_amount: 
 # --- ЛОГИКА КВЕСТОВ ---
 
 async def create_quest(db: AsyncSession, tg_id: str, quest_data: schemas.QuestSave):
-    """Создать квест асинхронно"""
     user = await get_user_by_tg_id(db, tg_id)
     if not user:
         return None
@@ -78,6 +77,7 @@ async def create_quest(db: AsyncSession, tg_id: str, quest_data: schemas.QuestSa
         difficulty=quest_data.difficulty,
         xp_reward=quest_data.xp_reward,
         gold_reward=quest_data.gold_reward,
+        hp_penalty=quest_data.hp_penalty,
         deadline=quest_data.deadline,
         is_completed=False,
         is_failed=False
