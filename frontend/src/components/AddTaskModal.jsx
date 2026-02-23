@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { X } from 'lucide-react'; // Не забудь импортировать иконку
+import { X } from 'lucide-react';
 
 const AddTaskModal = ({ onAdd, onClose, triggerHaptic }) => {
   const [title, setTitle] = useState('');
@@ -8,8 +8,18 @@ const AddTaskModal = ({ onAdd, onClose, triggerHaptic }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Получаем сегодняшнюю дату в формате YYYY-MM-DD
+  const today = new Date().toISOString().split('T')[0];
+
   const handleSubmit = async () => {
     if (!title.trim() || !deadline || isLoading) return;
+
+    // Дополнительная проверка: дедлайн не может быть в прошлом
+    if (deadline < today) {
+      setError("Нельзя заключить контракт в прошлом!");
+      if (triggerHaptic) triggerHaptic('error');
+      return;
+    }
 
     setIsLoading(true);
     setError(null);
@@ -17,7 +27,8 @@ const AddTaskModal = ({ onAdd, onClose, triggerHaptic }) => {
 
     try {
       const response = await axios.post('/api/analyze', { 
-        title: title.trim() 
+        title: title.trim(),
+        deadline: deadline 
       });
 
       const aiResult = response.data;
@@ -26,15 +37,15 @@ const AddTaskModal = ({ onAdd, onClose, triggerHaptic }) => {
         title: title.trim(),
         deadline: deadline,
         difficulty: aiResult.difficulty || 'medium',
-        xp: aiResult.xp || 50,
-        gold: aiResult.gold || 25
+        xp: aiResult.xp || 20,
+        gold: aiResult.gold || 10
       });
 
       if (triggerHaptic) triggerHaptic('success');
+      onClose();
       
     } catch (err) {
-      console.error("Analysis failed:", err);
-      setError("Не удалось оценить контракт. Попробуйте еще раз.");
+      setError("Ошибка оценки. Попробуй еще раз.");
       if (triggerHaptic) triggerHaptic('error');
     } finally {
       setIsLoading(false);
@@ -45,7 +56,6 @@ const AddTaskModal = ({ onAdd, onClose, triggerHaptic }) => {
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 backdrop-blur-md bg-black/80">
       <div className="w-full max-w-sm bg-[#111] border-2 border-white/10 p-6 shadow-[10px_10px_0px_#000] relative">
         
-        {/* КНОПКА ЗАКРЫТИЯ (КРЕСТИК) */}
         <button 
           onClick={onClose}
           className="absolute top-4 right-4 text-white/20 hover:text-white transition-colors"
@@ -87,7 +97,11 @@ const AddTaskModal = ({ onAdd, onClose, triggerHaptic }) => {
             <input 
               type="date"
               value={deadline}
-              onChange={(e) => setDeadline(e.target.value)}
+              min={today} // ОГРАНИЧЕНИЕ: Блокирует прошлые даты в календаре
+              onChange={(e) => {
+                setDeadline(e.target.value);
+                if(error) setError(null);
+              }}
               className="w-full bg-white/5 border border-white/10 p-3 text-white font-mono text-sm outline-none focus:border-[#daa520] appearance-none"
               style={{ colorScheme: 'dark' }}
               disabled={isLoading}
@@ -95,14 +109,12 @@ const AddTaskModal = ({ onAdd, onClose, triggerHaptic }) => {
           </div>
         </div>
 
-        {/* ОШИБКА */}
         {error && (
           <div className="mt-6 p-3 border border-red-500/50 bg-red-500/10 text-red-500 text-[10px] font-black uppercase">
             ⚠ {error}
           </div>
         )}
 
-        {/* КНОПКА ДЕЙСТВИЯ */}
         <div className="mt-10">
           <button 
             onClick={handleSubmit}

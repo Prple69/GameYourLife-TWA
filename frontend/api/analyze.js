@@ -1,7 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 
 export default async function handler(req, res) {
-  // CORS конфиг для Telegram Web App
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -9,30 +8,38 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ message: 'Method not allowed' });
 
-  const { title } = req.body;
+  const { title, deadline } = req.body;
+  const today = new Date().toISOString().split('T')[0]; // Генерируем дату на сервере
+  const prompt = `Ты RPG мастер. Оцени контракт: "${title}".
+  Сегодня: ${today}. Дедлайн: ${deadline}.
 
-  // Инициализируем ИИ
+  КРИТЕРИИ СЛОЖНОСТИ:
+  - easy: Рутина, до 30 мин. Награда: gold 5-15, xp 10-30.
+  - medium: Усилия, 1-3 часа. Награда: gold 20-45, xp 40-80.
+  - hard: Тяжелая работа, весь день или сложный проект. Награда: gold 50-120, xp 100-250.
+  - epic: Жизненное достижение или экстремальный дедлайн. Награда: gold 150-300, xp 300-500.
+
+  Если дедлайн очень близко (сегодня/завтра) для сложной задачи — повышай категорию до hard/epic.
+
+  Верни ТОЛЬКО JSON: 
+  {"difficulty": "easy"|"medium"|"hard"|"epic", "xp": number, "gold": number}`;
+
   const ai = new GoogleGenAI({ 
     apiKey: process.env.GEMINI_API_KEY 
   });
 
   try {
-    // Используем gemini-2.5-flash
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: [{
         role: "user",
         parts: [{
-          text: `Ты RPG мастер. Проанализируй квест: "${title}". 
-          Верни ТОЛЬКО JSON: {"difficulty": "easy"|"medium"|"hard"|"epic", "xp": number, "gold": number}. 
-          XP давай от 20 до 500. Никакого лишнего текста.`
+          text: prompt
         }]
       }]
     });
 
     const aiText = response.text;
-    
-    // Чистим от маркдауна (ИИ часто сует ```json ... ```)
     const cleanJsonString = aiText.replace(/```json|```/g, "").trim();
     const result = JSON.parse(cleanJsonString);
 
@@ -40,15 +47,8 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error("AI Error:", error);
-
-    // Если 404 (модель еще не доехала до твоего региона Vercel) или другая ошибка
-    // Отдаем дефолт, чтобы приложение не падало
     return res.status(200).json({
-      difficulty: "medium",
-      xp: 50,
-      gold: 25,
-      fallback: true,
-      debug: error.message 
+      difficulty: "medium", xp: 30, gold: 20, fallback: true 
     });
   }
 }
