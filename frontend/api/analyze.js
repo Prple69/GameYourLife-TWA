@@ -1,39 +1,54 @@
 import { GoogleGenAI } from "@google/genai";
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).end();
+  // CORS конфиг для Telegram Web App
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method !== 'POST') return res.status(405).json({ message: 'Method not allowed' });
 
   const { title } = req.body;
 
-  // Инициализация с твоим ключом из настроек Vercel
-  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  // Инициализируем ИИ
+  const ai = new GoogleGenAI({ 
+    apiKey: process.env.GEMINI_API_KEY 
+  });
 
   try {
+    // Используем gemini-2.5-flash
     const response = await ai.models.generateContent({
-      // Используем модель из твоего примера
-      model: "gemini-1.5-flash", // gemini-3-flash-preview может быть доступна не во всех регионах, если 404 останется — это она
-      contents: `Ты геймдизайнер. Оцени задание: "${title}". 
-      Верни ТОЛЬКО JSON: {"difficulty":"easy"|"medium"|"hard"|"epic", "xp":number, "gold":number}. 
-      Не пиши лишних слов.`,
+      model: "gemini-2.5-flash",
+      contents: [{
+        role: "user",
+        parts: [{
+          text: `Ты RPG мастер. Проанализируй квест: "${title}". 
+          Верни ТОЛЬКО JSON: {"difficulty": "easy"|"medium"|"hard"|"epic", "xp": number, "gold": number}. 
+          XP давай от 20 до 500. Никакого лишнего текста.`
+        }]
+      }]
     });
 
-    // В библиотеке @google/genai ответ обычно лежит в response.text
-    const text = response.text;
+    const aiText = response.text;
     
-    // Чистим JSON от возможных кавычек markdown
-    const cleanJson = JSON.parse(text.replace(/```json|```/g, "").trim());
-    
-    return res.status(200).json(cleanJson);
+    // Чистим от маркдауна (ИИ часто сует ```json ... ```)
+    const cleanJsonString = aiText.replace(/```json|```/g, "").trim();
+    const result = JSON.parse(cleanJsonString);
+
+    return res.status(200).json(result);
 
   } catch (error) {
     console.error("AI Error:", error);
-    
-    // Если ИИ все еще выдает 404 или падает, отдаем дефолт, чтобы юзер мог создать задачу
+
+    // Если 404 (модель еще не доехала до твоего региона Vercel) или другая ошибка
+    // Отдаем дефолт, чтобы приложение не падало
     return res.status(200).json({
       difficulty: "medium",
       xp: 50,
       gold: 25,
-      error: error.message
+      fallback: true,
+      debug: error.message 
     });
   }
 }
