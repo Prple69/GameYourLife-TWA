@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { X } from 'lucide-react'; // Не забудь импортировать иконку
 
 const AddTaskModal = ({ onAdd, onClose, triggerHaptic }) => {
   const [title, setTitle] = useState('');
   const [deadline, setDeadline] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null); // Новое состояние для ошибки
+  const [error, setError] = useState(null);
 
   const handleSubmit = async () => {
     if (!title.trim() || !deadline || isLoading) return;
 
     setIsLoading(true);
-    setError(null); // Сбрасываем старую ошибку перед новым запросом
+    setError(null);
     if (triggerHaptic) triggerHaptic('medium');
 
     try {
@@ -21,7 +22,6 @@ const AddTaskModal = ({ onAdd, onClose, triggerHaptic }) => {
 
       const aiResult = response.data;
 
-      // Если все ок — добавляем и закрываем
       onAdd({
         title: title.trim(),
         deadline: deadline,
@@ -33,9 +33,8 @@ const AddTaskModal = ({ onAdd, onClose, triggerHaptic }) => {
       if (triggerHaptic) triggerHaptic('success');
       
     } catch (err) {
-      console.error("AI Analysis failed:", err);
-      // Вместо скрытого фоллбека — показываем ошибку юзеру
-      setError("ИИ не смог оценить контракт. Проверь связь или попробуй позже.");
+      console.error("Analysis failed:", err);
+      setError("Не удалось оценить контракт. Попробуйте еще раз.");
       if (triggerHaptic) triggerHaptic('error');
     } finally {
       setIsLoading(false);
@@ -44,86 +43,82 @@ const AddTaskModal = ({ onAdd, onClose, triggerHaptic }) => {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 backdrop-blur-md bg-black/80">
-      <div className="w-full max-w-sm bg-[#111] border-2 border-white/10 p-6 shadow-[10px_10px_0px_#000]">
+      <div className="w-full max-w-sm bg-[#111] border-2 border-white/10 p-6 shadow-[10px_10px_0px_#000] relative">
         
-        <div className="flex justify-between items-center mb-6">
+        {/* КНОПКА ЗАКРЫТИЯ (КРЕСТИК) */}
+        <button 
+          onClick={onClose}
+          className="absolute top-4 right-4 text-white/20 hover:text-white transition-colors"
+          disabled={isLoading}
+        >
+          <X size={20} strokeWidth={3} />
+        </button>
+
+        <div className="flex items-center mb-8">
           <h2 className="text-white text-xl font-black uppercase tracking-tighter">
             Новый контракт
           </h2>
           {isLoading && (
-            <div className="animate-spin h-4 w-4 border-2 border-[#daa520] border-t-transparent rounded-full" />
+            <div className="ml-3 animate-spin h-3 w-3 border-2 border-[#daa520] border-t-transparent rounded-full" />
           )}
         </div>
         
         <div className="space-y-6">
           <div className={isLoading ? "opacity-50 pointer-events-none" : ""}>
-            <label className="text-white/40 text-[9px] uppercase font-black mb-2 block tracking-widest">
+            <label className="text-white/40 text-[9px] uppercase font-black mb-2 block tracking-[0.2em]">
               Суть задания
             </label>
             <input 
               value={title}
               onChange={(e) => {
                 setTitle(e.target.value);
-                if(error) setError(null); // Убираем ошибку, когда юзер начал править текст
+                if(error) setError(null);
               }}
-              className="w-full bg-white/5 border border-white/10 p-3 text-white font-mono text-sm focus:border-[#daa520] outline-none transition-colors"
-              placeholder="Напр: Прочитать 20 страниц..."
+              className="w-full bg-white/5 border border-white/10 p-3 text-white font-mono text-sm focus:border-[#daa520] outline-none transition-colors placeholder:text-white/10"
+              placeholder="Напр: Тренировка в зале..."
               disabled={isLoading}
             />
           </div>
 
           <div className={isLoading ? "opacity-50 pointer-events-none" : ""}>
-            <label className="text-white/40 text-[9px] uppercase font-black mb-2 block tracking-widest">
-              Выполнить до
+            <label className="text-white/40 text-[9px] uppercase font-black mb-2 block tracking-[0.2em]">
+              Дедлайн
             </label>
             <input 
               type="date"
               value={deadline}
               onChange={(e) => setDeadline(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 p-3 text-white font-mono text-sm outline-none focus:border-[#daa520] appearance-none min-h-[48px]"
+              className="w-full bg-white/5 border border-white/10 p-3 text-white font-mono text-sm outline-none focus:border-[#daa520] appearance-none"
               style={{ colorScheme: 'dark' }}
               disabled={isLoading}
             />
           </div>
         </div>
 
-        {/* БЛОК ОШИБКИ */}
+        {/* ОШИБКА */}
         {error && (
-          <div className="mt-6 p-3 border border-red-500/50 bg-red-500/10 text-red-500 text-[10px] font-bold uppercase tracking-tight">
+          <div className="mt-6 p-3 border border-red-500/50 bg-red-500/10 text-red-500 text-[10px] font-black uppercase">
             ⚠ {error}
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-4 mt-10">
-          <button 
-            onClick={onClose} 
-            disabled={isLoading}
-            className="py-3 text-white/40 font-black uppercase text-[10px] active:text-white transition-colors disabled:opacity-0"
-          >
-            НАЗАД
-          </button>
-          
+        {/* КНОПКА ДЕЙСТВИЯ */}
+        <div className="mt-10">
           <button 
             onClick={handleSubmit}
             disabled={!title.trim() || !deadline || isLoading}
             className={`
-              py-3 font-black uppercase text-[10px] transition-all duration-200
+              w-full py-4 font-black uppercase text-[11px] tracking-[0.1em] transition-all duration-200
               ${isLoading 
-                ? "bg-gray-600 text-gray-400 cursor-wait" 
-                : "bg-white text-black shadow-[3px_3px_0px_#daa520] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
+                ? "bg-white/10 text-white/20 cursor-wait" 
+                : "bg-white text-black shadow-[4px_4px_0px_#daa520] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
               }
               disabled:opacity-20 disabled:shadow-none
             `}
           >
-            {isLoading ? 'Анализ...' : 'Принять'}
+            {isLoading ? 'Анализ...' : 'Оценить контракт'}
           </button>
         </div>
-
-        {isLoading && (
-          <p className="text-[8px] text-[#daa520] font-bold uppercase mt-4 text-center animate-pulse tracking-widest">
-            Магический ИИ оценивает сложность контракта...
-          </p>
-        )}
       </div>
     </div>
   );
