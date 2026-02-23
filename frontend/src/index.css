@@ -1,50 +1,106 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 @import "tailwindcss";
 
+/* --- ГЛОБАЛЬНЫЕ НАСТРОЙКИ ТЕЛА --- */
 body {
-  background-color: #000000; /* Темно-зеленый лесной */
-  background-image: radial-gradient(#000000 1px, transparent 1px);
+  background-color: #000000;
+  background-image: radial-gradient(#1a1a1a 1px, transparent 1px);
   background-size: 20px 20px;
-/* Запрещает выделение текста на всей странице */
+  color: #ffffff;
+  margin: 0;
+  padding: 0;
+  
+  /* Блокировка системных взаимодействий */
   user-select: none;
   -webkit-user-select: none;
-  
-  /* Отключает системное меню (копировать/вставить) при долгом нажатии на мобилках */
   -webkit-touch-callout: none;
   
-  /* Убирает задержку перед кликом и отключает двойной тап для зума */
-  touch-action: manipulation;
-  
-  /* Запрещает браузеру автоматически масштабировать текст */
-  -webkit-text-size-adjust: none;
+  /* Убирает "резиновый" скролл на iOS (bounce effect) */
+  overscroll-behavior: none;
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+
+  /* Оптимизация шрифтов */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+  
+  /* Убирает задержку клика */
+  touch-action: manipulation;
 }
 
-/* Убирает синюю подсветку при тапе на мобилках */
+/* --- ОПТИМИЗАЦИЯ ВИДЕО И ГРАФИКИ (GPU ACCELERATION) --- */
+video, 
+img, 
+canvas,
+.gpu-layer {
+  /* Принудительное использование видеокарты */
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  perspective: 1000;
+  
+  /* Подсказка браузеру для плавной отрисовки */
+  will-change: transform, opacity;
+  
+  /* Убирает фантомные клики по видео-слою */
+  pointer-events: none;
+}
+
+/* --- МОБИЛЬНЫЕ ФИКСЫ (iOS & ANDROID) --- */
 * {
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* Если у тебя будут поля ввода (input), им нужно вернуть возможность выделения */
-input, textarea {
-  user-select: text;
-  -webkit-user-select: text;
-}
-
-/* Убираем синюю подсветку при тапе (ты уже добавил, но для надежности расширим) */
-* {
+  /* Убирает синюю подсветку при нажатии на кнопки/ссылки */
   -webkit-tap-highlight-color: transparent;
   outline: none;
 }
 
-video {
-  -webkit-transform-style: preserve-3d;
-  transform: translateZ(0); /* Принудительное ускорение GPU */
+/* Исправляем Safe Area для новых iPhone (челка и полоса снизу) */
+:root {
+  --safe-top: env(safe-area-inset-top);
+  --safe-bottom: env(safe-area-inset-bottom);
 }
 
-/* Отключаем зум на iOS при фокусе в инпуты (если размер шрифта меньше 16px) */
-@media screen and (max-width: 768px) {
-  input, select, textarea {
-    font-size: 16px !important;
-  }
+/* Скрываем все возможные скроллбары */
+::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+}
+
+/* Фикс инпутов: возвращаем выделение текста, где оно нужно */
+input, textarea {
+  user-select: text;
+  -webkit-user-select: text;
+  /* Запрет зума при фокусе на iOS (шрифт должен быть >= 16px) */
+  font-size: 16px !important;
+}
+
+/* --- УЛУЧШЕНИЯ ДЛЯ ПИКСЕЛЬНЫХ ШРИФТОВ --- */
+.font-press-start {
+  font-family: 'Press Start 2P', cursive;
+  /* Убирает размытие при масштабировании текста */
+  image-rendering: pixelated;
+  text-rendering: optimizeSpeed;
+}
+
+/* --- УТИЛИТЫ ДЛЯ ПРОИЗВОДИТЕЛЬНОСТИ --- */
+
+/* ВМЕСТО backdrop-blur используй этот класс для плашек поверх видео */
+.glass-panel {
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  /* НЕ добавляй backdrop-blur, если хочешь 60 FPS на iOS поверх видео */
+}
+
+/* Анимация появления контента после лоадера */
+.fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
 }
