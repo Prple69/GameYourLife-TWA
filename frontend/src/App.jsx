@@ -6,24 +6,19 @@ import LeaderboardPage from "./pages/LeaderboardPage.jsx";
 import ShopPage from "./pages/ShopPage.jsx";
 import InventoryPage from "./pages/InventoryPage.jsx";
 import LoadingPage from "./pages/LoadingPage.jsx";
-
 import { userService } from './services/api';
 
-import shopVideoSrc from './assets/shop_anim.mp4';
-import bagVideoSrc from './assets/bag_anim.mp4';
-import campVideoSrc from './assets/hero_anim.mp4';
-import leaderVideoSrc from './assets/leaderboard_anim.mp4';
-import questsVideoSrc from './assets/quests_anim.mp4';
-import avatar1 from './assets/avatar1.png'; 
-import avatar2 from './assets/avatar2.png';
-import avatar3 from './assets/avatar3.png';
+// --- АВТОМАТИЧЕСКИЙ ИМПОРТ ВСЕХ АССЕТОВ ---
+// Эта магия Vite соберет все видео и картинки из папки assets
+const allVideoFiles = import.meta.glob('./assets/*.mp4', { eager: true });
+const allImageFiles = import.meta.glob('./assets/*.{png,jpg,jpeg,gif}', { eager: true });
 
 const App = () => {
   const tg = window.Telegram.WebApp;
 
   const [activeTab, setActiveTab] = useState('camp');
   const [isLoaded, setIsLoaded] = useState(false);
-  const [error, setError] = useState(null); // Добавляем состояние ошибки
+  const [error, setError] = useState(null);
   const [progress, setProgress] = useState(0);
   const [videoUrls, setVideoUrls] = useState({});
   const [character, setCharacter] = useState(null);
@@ -37,20 +32,17 @@ const App = () => {
     tg.ready();
     tg.expand();
 
-    const videoAssets = [
-      { id: 'shop', src: shopVideoSrc },
-      { id: 'bag', src: bagVideoSrc },
-      { id: 'camp', src: campVideoSrc },
-      { id: 'leader', src: leaderVideoSrc },
-      { id: 'quests', src: questsVideoSrc }
-    ];
-    const imageAssets = [avatar1, avatar2, avatar3];
-
     const initializeApp = async () => {
-      const totalSteps = videoAssets.length + imageAssets.length + 1;
+      // Превращаем объекты импортов в массивы путей
+      const videos = Object.entries(allVideoFiles).map(([path, module]) => ({
+        id: path.split('/').pop().split('.')[0], // Берем имя файла как ID (например, 'shop_anim')
+        src: module.default
+      }));
+
+      const images = Object.values(allImageFiles).map(module => module.default);
+
+      const totalSteps = videos.length + images.length + 1;
       let completedSteps = 0;
-      
-      // Локальные хранилища, чтобы не дергать стейт постоянно
       const tempVideoUrls = {};
 
       const increment = () => {
@@ -59,43 +51,40 @@ const App = () => {
       };
 
       try {
-        // 1. Сначала данные профиля. Если тут ошибка — летим в catch
+        // 1. Загрузка профиля
         const userRes = await userService.getProfile(userData.id, userData.username);
-        if (!userRes) throw new Error("Данные персонажа не получены");
+        if (!userRes) throw new Error("API_DATA_MISSING");
+        increment();
 
-        // 2. Загрузка видео через Fetch (Blob)
-        const videoPromises = videoAssets.map(async (asset) => {
-          const response = await fetch(asset.src);
-          if (!response.ok) throw new Error(`Ошибка загрузки ${asset.id}`);
+        // 2. Загрузка ВСЕХ найденных видео в Blob
+        const videoPromises = videos.map(async (v) => {
+          const response = await fetch(v.src);
+          if (!response.ok) throw new Error(`FAILED_VIDEO: ${v.id}`);
           const blob = await response.blob();
-          tempVideoUrls[asset.id] = URL.createObjectURL(blob);
+          tempVideoUrls[v.id] = URL.createObjectURL(blob);
           increment();
         });
 
-        // 3. Кеширование картинок
-        const imagePromises = imageAssets.map((src) => {
+        // 3. Кеширование ВСЕХ найденных картинок
+        const imagePromises = images.map((src) => {
           return new Promise((resolve, reject) => {
             const img = new Image();
             img.src = src;
             img.onload = () => { increment(); resolve(); };
-            img.onerror = () => reject(new Error("Ошибка загрузки картинки"));
+            img.onerror = () => reject(new Error("IMAGE_LOAD_FAILED"));
           });
         });
 
-        // Ждем абсолютно всё
-        await Promise.all([userRes, ...videoPromises, ...imagePromises]);
+        await Promise.all([...videoPromises, ...imagePromises]);
 
-        // Только когда ВСЁ загружено, обновляем стейты ОДИН раз
+        // Финализация
         setCharacter(userRes);
         setVideoUrls(tempVideoUrls);
-        
-        // Маленькая пауза, чтобы браузер «прожевал» ассеты перед показом
-        setTimeout(() => setIsLoaded(true), 400);
+        setTimeout(() => setIsLoaded(true), 500);
 
       } catch (err) {
-        console.error("Критический сбой:", err);
-        setError("ОШИБКА ПОДКЛЮЧЕНИЯ К СЕРВЕРУ");
-        // setIsLoaded остается false, приложение не откроется
+        console.error("Critical error:", err);
+        setError(err.message || "CONNECTION_LOST");
       }
     };
 
@@ -112,15 +101,12 @@ const App = () => {
 
   if (error) {
     return (
-      <div className="fixed inset-0 bg-black flex items-center justify-center p-10 text-center">
-        <div className="border border-red-500/50 p-6 bg-red-500/10">
-          <h1 className="text-red-500 font-black text-xl mb-4">CRITICAL_ERROR</h1>
-          <p className="text-white/60 text-xs leading-relaxed uppercase tracking-widest">{error}</p>
-          <button 
-            onClick={() => window.location.reload()}
-            className="mt-6 px-4 py-2 border border-white text-white text-[10px] font-bold"
-          >
-            ПЕРЕЗАГРУЗИТЬ
+      <div className="fixed inset-0 bg-black flex flex-col items-center justify-center p-10 text-center z-[100000]">
+        <div className="border-2 border-red-600 p-6 bg-red-900/20 backdrop-blur-md">
+          <h1 className="text-red-500 font-[1000] text-2xl mb-2 tracking-tighter italic">SYSTEM_FAILURE</h1>
+          <p className="text-white/40 text-[10px] uppercase tracking-[0.3em] mb-6">{error}</p>
+          <button onClick={() => window.location.reload()} className="px-6 py-2 bg-white text-black font-black text-xs uppercase hover:bg-red-500 hover:text-white transition-colors">
+            REBOOT_SYSTEM
           </button>
         </div>
       </div>
@@ -129,6 +115,7 @@ const App = () => {
 
   const renderPage = () => {
     if (!character) return null;
+    // Теперь в videos лежат все файлы по их именам: videos.shop_anim, videos.hero_anim и т.д.
     const props = { character, setCharacter, videos: videoUrls, triggerHaptic };
 
     switch (activeTab) {
