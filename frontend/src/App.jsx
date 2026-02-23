@@ -13,6 +13,14 @@ import { userService } from './services/api';
 const allVideoFiles = import.meta.glob('./assets/*.mp4', { eager: true });
 const allImageFiles = import.meta.glob('./assets/*.{png,jpg,jpeg,gif}', { eager: true });
 
+const assetNamingMap = {
+  'shop':   'shop_anim',
+  'bag':    'bag_anim',
+  'camp':   'hero_anim',
+  'leader': 'leaderboard_anim',
+  'quests': 'quests_anim'
+};
+
 const App = () => {
   const tg = window.Telegram.WebApp;
 
