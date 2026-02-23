@@ -57,7 +57,7 @@ const QuestsPage = ({
         <div className="w-full shrink-0 flex justify-center">
           {/* Ограничиваем ширину хедера тоже, чтобы он не разъезжался слишком сильно */}
           <div className="w-full max-w-2xl">
-            <Header title="Задания" subtitle="Активные контракты" gold={character.gold} />
+            <Header title="Задания" subtitle="Активные контракты"/>
           </div>
         </div>
 
