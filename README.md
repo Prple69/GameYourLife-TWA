@@ -18,5 +18,5 @@
 
 1. **Клонируйте репозиторий:**
    ```bash
-   git clone [https://github.com/Prple69/GameYourLife-TWA.git](https://github.com/Prple69/GameYourLife-TWA.git)
+   git clone https://github.com/Prple69/GameYourLife-TWA.git
    cd GameYourLife-TWA
