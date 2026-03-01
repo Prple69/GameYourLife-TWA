@@ -1,33 +1,22 @@
-Понял тебя. Давай вернемся к чистому, структурированному формату, где каждый блок на своем месте. Это лучший вариант для GitHub: выглядит профессионально, легко копируется и не превращается в кашу.
 
-Вот оформление твоего проекта **GameYourLife-TWA**:
-
----
-
-## 📄 Файл: `README.md`
-
-Это «лицо» твоего репозитория. Скопируй этот блок целиком.
-
-```markdown
 # 🎮 GameYourLife-TWA
 
-**GameYourLife** — это Telegram Web App (TWA), которое превращает вашу повседневную жизнь в RPG-игру. Выполняйте задачи в реальном мире, получайте опыт (XP) и прокачивайте своего персонажа.
+**GameYourLife** — это инновационное Telegram Web App (TWA), которое превращает вашу повседневную жизнь в захватывающую RPG-игру. Выполняйте задачи в реальном мире, зарабатывайте опыт (XP) и прокачивайте своего персонажа прямо в мессенджере.
 
 ---
 
 ## 🛠 Установка и запуск
 
 ### 🐍 Backend (FastAPI)
+
 1. **Создайте окружение и установите зависимости:**
    ```bash
    python -m venv venv
    source venv/bin/activate  # Для Windows: venv\Scripts\activate
    pip install -r requirements.txt
 
-```
-
 2. **Настройте переменные окружения:**
-Создайте файл `.env` в корне бэкенда:
+Создайте файл `.env` в папке бэкенда:
 ```env
 DATABASE_URL=postgresql+asyncpg://postgres:purple666@127.0.0.1:5432/game_db
 OPENAI_API_KEY=your_key_here
@@ -42,7 +31,7 @@ uvicorn main:app --reload
 ```
 
 
-> API Docs: [http://127.0.0.1:8000/docs](https://www.google.com/search?q=http://127.0.0.1:8000/docs)
+> 🔗 **API Docs:** http://127.0.0.1:8000/docs
 
 
 
@@ -65,7 +54,7 @@ npm run dev
 ```
 
 
-> Local URL: [http://localhost:5173](https://www.google.com/search?q=http://localhost:5173)
+> 🔗 **Local URL:** http://localhost:5173
 
 
 
@@ -77,12 +66,26 @@ npm run dev
 * **Frontend:** React, Vite, Tailwind CSS, @twa-dev/sdk.
 * **AI Integration:** OpenAI API для генерации игровых механик.
 
+---
+
+## 🛡️ Безопасность
+
+Убедитесь, что ваш `.gitignore` содержит следующие записи, чтобы не скомпрометировать ключи:
+
+```text
+venv/
+node_modules/
+.env
+__pycache__/
+dist/
+
 ```
 
 ---
 
-## 🐍 Файл: `requirements.txt` (Backend)
-Положи этот файл в корень бэкенда.
+## 📋 Зависимости проекта
+
+### Backend (requirements.txt)
 
 ```text
 fastapi==0.109.0
@@ -95,11 +98,7 @@ openai==1.10.0
 
 ```
 
----
-
-## ⚛️ Файл: `package.json` (Frontend)
-
-Положи этот файл в папку `frontend`.
+### Frontend (package.json)
 
 ```json
 {
@@ -107,10 +106,6 @@ openai==1.10.0
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build"
-  },
   "dependencies": {
     "@twa-dev/sdk": "^7.0.0",
     "axios": "^1.6.0",
@@ -127,28 +122,5 @@ openai==1.10.0
     "vite": "^4.4.5"
   }
 }
-
-```
-
----
-
-## 🛡️ Файл: `.gitignore`
-
-Создай его в самом корне проекта, чтобы не залить лишнего.
-
-```text
-# Python
-venv/
-__pycache__/
-*.pyc
-.env
-
-# Node.js
-node_modules/
-dist/
-.DS_Store
-
-# DB
-*.sqlite3
 
 ```
