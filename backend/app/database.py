@@ -1,10 +1,14 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, declarative_base
 import asyncio
+from dotenv import load_dotenv
+
+# Загружаем переменные из файла .env
+load_dotenv()
 
 # Используем 127.0.0.1 вместо localhost для исключения задержек DNS (пинг)
 # Формат: postgresql+asyncpg://user:password@127.0.0.1:5432/db_name
-SQLALCHEMY_DATABASE_URL = "postgresql+asyncpg://postgres:purple666@127.0.0.1:5432/game_db"
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
 
 # Создаем асинхронный движок
 engine = create_async_engine(
