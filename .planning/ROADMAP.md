@@ -32,7 +32,11 @@
 3. Existing quest completion and progression features continue to work with signature validation enabled
 4. No credentials visible in git history or code files
 
-**Plans:** TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Credential externalization: create Pydantic Settings config, migrate database.py and main.py off hardcoded values, create .env + .env.example + root .gitignore
+- [ ] 01-02-PLAN.md — Telegram signature validation: create dependencies.py with verify_telegram_init_data, wire into all 8 endpoints, update frontend api.js to forward initData header
 
 ---
 
@@ -113,7 +117,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Secure Foundation | 0/TBD | Not started | — |
+| 1. Secure Foundation | 0/2 | Not started | — |
 | 2. Character Stats | 0/TBD | Not started | — |
 | 3. AI Daily Quests | 0/TBD | Not started | — |
 | 4. Shop & Inventory | 0/TBD | Not started | — |
