@@ -100,28 +100,28 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PROG-01 | — | Complete (existing) |
 | PROF-01 | — | Complete (existing) |
 | PROF-02 | — | Complete (existing) |
-| SEC-01 | Phase TBD | Pending |
-| SEC-02 | Phase TBD | Pending |
-| PROG-02 | Phase TBD | Pending |
-| PROG-03 | Phase TBD | Pending |
-| SHOP-01 | Phase TBD | Pending |
-| SHOP-02 | Phase TBD | Pending |
-| SHOP-03 | Phase TBD | Pending |
-| SHOP-04 | Phase TBD | Pending |
-| SHOP-05 | Phase TBD | Pending |
-| INV-01 | Phase TBD | Pending |
-| INV-02 | Phase TBD | Pending |
-| INV-03 | Phase TBD | Pending |
-| LEAD-01 | Phase TBD | Pending |
-| LEAD-02 | Phase TBD | Pending |
-| AI-01 | Phase TBD | Pending |
-| AI-02 | Phase TBD | Pending |
+| SEC-01 | Phase 1 | Pending |
+| SEC-02 | Phase 1 | Pending |
+| PROG-02 | Phase 2 | Pending |
+| PROG-03 | Phase 2 | Pending |
+| AI-01 | Phase 3 | Pending |
+| AI-02 | Phase 3 | Pending |
+| SHOP-01 | Phase 4 | Pending |
+| SHOP-02 | Phase 4 | Pending |
+| SHOP-03 | Phase 4 | Pending |
+| SHOP-04 | Phase 4 | Pending |
+| SHOP-05 | Phase 4 | Pending |
+| INV-01 | Phase 4 | Pending |
+| INV-02 | Phase 4 | Pending |
+| INV-03 | Phase 4 | Pending |
+| LEAD-01 | Phase 5 | Pending |
+| LEAD-02 | Phase 5 | Pending |
 
 **Coverage:**
 - v1 requirements: 24 total (8 existing, 16 new)
-- Mapped to phases: 0 (populated by roadmap)
-- Unmapped: 16 ⚠️
+- Mapped to phases: 16 (populated by roadmap)
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-01*
-*Last updated: 2026-03-01 after initial definition*
+*Traceability updated: 2026-03-01 after roadmap creation*
