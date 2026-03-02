@@ -8,7 +8,7 @@
 
 ## Phases
 
-- [ ] **Phase 1: Secure Foundation** - Fix critical security issues and move credentials to environment variables
+- [x] **Phase 1: Secure Foundation** - Fix critical security issues and move credentials to environment variables (completed 2026-03-02)
 - [ ] **Phase 2: Character Stats** - Add 4 named stats that grow through different quest types
 - [ ] **Phase 3: AI Daily Quests** - Generate personalized daily quest suggestions based on character stats and history
 - [ ] **Phase 4: Shop & Inventory** - Add purchasable items (XP multiplier, gold multiplier, quest slots, cosmetics) and inventory management
@@ -32,7 +32,7 @@
 3. Existing quest completion and progression features continue to work with signature validation enabled
 4. No credentials visible in git history or code files
 
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
 - [ ] 01-01-PLAN.md — Credential externalization: create Pydantic Settings config, migrate database.py and main.py off hardcoded values, create .env + .env.example + root .gitignore
@@ -117,7 +117,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Secure Foundation | 1/2 | In Progress|  |
+| 1. Secure Foundation | 2/2 | Complete   | 2026-03-02 |
 | 2. Character Stats | 0/TBD | Not started | — |
 | 3. AI Daily Quests | 0/TBD | Not started | — |
 | 4. Shop & Inventory | 0/TBD | Not started | — |

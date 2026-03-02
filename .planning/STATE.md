@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 current_phase: Phase 1 (not started)
-current_plan: None
+current_plan: 01-01 complete, 01-02 next
 status: unknown
-last_updated: "2026-03-02T12:31:06.045Z"
+last_updated: "2026-03-02T12:38:38.725Z"
 progress:
   total_phases: 1
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 2
-  completed_plans: 1
-  percent: 50
+  completed_plans: 2
+  percent: 100
 ---
 
 # STATE: Game Your Life Roadmap Execution
@@ -47,7 +47,7 @@ progress:
 **Current Phase:** Phase 1: Secure Foundation (in progress)
 **Current Plan:** 01-01 complete, 01-02 next
 **Execution Status:** In progress
-**Progress:** [█████░░░░░] 50% (1/2 plans complete)
+**Progress:** [██████████] 100%
 
 ---
 
@@ -75,6 +75,9 @@ Phase 1 planning must address security (SEC-01, SEC-02) before feature work.
 | Leaderboard is final phase | Least critical; competitive layer is good polish after core loops work |
 | [01-01] Use Path(__file__).parent.parent to resolve backend/.env absolutely in config.py | Relative paths fail when module is imported from a different working directory |
 | [01-01] All backend modules use get_settings() singleton from app.config | Never use os.getenv() directly — centralized config prevents credential sprawl |
+- [Phase 01-secure-foundation]: [01-02] Use stdlib HMAC (hmac/hashlib) instead of telegram-init-data library — zero external dependencies, same algorithm
+- [Phase 01-secure-foundation]: [01-02] Route naming: /me convention (/api/user/me, /api/quests/me) instead of /{tg_id} path params — identity from verified token
+- [Phase 01-secure-foundation]: [01-02] All backend modules use Depends(verify_telegram_init_data) for auth — no endpoint is unauthenticated except /health
 
 ## Session Continuity
 
@@ -98,6 +101,7 @@ Phase 1 planning must address security (SEC-01, SEC-02) before feature work.
 
 ---
 | Phase 01-secure-foundation P01 | 3 | 2 tasks | 6 files |
+| Phase 01-secure-foundation P02 | 5 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
