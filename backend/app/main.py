@@ -1,29 +1,23 @@
 import re
 import json
 import logging
-import os
 from typing import List
 from openai import AsyncOpenAI
 from contextlib import asynccontextmanager
 from sqlalchemy.ext.asyncio import AsyncSession
 from app import models, crud, database, schemas
+from app.config import get_settings
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Depends, HTTPException, Body
-from dotenv import load_dotenv
 
 
 # Настройка логирования для отладки
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-load_dotenv() # Загружает данные из файла .env, если он есть
-
-# Извлекаем именно твою переменную
-my_key = os.getenv("OPENAI_API_KEY")
-
 client = AsyncOpenAI(
     base_url="https://openrouter.ai/api/v1",
-    api_key=my_key
+    api_key=get_settings().OPENAI_API_KEY
 )
 
 @asynccontextmanager
