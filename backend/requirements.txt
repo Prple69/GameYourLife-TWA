@@ -1,0 +1,18 @@
+# Web Framework
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+
+# Database (SQLAlchemy + Async Driver)
+sqlalchemy==2.0.25
+asyncpg==0.29.0
+
+# Data Validation & Settings
+pydantic==2.5.3
+pydantic-settings==2.1.0
+python-dotenv==1.0.0
+
+# AI & Integration
+openai==1.10.0
+
+# Utilities
+alembic==1.13.1
