@@ -32,7 +32,7 @@
 3. Existing quest completion and progression features continue to work with signature validation enabled
 4. No credentials visible in git history or code files
 
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
 - [ ] 01-01-PLAN.md — Credential externalization: create Pydantic Settings config, migrate database.py and main.py off hardcoded values, create .env + .env.example + root .gitignore
@@ -117,7 +117,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Secure Foundation | 0/2 | Not started | — |
+| 1. Secure Foundation | 1/2 | In Progress|  |
 | 2. Character Stats | 0/TBD | Not started | — |
 | 3. AI Daily Quests | 0/TBD | Not started | — |
 | 4. Shop & Inventory | 0/TBD | Not started | — |

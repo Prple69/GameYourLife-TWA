@@ -53,7 +53,7 @@ Requirements for initial release. Checked items are already working in the exist
 ### Security & Foundation
 
 - [ ] **SEC-01**: Server verifies Telegram initData cryptographic signature on all requests (no spoofable tg_id)
-- [ ] **SEC-02**: All credentials and API keys loaded from environment variables (not hardcoded)
+- [x] **SEC-02**: All credentials and API keys loaded from environment variables (not hardcoded)
 
 ## v2 Requirements
 
@@ -101,7 +101,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PROF-01 | — | Complete (existing) |
 | PROF-02 | — | Complete (existing) |
 | SEC-01 | Phase 1 | Pending |
-| SEC-02 | Phase 1 | Pending |
+| SEC-02 | Phase 1 | Complete |
 | PROG-02 | Phase 2 | Pending |
 | PROG-03 | Phase 2 | Pending |
 | AI-01 | Phase 3 | Pending |
