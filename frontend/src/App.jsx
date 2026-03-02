@@ -66,7 +66,7 @@ const App = () => {
 
       try {
         // --- ОПТИМИЗАЦИЯ: Запускаем всё параллельно ---
-        const apiPromise = userService.getProfile(userData.id, userData.username);
+        const apiPromise = userService.getProfile();
         
         const videoPromises = videosToLoad.map(async (v) => {
           const response = await fetch(v.src);

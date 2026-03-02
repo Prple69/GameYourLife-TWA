@@ -37,7 +37,7 @@ const CharacterPage = ({ character, setCharacter, videos, triggerHaptic }) => {
       setCharacter(prev => ({ ...prev, selected_avatar: avatarId }));
       setIsSelectorOpen(false);
       
-      const updatedUser = await userService.updateAvatar(character.telegram_id, avatarId);
+      const updatedUser = await userService.updateAvatar(avatarId);
       if (updatedUser) setCharacter(updatedUser); 
     } catch (err) {
       console.error(err);
