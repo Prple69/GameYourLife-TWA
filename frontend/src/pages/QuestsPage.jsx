@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import Header from '../components/Header';
 import ConfirmModal from '../components/ConfirmModal';
 import AddTaskModal from '../components/AddTaskModal';
@@ -45,15 +45,15 @@ const QuestsPage = ({ character, setCharacter, videos, triggerHaptic }) => {
     const fetchQuests = async () => {
       if (!character?.telegram_id) return;
       try {
-        const res = await axios.get(`/api/quests/${character.telegram_id}`);
+        const res = await api.get('/quests/me');
         if (res.data && Array.isArray(res.data)) {
           setTasks(res.data);
         } else {
           setTasks([]);
         }
-      } catch (e) { 
-        console.error("Ошибка загрузки", e); 
-        setTasks([]); 
+      } catch (e) {
+        console.error("Ошибка загрузки", e);
+        setTasks([]);
       }
     };
     fetchQuests();
@@ -101,7 +101,7 @@ const QuestsPage = ({ character, setCharacter, videos, triggerHaptic }) => {
 
       let analyzedData;
       try {
-        const response = await axios.post('/api/analyze', analysisPayload);
+        const response = await api.post('/analyze', analysisPayload);
         analyzedData = response.data;
       } catch (e) {
         if (DEBUG_MODE) {
@@ -112,7 +112,7 @@ const QuestsPage = ({ character, setCharacter, videos, triggerHaptic }) => {
         } else { throw e; }
       }
 
-      const saveRes = await axios.post(`/api/quests/save/${character.telegram_id}`, {
+      const saveRes = await api.post('/quests/save', {
         title: basicData.title,
         deadline: basicData.deadline,
         difficulty: analyzedData.difficulty,
@@ -137,7 +137,7 @@ const QuestsPage = ({ character, setCharacter, videos, triggerHaptic }) => {
   const finalizeTask = async () => {
     if (!confirmTask || !character) return;
     try {
-      const res = await axios.post(`/api/quests/complete/${confirmTask.id}?tg_id=${character.telegram_id}`);
+      const res = await api.post(`/quests/complete/${confirmTask.id}`);
       setTasks(prev => prev.filter(t => t.id !== confirmTask.id));
       setCharacter(res.data.user);
       setConfirmTask(null);

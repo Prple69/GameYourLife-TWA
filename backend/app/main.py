@@ -7,6 +7,7 @@ from contextlib import asynccontextmanager
 from sqlalchemy.ext.asyncio import AsyncSession
 from app import models, crud, database, schemas
 from app.config import get_settings
+from app.dependencies import verify_telegram_init_data
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Depends, HTTPException, Body
 
@@ -42,10 +43,14 @@ app.add_middleware(
 # --- ИИ ОЦЕНКА КВЕСТОВ ---
 
 @app.post("/api/analyze")
-async def analyze_task(payload: dict = Body(...)):
+async def analyze_task(
+    payload: dict = Body(...),
+    init_data: dict = Depends(verify_telegram_init_data),
+):
     """
-    Анализ квеста через Gemini AI. 
+    Анализ квеста через Gemini AI.
     Принимает те же данные, что и твоя Vercel-функция.
+    Требует валидный X-Telegram-Init-Data заголовок.
     """
     try:
         title = payload.get("title", "Без названия")
@@ -58,7 +63,7 @@ async def analyze_task(payload: dict = Body(...)):
         # Твой промпт, перенесенный из JS
         prompt = f""" Ты RPG мастер. Оцени контракт: "{title}".
         Сегодня: {current_day}. Дедлайн: {deadline}.
-        
+
         СТАТУС ИГРОКА:
         - Уровень: {lvl}
         - Текущее HP: {current_hp} / {max_hp}
@@ -71,37 +76,39 @@ async def analyze_task(payload: dict = Body(...)):
 
         ПРАВИЛА МАСТЕРА:
         1. Если дедлайн критический (сегодня), сложность и награда растут.
-        2. Оцени "hp_penalty" (штраф за провал) исходя из сложности. 
+        2. Оцени "hp_penalty" (штраф за провал) исходя из сложности.
         3. Если у игрока критически мало HP ({current_hp}), сделай штраф чуть мягче, но не ниже минимального для категории.
 
-        Верни ТОЛЬКО чистый JSON (без разметки markdown): 
+        Верни ТОЛЬКО чистый JSON (без разметки markdown):
         {{
-            "difficulty": "easy"|"medium"|"hard"|"epic", 
-            "xp": number, 
-            "gold": number, 
+            "difficulty": "easy"|"medium"|"hard"|"epic",
+            "xp": number,
+            "gold": number,
             "hp_penalty": number
         }} """
 
         completion = await client.chat.completions.create(
-            model="liquid/lfm-2.5-1.2b-thinking:free", # Та самая модель из примера
+            model="liquid/lfm-2.5-1.2b-thinking:free",
             messages=[
                 {
-                    "role": "user", 
+                    "role": "user",
                     "content": prompt
                 }
             ]
         )
 
-        # 3. Обрабатываем ответ
+        # Обрабатываем ответ
         content = completion.choices[0].message.content
 
         # Чистка от ```json ... ``` если ИИ их добавил
         clean_json = re.sub(r"```json|```", "", content).strip()
-        
+
         # Парсим строку в словарь и возвращаем
         result = json.loads(clean_json)
         return result
 
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"AI Analysis Error: {e}")
         # Фаллбек, если ИИ упал или выдал невалидный JSON
@@ -115,8 +122,13 @@ async def analyze_task(payload: dict = Body(...)):
 
 # --- ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ ---
 
-@app.get("/api/user/{tg_id}", response_model=schemas.UserSchema)
-async def get_profile(tg_id: str, username: str = "Hero", db: AsyncSession = Depends(database.get_db)):
+@app.get("/api/user/me", response_model=schemas.UserSchema)
+async def get_profile(
+    init_data: dict = Depends(verify_telegram_init_data),
+    db: AsyncSession = Depends(database.get_db),
+):
+    tg_id = str(init_data["user"]["id"])
+    username = init_data["user"].get("username", "Hero")
     try:
         user = await crud.get_user_by_tg_id(db, tg_id)
         if not user:
@@ -127,41 +139,61 @@ async def get_profile(tg_id: str, username: str = "Hero", db: AsyncSession = Dep
         logger.error(f"Error getting profile: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
+
 @app.post("/api/user/update-avatar", response_model=schemas.UserSchema)
-async def update_avatar(tg_id: str, avatar_id: str, db: AsyncSession = Depends(database.get_db)):
-    print(f"Update request: tg_id={tg_id}, avatar={avatar_id}") # Лог для проверки
+async def update_avatar(
+    avatar_id: str,
+    init_data: dict = Depends(verify_telegram_init_data),
+    db: AsyncSession = Depends(database.get_db),
+):
+    tg_id = str(init_data["user"]["id"])
+    print(f"Update request: tg_id={tg_id}, avatar={avatar_id}")  # Лог для проверки
     user = await crud.update_user_avatar(db, tg_id, avatar_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
+
 # --- КОНТРАКТЫ (КВЕСТЫ) ---
 
-@app.post("/api/quests/save/{tg_id}", response_model=schemas.QuestSchema)
-async def save_quest(tg_id: str, quest_data: schemas.QuestSave, db: AsyncSession = Depends(database.get_db)):
+@app.post("/api/quests/save", response_model=schemas.QuestSchema)
+async def save_quest(
+    quest_data: schemas.QuestSave,
+    init_data: dict = Depends(verify_telegram_init_data),
+    db: AsyncSession = Depends(database.get_db),
+):
     """Сохранение квеста. Обязательно метод POST"""
+    tg_id = str(init_data["user"]["id"])
     try:
         # Логируем, чтобы видеть запрос в терминале
         print(f"DEBUG: Saving quest for {tg_id}. Data: {quest_data.title}")
-        
+
         quest = await crud.create_quest(db, tg_id, quest_data)
         if not quest:
             raise HTTPException(status_code=404, detail="User not found")
         return quest
+    except HTTPException:
+        raise
     except Exception as e:
         print(f"ERROR: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @app.post("/api/quests/complete/{quest_id}")
-async def complete_quest(quest_id: int, tg_id: str, db: AsyncSession = Depends(database.get_db)):
+async def complete_quest(
+    quest_id: int,
+    init_data: dict = Depends(verify_telegram_init_data),
+    db: AsyncSession = Depends(database.get_db),
+):
+    tg_id = str(init_data["user"]["id"])
     try:
         quest, leveled_up = await crud.complete_quest(db, quest_id, tg_id)
-        
+
         if not quest:
             raise HTTPException(status_code=404, detail="Quest not found")
-        
+
         user = await crud.get_user_by_tg_id(db, tg_id)
-        
+
         return {
             "status": "success",
             "leveled_up": leveled_up,
@@ -171,13 +203,20 @@ async def complete_quest(quest_id: int, tg_id: str, db: AsyncSession = Depends(d
                 "gold": quest.gold_reward if quest else 0
             }
         }
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error completing quest: {e}")
         raise HTTPException(status_code=500, detail="Error during completion")
 
-@app.get("/api/quests/{tg_id}", response_model=List[schemas.QuestSchema])
-async def get_quests(tg_id: str, db: AsyncSession = Depends(database.get_db)):
+
+@app.get("/api/quests/me", response_model=List[schemas.QuestSchema])
+async def get_quests(
+    init_data: dict = Depends(verify_telegram_init_data),
+    db: AsyncSession = Depends(database.get_db),
+):
     """Гарантированно возвращает список, чтобы .map() на фронте не падал"""
+    tg_id = str(init_data["user"]["id"])
     try:
         quests = await crud.get_active_quests(db, tg_id)
         # Если crud вернул None или что-то еще, возвращаем []
@@ -189,8 +228,13 @@ async def get_quests(tg_id: str, db: AsyncSession = Depends(database.get_db)):
         # Вместо падения возвращаем пустой список, чтобы фронт выжил
         return []
 
-@app.get("/api/quests/history/{tg_id}", response_model=List[schemas.QuestSchema])
-async def get_history(tg_id: str, db: AsyncSession = Depends(database.get_db)):
+
+@app.get("/api/quests/history/me", response_model=List[schemas.QuestSchema])
+async def get_history(
+    init_data: dict = Depends(verify_telegram_init_data),
+    db: AsyncSession = Depends(database.get_db),
+):
+    tg_id = str(init_data["user"]["id"])
     try:
         history = await crud.get_quest_history(db, tg_id)
         return history if history is not None else []
@@ -198,14 +242,21 @@ async def get_history(tg_id: str, db: AsyncSession = Depends(database.get_db)):
         logger.error(f"Error history: {e}")
         return []
 
-@app.get("/api/user/{tg_id}/status")
-async def check_status(tg_id: str, db: AsyncSession = Depends(database.get_db)):
+
+@app.get("/api/user/me/status")
+async def check_status(
+    init_data: dict = Depends(verify_telegram_init_data),
+    db: AsyncSession = Depends(database.get_db),
+):
+    tg_id = str(init_data["user"]["id"])
     try:
         await crud.check_and_fail_quests(db, tg_id)
         user = await crud.get_user_by_tg_id(db, tg_id)
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         return user
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Status check failed: {e}")
         raise HTTPException(status_code=500, detail="Status check error")
