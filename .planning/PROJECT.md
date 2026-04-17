@@ -2,11 +2,11 @@
 
 ## What This Is
 
-Game Your Life is a Telegram mini-app RPG that turns real-life tasks into quests. Users create goals, an AI engine assigns difficulty and rewards, and completing quests earns XP, gold, and character progression. Targeted at gamers who want to be more productive — it uses the mechanics they love (leveling, loot, guilds) to motivate real-world action.
+Game Your Life — публичный SaaS-сайт для RU-рынка, превращающий повседневные задачи в RPG. Пользователь регистрируется по email или через Telegram Login Widget, создаёт квесты, AI оценивает сложность и назначает награды, а выполнение даёт XP, gold, рост 4 статов (Strength / Wisdom / Endurance / Charisma). Заработанный gold тратится в магазине на бусты и скины; премиум-валюта gems покупается за рубли через ЮKassa. Игроки соревнуются в глобальном лидерборде, дружат, создают гильдии с командными челленджами.
 
 ## Core Value
 
-Completing a real-life task feels like progressing a character — the RPG loop must always feel rewarding, never like a chore tracker with a skin.
+Выполнить реальную задачу = прокачать персонажа. RPG-петля всегда должна давать ощутимую награду, а не быть трекером дел с геймифицированной обложкой.
 
 ## Requirements
 
@@ -14,65 +14,115 @@ Completing a real-life task feels like progressing a character — the RPG loop 
 
 <!-- Shipped and confirmed working in existing codebase. -->
 
-- ✓ User gets a character profile initialized from Telegram identity — existing
-- ✓ User can create a quest with title and deadline — existing
-- ✓ AI analyzes quest and assigns difficulty, XP, gold, and HP penalty — existing
-- ✓ User can complete a quest and receive XP and gold rewards — existing
-- ✓ User levels up when XP reaches threshold (scales 1.2x per level) — existing
-- ✓ User can select a character avatar — existing
-- ✓ Quests auto-fail and apply HP penalty when deadline passes — existing
-- ✓ Quest history (completed/failed) is tracked and retrievable — existing
+- ✓ User получает профиль персонажа, инициализированный от Telegram-identity — existing (будет переиспользован для Telegram Login Widget)
+- ✓ User может создать квест с заголовком и дедлайном — existing
+- ✓ AI анализирует квест и назначает сложность, XP, gold, HP penalty — existing
+- ✓ User выполняет активный квест и получает XP/gold — existing
+- ✓ Уровень растёт по XP-порогу (масштаб 1.2× за уровень) — existing
+- ✓ User может выбрать аватар персонажа — existing
+- ✓ Просроченные квесты автоматически фейлятся и снимают HP — existing
+- ✓ Quest history (completed/failed) отслеживается — existing
+- ✓ Server валидирует Telegram initData HMAC-SHA256 (Phase 1) — existing
+- ✓ Credentials загружаются из env через Pydantic Settings (Phase 1) — existing
 
 ### Active
 
-<!-- Current build goals — hypotheses until shipped and validated. -->
+<!-- v1.0 релиз публичного сайта — полный scope. -->
 
-- [ ] User can browse a shop and purchase items with earned gold
-- [ ] User can view and manage their inventory of owned items
-- [ ] Purchased items apply stat bonuses (XP multiplier, gold multiplier, HP regen)
-- [ ] Leaderboard shows real rankings of users by level and XP
-- [ ] User can add friends and see their quest activity
-- [ ] AI can propose daily quests based on user's character stats and history
-- [ ] Character has named stats (Strength, Wisdom, Endurance, Charisma) that grow through relevant quest types
-- [ ] Security: Telegram initData signature verified server-side (no spoofable tg_id)
-- [ ] Database credentials and API keys moved to environment variables
+**Web Foundation & Auth:**
+- [ ] Сайт работает на `gameyourlife.ru` без Telegram-контейнера
+- [ ] User регистрируется по email + password с подтверждением email
+- [ ] User логинится через Telegram Login Widget (как альтернатива email)
+- [ ] Responsive: desktop (sidebar-навигация) и mobile web (bottom-tabs)
+- [ ] Legal-страницы: Privacy Policy (152-ФЗ), Terms, Public Offer, Cookie consent
+
+**Character Progression:**
+- [ ] 4 стата (Strength / Wisdom / Endurance / Charisma) на профиле
+- [ ] Квесты имеют категорию (work / fitness / learning / social), растят соответствующий стат
+- [ ] AI учитывает текущие статы при назначении награды
+
+**AI Features:**
+- [ ] User получает 3 AI-предложения квестов в день, персонализированных под статы и историю
+
+**Shop & Inventory:**
+- [ ] Каталог магазина с товарами (бусты, скины, слоты) — цена в gold или gems
+- [ ] User покупает XP-мультипликатор, gold-мультипликатор, доп. слоты квестов, скины
+- [ ] User активирует бусты из инвентаря, экипирует скины
+
+**Monetization:**
+- [ ] User покупает паки gems (100/500/1500) за рубли через ЮKassa
+- [ ] Покупки gems подтверждаются webhook-ом и зачисляются атомарно
+
+**Social:**
+- [ ] Глобальный лидерборд показывает топ-100 по уровню и XP; позиция пользователя подсвечена
+- [ ] User ищет по display_name, добавляет друзей, видит их прогресс
+- [ ] User создаёт/вступает в гильдию, участвует в групповых челленджах
+
+**Production Readiness:**
+- [ ] Rate-limiting на auth-эндпоинтах
+- [ ] Ошибки отправляются в Sentry
+- [ ] Email-нотификации через SMTP (email verification, password reset)
+- [ ] Health-check эндпоинт для мониторинга
+- [ ] PostgreSQL на хостинге в РФ (Yandex Cloud или аналог) для соответствия 152-ФЗ
 
 ### Out of Scope
 
 <!-- Explicit exclusions with reasoning. -->
 
-- Native iOS/Android app — web-first; Telegram covers mobile
-- Real-money payments / premium subscriptions — keep free for v1, no payment complexity
-- Web access outside Telegram — purpose-built for the Telegram ecosystem
-- Custom quest categories or tags — YAGNI for v1, simplify to free-form
+- **Native iOS/Android app** — web-first; PWA при необходимости позже
+- **i18n (multi-language)** — v1.0 только русский; расширение после PMF
+- **Гильдийный чат** — большой модуль, отложен после v1.0 для фокуса
+- **Premium-подписка** — v1.0 монетизация только через gems; подписка после оценки LTV
+- **Achievement badges / daily streaks** — отложены после ядра
+- **Push-уведомления (web push)** — в v1.0 только email; push после PMF
+- **Открытый API для сторонних клиентов** — не раскрываем API до стабилизации контракта
 
 ## Context
 
-The codebase is a working prototype with the core quest loop functional. Frontend is React 19 + Vite + Tailwind, deployed on Vercel. Backend is FastAPI (Python) + SQLAlchemy async + PostgreSQL. AI analysis runs via OpenRouter (OpenAI-compatible client). Telegram integration uses @twa-dev/sdk.
+Исходный код — работающий прототип Telegram Mini App. Phase 1 (Secure Foundation) завершена: HMAC-валидация Telegram initData на всех эндпоинтах, credentials вынесены в Pydantic Settings.
 
-Known issues to address in early phases:
-- DB credentials hardcoded in `backend/app/database.py` (critical: visible in git)
-- `DEBUG_MODE = true` left enabled in `QuestsPage.jsx`
-- Dead code: `questService` in `api.js` references undefined `API_URL`
-- No server-side Telegram auth validation — any tg_id can be spoofed
-- Timezone inconsistency between frontend (local) and backend (MSK)
+**Пивот (2026-04-18):** Решение уйти с TWA на публичный веб-сайт. Причина — потенциал SaaS-рынка больше, чем Telegram-аудитория; убирает ограничения Telegram-контейнера; позволяет монетизацию через ЮKassa. Telegram остаётся как опция логина (Login Widget), существующие tg-юзеры переезжают без потери данных.
+
+**Стек сохраняется** (React + FastAPI + PostgreSQL + OpenRouter), но добавляются:
+- React Router v6, Zustand, TanStack Query (frontend)
+- python-jose (JWT), bcrypt, Alembic (полноценные миграции), aioredis, slowapi, aiosmtplib, Sentry (backend)
+- Redis (кеш лидерборда, rate-limit, daily cache)
+- ЮKassa SDK (billing)
+
+**Известные проблемы под пивот:**
+- `backend/app/models.py:20` — `telegram_id UNIQUE NOT NULL` нужно сделать nullable
+- `backend/app/dependencies.py` — `verify_telegram_init_data` заменить на `get_current_user` (JWT)
+- `backend/app/main.py` — 262 строки в одном файле, разбить на роутеры
+- `frontend/src/App.jsx:33-48` — инициализация `window.Telegram.WebApp` удаляется
+- `frontend/src/services/api.js:19-26` — `X-Telegram-Init-Data` заменить на Bearer
+- `frontend/index.html:4` — `<script src="telegram-web-app.js">` удаляется
+- `package.json` — убрать `@twa-dev/sdk`, добавить `react-router-dom`, `zustand`, `@tanstack/react-query`
+- Cloudflare Tunnel (`gameurlife.ru.tuna.am`) заменить на продакшн-домен с HTTPS
 
 ## Constraints
 
-- **Platform**: Telegram Mini App (TWA) — all UI must work inside Telegram mobile client
-- **Tech Stack**: React + FastAPI + PostgreSQL already committed; no full rewrites
-- **AI Provider**: OpenRouter API (already integrated) — not switching to direct OpenAI
-- **Deployment**: Frontend on Vercel, backend on self-hosted server with Cloudflare Tunnel
-- **Auth**: Telegram initData as sole identity mechanism — no separate account system
+- **Рынок:** только RU (русский UI, без i18n, хостинг ПД в РФ по 152-ФЗ)
+- **Платформа:** responsive web (desktop + mobile web); no native app
+- **Стек:** React 19 + FastAPI + PostgreSQL + OpenRouter зафиксированы; миграция БД через Alembic
+- **Визуал:** retro/pixel эстетика (Press Start 2P, золото-чёрная палитра, NES.css) сохраняется
+- **Deployment:** фронт на Vercel, бэкенд на VDS (РФ) с nginx+HTTPS; Redis рядом
+- **Auth:** Email+password (обязательно) и Telegram Login Widget (второй способ)
+- **Payments:** ЮKassa — для РФ-рынка; требует ИП/самозанятого/ООО
+- **Legal:** 152-ФЗ (политика ПД), публичная оферта для gems, удаление аккаунта по запросу
 
 ## Key Decisions
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| OpenRouter for AI analysis | Cost flexibility, multi-model access | — Pending |
-| Implicit Telegram auth (initDataUnsafe) | Speed of initial prototype | ⚠️ Revisit — security risk, needs signature verification |
-| Lifted state in App.jsx (no Redux/Zustand) | Simplicity for small app | — Pending |
-| MSK timezone for all backend timestamps | Single-region initial target | ⚠️ Revisit — breaks users outside UTC+3 |
+| Пивот с TWA на публичный сайт | Больший рынок, возможность монетизации, гибкость | Accepted 2026-04-18 |
+| Сохранить retro-эстетику | Идентичность уже узнаваемая, уникальный вайб | Accepted 2026-04-18 |
+| Email+password + Telegram Login Widget | Широкий охват + миграция существующих tg-юзеров | Accepted 2026-04-18 |
+| Gems через ЮKassa (не Stripe) | Stripe не работает в РФ; ЮKassa стандарт для RU SaaS | Accepted 2026-04-18 |
+| Redis для сессий/кеша/лидерборда | Масштабируемость; SQL-запросы на top-100 по каждому визиту недопустимы | Accepted 2026-04-18 |
+| Alembic вместо `init_db()` на старте | Контроль миграций в продакшне; без потери данных при релизах | Accepted 2026-04-18 |
+| Один релиз v1.0 (не инкрементальные) | Выбор пользователя; риск scope зафиксирован | Accepted 2026-04-18, risk acknowledged |
+| OpenRouter для AI | Cost flexibility, multi-model access | Pending (existing) |
+| Запуск всего RU-only | Меньше сложности для старта; i18n после PMF | Accepted 2026-04-18 |
 
 ---
-*Last updated: 2026-03-01 after initialization*
+*Last updated: 2026-04-18 после решения о пивоте TWA → Web*

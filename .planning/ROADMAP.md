@@ -1,113 +1,235 @@
-# ROADMAP: Game Your Life v1
+# ROADMAP: Game Your Life v1.0 (Pivot TWA → Web)
 
 **Created:** 2026-03-01
-**Project:** Game Your Life (Telegram Mini-App RPG)
-**Core Value:** Completing a real-life task feels like progressing a character — the RPG loop must always feel rewarding, never like a chore tracker with a skin.
+**Revised:** 2026-04-18 (pivot to public web SaaS)
+**Project:** Game Your Life (публичный RU SaaS-сайт с RPG-геймификацией задач)
+**Core Value:** Выполнить реальную задачу = прокачать персонажа. RPG-петля всегда даёт ощутимую награду.
 
 ---
 
 ## Phases
 
-- [x] **Phase 1: Secure Foundation** - Fix critical security issues and move credentials to environment variables (completed 2026-03-02)
-- [ ] **Phase 2: Character Stats** - Add 4 named stats that grow through different quest types
-- [ ] **Phase 3: AI Daily Quests** - Generate personalized daily quest suggestions based on character stats and history
-- [ ] **Phase 4: Shop & Inventory** - Add purchasable items (XP multiplier, gold multiplier, quest slots, cosmetics) and inventory management
-- [ ] **Phase 5: Leaderboard** - Show global rankings by level and XP with user's position highlighted
+- [x] **Phase 1: Secure Foundation** — HMAC-валидация Telegram initData + credentials в env (completed 2026-03-02)
+- [ ] **Phase 2: Web Foundation** — React Router, Zustand, react-query, responsive layout (sidebar/topbar), landing, legal pages. Удаление TWA SDK с фронта.
+- [ ] **Phase 3: Auth Refactor** — JWT (access + refresh), email/password регистрация и логин, Telegram Login Widget, миграция всех эндпоинтов на `get_current_user`. Alembic baseline.
+- [ ] **Phase 4: Character Stats** — 4 стата (Strength/Wisdom/Endurance/Charisma), категории квестов, рост статов, AI-промпт с учётом статов.
+- [ ] **Phase 5: Shop & Inventory** — каталог магазина, seed-данные, покупка за gold, инвентарь, активация бустов, экипировка скинов.
+- [ ] **Phase 6: AI Daily Quests** — on-demand daily suggestions, персонализация под статы, кеш в Redis.
+- [ ] **Phase 7: Leaderboard** — Redis sorted set, страница с топ-100 + позиция юзера.
+- [ ] **Phase 8: Social — Friends** — поиск, инвайты, friendship, feed активности друзей.
+- [ ] **Phase 9: Social — Guilds & Challenges** — CRUD гильдий, членство, групповые челленджи.
+- [ ] **Phase 10: Monetization** — gems как валюта, ЮKassa SDK интеграция, webhook, gem-паки в магазине.
+- [ ] **Phase 11: Production Polish** — Sentry, rate-limiting, SMTP-email, health-checks, prod-деплой на `gameyourlife.ru`, CI/CD.
 
 ---
 
 ## Phase Details
 
-### Phase 1: Secure Foundation
+### Phase 1: Secure Foundation ✓
 
 **Goal:** Users interact with a secure backend where their identity cannot be spoofed and credentials are protected.
 
-**Depends on:** Nothing (first phase)
+**Status:** Complete (2026-03-02).
 
 **Requirements:** SEC-01, SEC-02
 
-**Success Criteria** (what must be TRUE):
-1. Server rejects any request with invalid or missing Telegram initData signature
-2. Database credentials and API keys are loaded from environment variables, not hardcoded
-3. Existing quest completion and progression features continue to work with signature validation enabled
-4. No credentials visible in git history or code files
-
-**Plans:** 2/2 plans complete
-
-Plans:
-- [ ] 01-01-PLAN.md — Credential externalization: create Pydantic Settings config, migrate database.py and main.py off hardcoded values, create .env + .env.example + root .gitignore
-- [ ] 01-02-PLAN.md — Telegram signature validation: create dependencies.py with verify_telegram_init_data, wire into all 8 endpoints, update frontend api.js to forward initData header
-
 ---
 
-### Phase 2: Character Stats
+### Phase 2: Web Foundation
 
-**Goal:** Characters have 4 named stats (Strength, Wisdom, Endurance, Charisma) that evolve as users complete different quest types, creating meaningful quest differentiation.
+**Goal:** Фронтенд работает как обычный сайт в любом браузере (без Telegram-контейнера), роутинг на URL, responsive layout под desktop и mobile, публичный landing и legal-страницы.
 
 **Depends on:** Phase 1
 
-**Requirements:** PROG-02, PROG-03
+**Requirements:** WEB-01, WEB-02, WEB-03, LEGAL-01, LEGAL-02, LEGAL-03, LEGAL-04
 
-**Success Criteria** (what must be TRUE):
-1. User can view character profile showing 4 named stats with current values
-2. Completing a quest of a certain type (e.g., work, fitness, learning) increases the corresponding stat
-3. Stat growth is persistent and visible across sessions
-4. Stats are factored into AI quest analysis (different quest types reward different stats)
+**Success Criteria:**
+1. Сайт открывается в любом браузере (Chrome / Safari / Firefox) без зависимости от Telegram SDK
+2. URL-роутинг: каждая страница имеет свой путь (`/app/quests`, `/app/character`, etc.)
+3. На desktop (≥1024px) — sidebar-навигация; на mobile (<1024px) — bottom-tabs
+4. Landing page на `/` с hero / фичи / pricing / FAQ / footer
+5. Legal-страницы `/privacy`, `/terms`, `/public-offer` с контентом
+6. Cookie consent banner показывается при первом визите
+7. Существующие экраны (Quests, Character, Shop, Inventory, Leaderboard) открываются под `/app/*`, старый tab-state удалён
+8. `@twa-dev/sdk` удалён из `package.json`, `<script telegram-web-app.js>` удалён из `index.html`
 
-**Plans:** TBD
+**Plans:** TBD (после `/gsd:plan-phase 2`)
 
 ---
 
-### Phase 3: AI Daily Quests
+### Phase 3: Auth Refactor
 
-**Goal:** Users receive daily personalized quest suggestions based on their character stats, history, and progression level.
+**Goal:** Пользователь регистрируется по email+password или через Telegram Login Widget. Все API работают через JWT-токены. Существующие tg-юзеры мигрируют без потери данных.
 
 **Depends on:** Phase 2
 
-**Requirements:** AI-01, AI-02
+**Requirements:** AUTH-01, AUTH-02, AUTH-03, AUTH-04, AUTH-05, AUTH-06
 
-**Success Criteria** (what must be TRUE):
-1. User sees 3 AI-generated quest suggestions on the home screen, refreshed daily
-2. Suggested quests align with user's weak stats (e.g., if Charisma is low, suggest social tasks)
-3. Suggestions account for user's level and recent completion history (difficulty scaling)
-4. User can accept suggestions as active quests or dismiss and refresh
+**Success Criteria:**
+1. `POST /api/auth/register` создаёт юзера, отправляет email-подтверждение
+2. `POST /api/auth/login` возвращает access (15 min) + refresh (30 days) токены
+3. `POST /api/auth/telegram-login` принимает данные от Telegram Login Widget, валидирует HMAC, создаёт/находит юзера по `telegram_id`
+4. Все ранее существующие эндпоинты (`/api/user/me`, `/api/quests/*`) работают через `Depends(get_current_user)` — JWT вместо initData
+5. `verify_telegram_init_data` и `@twa-dev/sdk`-зависимость полностью удалены из кода
+6. Alembic baseline миграция = текущая схема; новая миграция добавляет `email`, `password_hash`, `email_verified_at`, `display_name`, `gems` в users; делает `telegram_id` nullable
+7. Существующий юзер с `telegram_id` может войти через Telegram Login и получить те же данные
 
 **Plans:** TBD
 
 ---
 
-### Phase 4: Shop & Inventory
+### Phase 4: Character Stats
 
-**Goal:** Users can spend earned gold on items that meaningfully enhance progression (boosters, quest slots, cosmetics).
+**Goal:** Персонаж имеет 4 именованных стата, которые растут от квестов разных категорий. AI учитывает слабые статы при назначении награды.
 
-**Depends on:** Phase 1, Phase 3
+**Depends on:** Phase 3
+
+**Requirements:** PROG-02, PROG-03
+
+**Success Criteria:**
+1. На `/app/character` видно 4 стата (Strength, Wisdom, Endurance, Charisma) со значениями
+2. При создании квеста пользователь выбирает категорию (work / fitness / learning / social)
+3. Завершение квеста увеличивает соответствующий стат (+1/+2/+4/+8 по difficulty)
+4. AI-промпт получает статы юзера и учитывает их при выставлении награды
+5. Alembic-миграция добавила `stat_strength / stat_wisdom / stat_endurance / stat_charisma` в users, `category` в quests
+
+**Plans:** TBD
+
+---
+
+### Phase 5: Shop & Inventory
+
+**Goal:** Пользователь тратит gold на каталожные товары, управляет инвентарём, активирует бусты и скины.
+
+**Depends on:** Phase 4
 
 **Requirements:** SHOP-01, SHOP-02, SHOP-03, SHOP-04, SHOP-05, INV-01, INV-02, INV-03
 
-**Success Criteria** (what must be TRUE):
-1. User can browse a shop catalog showing items (XP multiplier, gold multiplier, quest slots, cosmetic skins) with costs and descriptions
-2. User can purchase items with gold and items are added to inventory
-3. User can view inventory and activate/equip items from it
-4. Boost items apply stat multipliers (visible in quest rewards) and persist until consumed
-5. Avatar skins can be equipped and display on the user's character profile
+**Success Criteria:**
+1. `GET /api/shop` возвращает каталог (seed-данные в БД)
+2. На `/app/shop` — карточки товаров с фильтрами (boosters / skins / slots)
+3. Покупка за gold — `POST /api/shop/buy/{id}` с idempotency_key, атомарное списание gold и создание inventory_item
+4. `/app/inventory` показывает купленные товары
+5. Активация буста `POST /api/inventory/{id}/activate` устанавливает `xp_multiplier` / `gold_multiplier` с `expires_at`
+6. Экипировка скина меняет аватар персонажа
+7. Новые таблицы `shop_items`, `inventory_items` мигрированы через Alembic
 
 **Plans:** TBD
 
 ---
 
-### Phase 5: Leaderboard
+### Phase 6: AI Daily Quests
 
-**Goal:** Users can see global rankings by level and XP, creating competitive motivation and social proof of progression.
+**Goal:** Пользователь получает 3 персонализированных AI-предложения каждый день, основанных на статах и истории.
+
+**Depends on:** Phase 4
+
+**Requirements:** AI-01, AI-02
+
+**Success Criteria:**
+1. `GET /api/daily/suggestions` возвращает 3 квеста, сгенерированных AI
+2. Предложения учитывают слабые статы юзера (низкая Charisma → social quest)
+3. Результат кешируется в Redis по ключу `daily:{user_id}:{YYYY-MM-DD}` (TTL до полуночи)
+4. User может принять (создаёт квест) или отклонить (перегенерировать, но не более 2 раз в день)
+5. AI-промпт включает lvl, last 10 quests, stats
+
+**Plans:** TBD
+
+---
+
+### Phase 7: Leaderboard
+
+**Goal:** Глобальный лидерборд по уровню/XP с позицией пользователя.
 
 **Depends on:** Phase 4
 
 **Requirements:** LEAD-01, LEAD-02
 
-**Success Criteria** (what must be TRUE):
-1. User can access a leaderboard showing top players ranked by level (primary) then XP (secondary)
-2. User's own rank and position (e.g., "22nd") are highlighted on the leaderboard
-3. Leaderboard updates in near-real-time as users level up and earn XP
-4. User can see other players' names and current level on the leaderboard
+**Success Criteria:**
+1. Redis sorted set `leaderboard:global` обновляется при каждом изменении xp/lvl
+2. `GET /api/leaderboard?offset=0&limit=50` возвращает топ
+3. `GET /api/leaderboard/me` возвращает позицию и ±5 вокруг юзера
+4. На `/app/leaderboard` отображаются display_name, lvl, xp; позиция юзера подсвечена
+
+**Plans:** TBD
+
+---
+
+### Phase 8: Social — Friends
+
+**Goal:** Пользователь находит друзей, отправляет и принимает инвайты, видит их активность.
+
+**Depends on:** Phase 3
+
+**Requirements:** SOCL-01, SOCL-02
+
+**Success Criteria:**
+1. `GET /api/users/search?q=` ищет по display_name
+2. `POST /api/friends/request` / `POST /api/friends/accept/{id}` / `DELETE /api/friends/{id}` работают
+3. `GET /api/friends` возвращает список + последнюю активность
+4. `/app/friends` — страница с поиском, списком, feed активности
+5. Новая таблица `friendships` (UNIQUE requester_id + addressee_id)
+
+**Plans:** TBD
+
+---
+
+### Phase 9: Social — Guilds & Challenges
+
+**Goal:** Пользователь создаёт/вступает в гильдию, участвует в групповых челленджах.
+
+**Depends on:** Phase 8
+
+**Requirements:** SOCL-03, SOCL-04, GUILD-01, GUILD-02
+
+**Success Criteria:**
+1. `POST /api/guilds` создаёт гильдию (owner = создатель)
+2. `GET /api/guilds` — список публичных, `GET /api/guilds/{slug}` — детали
+3. `POST /api/guilds/{id}/join` / `leave` работают с ролями (owner/officer/member)
+4. `GET /api/guilds/{id}/challenges` — активные челленджи, прогресс считается от выполнения квестов участников
+5. `/app/guilds` — list, detail, join-flow
+6. Новые таблицы `guilds`, `guild_members`, `guild_challenges`
+
+**Plans:** TBD
+
+---
+
+### Phase 10: Monetization
+
+**Goal:** Пользователь покупает gems за рубли через ЮKassa; gems тратятся в магазине.
+
+**Depends on:** Phase 5
+
+**Requirements:** BILL-01, BILL-02, BILL-03
+
+**Success Criteria:**
+1. В каталоге shop_items появляются товары за gems (price_gems)
+2. Страница `/app/gems` — три пака (100 / 500 / 1500)
+3. `POST /api/billing/gems/create` создаёт платёж в ЮKassa (test mode), возвращает confirmation_url
+4. `POST /api/billing/yookassa/webhook` валидирует подпись, зачисляет gems в транзакции (SELECT FOR UPDATE)
+5. `gem_transactions` отражает lifecycle (pending → succeeded/failed)
+6. Идемпотентность: повторный webhook не зачисляет gems дважды
+
+**Plans:** TBD
+
+---
+
+### Phase 11: Production Polish
+
+**Goal:** Сайт готов к публичному запуску: мониторинг, защита, нотификации, деплой.
+
+**Depends on:** Phase 10
+
+**Requirements:** PROD-01, PROD-02, PROD-03, PROD-04, PROD-05
+
+**Success Criteria:**
+1. Rate-limiting (slowapi) на `/api/auth/*` (5 логинов/мин, 3 регистрации/час)
+2. Sentry ловит все unhandled exceptions (frontend + backend)
+3. SMTP-отправка работает (email verification, password reset) через Yandex 360 или аналог
+4. `GET /api/health` возвращает 200 + ping DB/Redis
+5. Deploy pipeline: frontend → Vercel (auto), backend → VDS через GitHub Actions + docker-compose
+6. Домен `gameyourlife.ru` прописан, HTTPS (Let's Encrypt)
+7. PostgreSQL и Redis на хостинге в РФ
 
 **Plans:** TBD
 
@@ -117,29 +239,42 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Secure Foundation | 2/2 | Complete    | 2026-03-02 |
-| 2. Character Stats | 0/TBD | Not started | — |
-| 3. AI Daily Quests | 0/TBD | Not started | — |
-| 4. Shop & Inventory | 0/TBD | Not started | — |
-| 5. Leaderboard | 0/TBD | Not started | — |
+| 1. Secure Foundation | 2/2 | Complete | 2026-03-02 |
+| 2. Web Foundation | 0/TBD | Not started | — |
+| 3. Auth Refactor | 0/TBD | Not started | — |
+| 4. Character Stats | 0/TBD | Not started | — |
+| 5. Shop & Inventory | 0/TBD | Not started | — |
+| 6. AI Daily Quests | 0/TBD | Not started | — |
+| 7. Leaderboard | 0/TBD | Not started | — |
+| 8. Friends | 0/TBD | Not started | — |
+| 9. Guilds & Challenges | 0/TBD | Not started | — |
+| 10. Monetization | 0/TBD | Not started | — |
+| 11. Production Polish | 0/TBD | Not started | — |
 
 ---
 
 ## Coverage Summary
 
-**Total v1 Requirements:** 24 (8 existing, 16 new)
-**Mapped to Phases:** 16 new requirements mapped
-**Unmapped:** 0
+**Total v1.0 Requirements:** расширено после пивота
+- Existing validated: 10
+- New v1.0: Web+Legal (7) + Auth (6) + Stats (2) + AI (2) + Shop/Inv (8) + Leader (2) + Friends (2) + Guilds (4) + Billing (3) + Prod (5) = **41 new**
+
+Полный список в `REQUIREMENTS.md` (обновить при планировании Phase 2).
 
 | Category | Count | Phase |
 |----------|-------|-------|
-| Security & Foundation | 2 | Phase 1 |
-| Character Progression | 2 | Phase 2 |
-| AI Features | 2 | Phase 3 |
-| Shop | 5 | Phase 4 |
-| Inventory | 3 | Phase 4 |
-| Leaderboard | 2 | Phase 5 |
+| Security & Foundation | 2 | Phase 1 ✓ |
+| Web Foundation & Legal | 7 | Phase 2 |
+| Auth | 6 | Phase 3 |
+| Character Progression | 2 | Phase 4 |
+| Shop & Inventory | 8 | Phase 5 |
+| AI Features | 2 | Phase 6 |
+| Leaderboard | 2 | Phase 7 |
+| Friends | 2 | Phase 8 |
+| Guilds | 4 | Phase 9 |
+| Monetization | 3 | Phase 10 |
+| Production | 5 | Phase 11 |
 
 ---
 
-*Roadmap created: 2026-03-01*
+*Roadmap v2 (post-pivot): 2026-04-18*
