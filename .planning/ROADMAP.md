@@ -53,7 +53,12 @@
 7. Существующие экраны (Quests, Character, Shop, Inventory, Leaderboard) открываются под `/app/*`, старый tab-state удалён
 8. `@twa-dev/sdk` удалён из `package.json`, `<script telegram-web-app.js>` удалён из `index.html`
 
-**Plans:** TBD (после `/gsd:plan-phase 2`)
+**Plans:** 3 plans (Wave 1: 02-01, 02-02 in parallel; Wave 2: 02-03)
+
+Plans:
+- [ ] 02-01-PLAN.md — Stack setup: install deps, remove TWA SDK, Zustand stores, routing skeleton, api.js Bearer interceptor
+- [ ] 02-02-PLAN.md — Legal pages (/privacy, /terms, /public-offer) and cookie consent banner
+- [ ] 02-03-PLAN.md — AppLayout (responsive sidebar/bottom-tabs), landing page (6 sections), auth shells, final route wiring + human verify
 
 ---
 
@@ -240,7 +245,7 @@
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Secure Foundation | 2/2 | Complete | 2026-03-02 |
-| 2. Web Foundation | 0/TBD | Not started | — |
+| 2. Web Foundation | 0/3 | Planned | — |
 | 3. Auth Refactor | 0/TBD | Not started | — |
 | 4. Character Stats | 0/TBD | Not started | — |
 | 5. Shop & Inventory | 0/TBD | Not started | — |
@@ -258,8 +263,6 @@
 **Total v1.0 Requirements:** расширено после пивота
 - Existing validated: 10
 - New v1.0: Web+Legal (7) + Auth (6) + Stats (2) + AI (2) + Shop/Inv (8) + Leader (2) + Friends (2) + Guilds (4) + Billing (3) + Prod (5) = **41 new**
-
-Полный список в `REQUIREMENTS.md` (обновить при планировании Phase 2).
 
 | Category | Count | Phase |
 |----------|-------|-------|
