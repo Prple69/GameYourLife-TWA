@@ -64,9 +64,9 @@ Requirements for initial release. Checked items are already working in the exist
 ### Legal & Compliance (added 2026-04-18 pivot)
 
 - [ ] **LEGAL-01**: Публичный landing на `/` с hero / фичи / pricing / FAQ / footer
-- [ ] **LEGAL-02**: Страницы `/privacy`, `/terms`, `/public-offer` с контентом (152-ФЗ соответствие)
-- [ ] **LEGAL-03**: Cookie consent banner при первом визите, с сохранением выбора пользователя
-- [ ] **LEGAL-04**: В footer есть ссылки на все legal-страницы, email для связи
+- [x] **LEGAL-02**: Страницы `/privacy`, `/terms`, `/public-offer` с контентом (152-ФЗ соответствие)
+- [x] **LEGAL-03**: Cookie consent banner при первом визите, с сохранением выбора пользователя
+- [x] **LEGAL-04**: В footer есть ссылки на все legal-страницы, email для связи
 
 ### Auth (added 2026-04-18 pivot)
 
@@ -166,9 +166,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | WEB-02 | Phase 2 | Pending |
 | WEB-03 | Phase 2 | Pending |
 | LEGAL-01 | Phase 2 | Pending |
-| LEGAL-02 | Phase 2 | Pending |
-| LEGAL-03 | Phase 2 | Pending |
-| LEGAL-04 | Phase 2 | Pending |
+| LEGAL-02 | Phase 2 | Complete |
+| LEGAL-03 | Phase 2 | Complete |
+| LEGAL-04 | Phase 2 | Complete |
 | AUTH-01 | Phase 3 | Pending |
 | AUTH-02 | Phase 3 | Pending |
 | AUTH-03 | Phase 3 | Pending |
