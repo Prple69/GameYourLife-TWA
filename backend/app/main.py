@@ -9,7 +9,7 @@ from app import models, crud, database, schemas
 from app.config import get_settings
 from app.dependencies import verify_telegram_init_data
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi import FastAPI, Depends, HTTPException, Body
+from fastapi import APIRouter, FastAPI, Depends, HTTPException, Body
 
 
 # Настройка логирования для отладки
@@ -39,6 +39,20 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# --- HEALTH CHECK ---
+
+@app.get("/api/health")
+async def health():
+    return {"status": "ok", "phase": "03"}
+
+
+# --- AUTH ROUTER (Phase 3 — endpoints filled in Plan 03-02) ---
+
+auth_router = APIRouter(prefix="/api/auth", tags=["auth"])
+app.include_router(auth_router)
+
 
 # --- ИИ ОЦЕНКА КВЕСТОВ ---
 

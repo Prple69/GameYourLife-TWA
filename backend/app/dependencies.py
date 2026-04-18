@@ -6,8 +6,11 @@ from datetime import datetime, timezone
 from typing import Optional
 
 from fastapi import Depends, HTTPException, Header
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import get_settings
+from app.database import get_db
+from app.auth import verify_token
 
 
 def _verify_manual(init_data: str, bot_token: str) -> dict:
@@ -87,3 +90,37 @@ async def verify_telegram_init_data(
             status_code=401,
             detail="Invalid or expired Telegram signature",
         )
+
+
+# --- Phase 3: JWT-based dependency -----------------------------------------
+
+async def get_current_user(
+    authorization: Optional[str] = Header(None),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    FastAPI dependency: extract JWT from Authorization: Bearer header, verify it,
+    fetch user from DB. Raises HTTP 401 on any failure.
+
+    Unified identity: works for both email-login'd and telegram-login'd users —
+    identity is user.id, not telegram_id.
+    """
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(
+            status_code=401,
+            detail="Missing or invalid Authorization header",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    token = authorization[len("Bearer "):]
+    user_id = verify_token(token, expected_type="access")
+    if not user_id:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid or expired token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    from app import crud
+    user = await crud.get_user_by_id(db, user_id)
+    if not user:
+        raise HTTPException(status_code=401, detail="User not found")
+    return user
