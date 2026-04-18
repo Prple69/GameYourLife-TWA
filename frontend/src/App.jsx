@@ -7,6 +7,7 @@ import LoadingPage from './pages/LoadingPage';
 import LandingPage from './pages/landing/LandingPage';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
+import VerifyEmailPage from './pages/auth/VerifyEmailPage';
 import NotFoundPage from './pages/NotFoundPage';
 import PrivacyPage from './pages/legal/PrivacyPage';
 import TermsPage from './pages/legal/TermsPage';
@@ -37,10 +38,10 @@ export default function App() {
       {/* ── Public: Landing ── */}
       <Route path="/" element={<LandingPage />} />
 
-      {/* ── Auth shells (Phase 3 will implement backend connection) ── */}
+      {/* ── Auth ── */}
       <Route path="/login"    element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
-      <Route path="/verify-email/:token" element={<LoginPage />} />
+      <Route path="/verify-email/:token" element={<VerifyEmailPage />} />
       <Route path="/reset-password"      element={<LoginPage />} />
 
       {/* ── Legal ── */}
