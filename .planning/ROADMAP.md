@@ -11,7 +11,7 @@
 
 - [x] **Phase 1: Secure Foundation** — HMAC-валидация Telegram initData + credentials в env (completed 2026-03-02)
 - [x] **Phase 2: Web Foundation** — React Router, Zustand, react-query, responsive layout (sidebar/bottom-tabs), landing, legal pages. Удаление TWA SDK с фронта (completed 2026-04-18)
-- [ ] **Phase 3: Auth Refactor** — JWT (access + refresh), email/password регистрация и логин, Telegram Login Widget, миграция всех эндпоинтов на `get_current_user`. Alembic baseline.
+- [x] **Phase 3: Auth Refactor** — JWT (access + refresh), email/password регистрация и логин, Telegram Login Widget, миграция всех эндпоинтов на `get_current_user`, Alembic baseline + add_auth_fields (completed 2026-04-18)
 - [ ] **Phase 4: Character Stats** — 4 стата (Strength/Wisdom/Endurance/Charisma), категории квестов, рост статов, AI-промпт с учётом статов.
 - [ ] **Phase 5: Shop & Inventory** — каталог магазина, seed-данные, покупка за gold, инвентарь, активация бустов, экипировка скинов.
 - [ ] **Phase 6: AI Daily Quests** — on-demand daily suggestions, персонализация под статы, кеш в Redis.
@@ -251,7 +251,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Secure Foundation | 2/2 | Complete | 2026-03-02 |
 | 2. Web Foundation | 3/3 | Complete | 2026-04-18 |
-| 3. Auth Refactor | 0/3 | Not started | — |
+| 3. Auth Refactor | 3/3 | Complete | 2026-04-18 |
 | 4. Character Stats | 0/TBD | Not started | — |
 | 5. Shop & Inventory | 0/TBD | Not started | — |
 | 6. AI Daily Quests | 0/TBD | Not started | — |
