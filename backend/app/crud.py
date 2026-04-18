@@ -1,3 +1,6 @@
+from datetime import datetime, timezone
+from typing import Optional
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update, or_
 from . import models, schemas
@@ -166,7 +169,7 @@ async def get_quest_history(db: AsyncSession, tg_id: str):
     user = await get_user_by_tg_id(db, tg_id)
     if not user:
         return []
-        
+
     result = await db.execute(
         select(models.Quest).filter(
             models.Quest.user_id == user.id,
@@ -174,3 +177,75 @@ async def get_quest_history(db: AsyncSession, tg_id: str):
         ).order_by(models.Quest.created_at.desc())
     )
     return result.scalars().all()
+
+
+# --- Phase 3: auth CRUD -----------------------------------------------------
+
+async def get_user_by_id(db: AsyncSession, user_id: int):
+    result = await db.execute(
+        select(models.User).filter(models.User.id == user_id)
+    )
+    return result.scalars().first()
+
+
+async def get_user_by_email(db: AsyncSession, email: str):
+    result = await db.execute(
+        select(models.User).filter(models.User.email.ilike(email))
+    )
+    return result.scalars().first()
+
+
+async def create_user_email(
+    db: AsyncSession, email: str, password_hash: str, display_name: str
+) -> models.User:
+    """Create a new email+password user. telegram_id stays NULL."""
+    db_user = models.User(
+        email=email,
+        password_hash=password_hash,
+        display_name=display_name,
+        telegram_id=None,
+        username=None,
+        lvl=1, xp=0, max_xp=100, gold=0, hp=100, max_hp=100,
+        selected_avatar="avatar1", char_class="knight",
+        gems=0,
+    )
+    db.add(db_user)
+    await db.commit()
+    await db.refresh(db_user)
+    return db_user
+
+
+async def create_user_telegram(
+    db: AsyncSession,
+    telegram_id: str,
+    display_name: str,
+    username: Optional[str] = None,
+) -> models.User:
+    """
+    Create a new user via Telegram Login Widget. email/password_hash stay NULL.
+    AUTH-06: callers MUST check get_user_by_tg_id first — this function only
+    runs when no matching user exists.
+    """
+    db_user = models.User(
+        telegram_id=telegram_id,
+        username=username,
+        display_name=display_name,
+        email=None,
+        password_hash=None,
+        lvl=1, xp=0, max_xp=100, gold=0, hp=100, max_hp=100,
+        selected_avatar="avatar1", char_class="knight",
+        gems=0,
+    )
+    db.add(db_user)
+    await db.commit()
+    await db.refresh(db_user)
+    return db_user
+
+
+async def update_user_email_verified(db: AsyncSession, user_id: int):
+    user = await get_user_by_id(db, user_id)
+    if user:
+        user.email_verified_at = datetime.now(timezone.utc)
+        await db.commit()
+        await db.refresh(user)
+    return user

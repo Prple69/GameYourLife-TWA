@@ -17,9 +17,16 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
-    telegram_id = Column(String, unique=True, index=True)
+    telegram_id = Column(String, unique=True, index=True, nullable=True)
     username = Column(String)
-    
+
+    # Phase 3: email/password auth fields (nullable for legacy tg-only users)
+    email = Column(String, unique=True, index=True, nullable=True)
+    password_hash = Column(String, nullable=True)
+    email_verified_at = Column(DateTime(timezone=True), nullable=True)
+    display_name = Column(String, nullable=True)
+    gems = Column(Integer, default=0, nullable=False, server_default="0")
+
     # Кастомизация персонажа
     selected_avatar = Column(String, default="avatar1")
     char_class = Column(String, default="knight")
