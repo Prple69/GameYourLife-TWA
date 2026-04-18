@@ -1,19 +1,24 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
-// Phase 2: set mock token on first visit so ProtectedRoute lets users through.
-// Phase 3 will replace this with real JWT obtained from /api/auth/login.
-const DEV_MOCK_TOKEN = import.meta.env.VITE_DEV_TOKEN ?? 'dev-phase2-mock';
-
+/**
+ * Phase 3: real JWT auth. accessToken/refreshToken come from /api/auth/*
+ * endpoints. isAuthenticated mirrors !!accessToken.
+ *
+ * Lifecycle:
+ *   Login / Register / Telegram-login -> setTokens(access, refresh)
+ *   401 response -> api.js interceptor tries /api/auth/refresh -> setTokens
+ *   Refresh failed -> clearTokens() -> redirect /login
+ */
 const useAuthStore = create(
   persist(
     (set) => ({
       _hasHydrated: false,
       setHasHydrated: (val) => set({ _hasHydrated: val }),
 
-      accessToken: DEV_MOCK_TOKEN,   // Phase 2: mock token pre-populated
+      accessToken: null,
       refreshToken: null,
-      isAuthenticated: true,          // Phase 2: always true; Phase 3 sets from login
+      isAuthenticated: false,
 
       setTokens: (access, refresh) =>
         set({ accessToken: access, refreshToken: refresh, isAuthenticated: !!access }),
