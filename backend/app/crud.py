@@ -249,3 +249,13 @@ async def update_user_email_verified(db: AsyncSession, user_id: int):
         await db.commit()
         await db.refresh(user)
     return user
+
+
+async def update_user_avatar_by_id(db: AsyncSession, user_id: int, avatar_id: str):
+    """Avatar update keyed by user.id — works for email-only users (no tg_id)."""
+    user = await get_user_by_id(db, user_id)
+    if user:
+        user.selected_avatar = avatar_id
+        await db.commit()
+        await db.refresh(user)
+    return user
