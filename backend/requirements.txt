@@ -19,5 +19,13 @@ greenlet
 # Telegram
 telegram-init-data
 
+# Auth (Phase 3)
+PyJWT==2.8.0
+passlib==1.7.4
+bcrypt==4.0.1
+python-multipart==0.0.9
+itsdangerous==2.2.0
+email-validator==2.1.0
+
 # Utilities
 alembic==1.13.1

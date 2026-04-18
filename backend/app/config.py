@@ -12,6 +12,8 @@ class Settings(BaseSettings):
     TELEGRAM_BOT_TOKEN: str
     OPENAI_API_KEY: str
     DEBUG_MODE: bool = False
+    JWT_SECRET_KEY: str
+    JWT_ALGORITHM: str = "HS256"
 
     model_config = SettingsConfigDict(
         env_file=_ENV_FILE,
