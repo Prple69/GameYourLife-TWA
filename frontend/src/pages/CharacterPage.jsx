@@ -45,10 +45,14 @@ const CharacterPage = ({ character, setCharacter, videos, triggerHaptic }) => {
     }
   }, [character.telegram_id, character.selected_avatar, setCharacter, triggerHaptic]);
 
-  if (!character) return null;
+  if (!character) return (
+    <div className="min-h-screen bg-black flex items-center justify-center font-mono text-white/30 text-xs">
+      данные загружаются...
+    </div>
+  );
 
   return (
-    <div className="fixed inset-0 w-full h-full bg-black overflow-hidden flex flex-col font-mono select-none touch-none">
+    <div className="min-h-screen w-full bg-black flex flex-col font-mono relative overflow-hidden">
       
       {/* ФОНОВОЕ ВИДЕО */}
       <div className="absolute inset-0 z-0 bg-black">

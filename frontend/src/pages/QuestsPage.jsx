@@ -5,7 +5,7 @@ import ConfirmModal from '../components/ConfirmModal';
 import AddTaskModal from '../components/AddTaskModal';
 import QuestDetailsModal from '../components/QuestDetailsModal';
 
-const DEBUG_MODE = true; 
+const DEBUG_MODE = false;
 
 const RollingValue = ({ isAnalyzing, value, colorClass, label, prefix = "+" }) => {
   const [displayValue, setDisplayValue] = useState(0);
@@ -146,7 +146,7 @@ const QuestsPage = ({ character, setCharacter, videos, triggerHaptic }) => {
   };
 
   return (
-    <div className="fixed inset-0 w-full h-full bg-black overflow-x-hidden overflow-y-auto flex flex-col font-mono items-center">
+    <div className="min-h-screen w-full bg-black flex flex-col font-mono items-center relative overflow-hidden">
       <div className="absolute inset-0 z-0">
         <video src={videos?.quests || ""} autoPlay loop muted playsInline className="w-full h-full object-cover opacity-60" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black" />

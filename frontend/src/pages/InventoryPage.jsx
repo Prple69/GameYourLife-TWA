@@ -13,7 +13,7 @@ const InventoryPage = ({ character, videos }) => {
   const slots = Array.from({ length: 24 }); // Увеличил кол-во слотов, раз теперь есть место
 
   return (
-    <div className="fixed inset-0 w-full h-full bg-black overflow-hidden flex flex-col font-mono select-none touch-none">
+    <div className="min-h-screen w-full bg-black flex flex-col font-mono relative overflow-hidden">
       
       {/* --- ЗАДНИЙ ФОН --- */}
       <div className="absolute inset-0 z-0 bg-black">

@@ -19,7 +19,7 @@ const LeaderboardPage = ({
   };
 
   return (
-    <div className="fixed inset-0 w-full h-full bg-black overflow-hidden flex flex-col font-mono items-center">
+    <div className="min-h-screen w-full bg-black flex flex-col font-mono items-center relative overflow-hidden">
       
       {/* --- ФОН --- */}
       <div className="absolute inset-0 z-0">
