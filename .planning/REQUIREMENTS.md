@@ -57,8 +57,8 @@ Requirements for initial release. Checked items are already working in the exist
 
 ### Web Foundation (added 2026-04-18 pivot)
 
-- [ ] **WEB-01**: Сайт открывается и работает в любом современном браузере (Chrome, Safari, Firefox) без зависимости от Telegram SDK или контейнера
-- [ ] **WEB-02**: Каждый экран приложения имеет собственный URL (React Router); навигация через адресную строку; закладки работают
+- [x] **WEB-01**: Сайт открывается и работает в любом современном браузере (Chrome, Safari, Firefox) без зависимости от Telegram SDK или контейнера
+- [x] **WEB-02**: Каждый экран приложения имеет собственный URL (React Router); навигация через адресную строку; закладки работают
 - [ ] **WEB-03**: Layout responsive — на desktop (≥1024px) sidebar-навигация; на mobile (<1024px) bottom-tabs; retro-эстетика сохранена
 
 ### Legal & Compliance (added 2026-04-18 pivot)
@@ -162,8 +162,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | INV-03 | Phase 4 | Pending |
 | LEAD-01 | Phase 7 | Pending |
 | LEAD-02 | Phase 7 | Pending |
-| WEB-01 | Phase 2 | Pending |
-| WEB-02 | Phase 2 | Pending |
+| WEB-01 | Phase 2 | Complete |
+| WEB-02 | Phase 2 | Complete |
 | WEB-03 | Phase 2 | Pending |
 | LEGAL-01 | Phase 2 | Pending |
 | LEGAL-02 | Phase 2 | Complete |

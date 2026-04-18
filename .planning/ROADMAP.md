@@ -53,7 +53,7 @@
 7. Существующие экраны (Quests, Character, Shop, Inventory, Leaderboard) открываются под `/app/*`, старый tab-state удалён
 8. `@twa-dev/sdk` удалён из `package.json`, `<script telegram-web-app.js>` удалён из `index.html`
 
-**Plans:** 3 plans (Wave 1: 02-01, 02-02 in parallel; Wave 2: 02-03)
+**Plans:** 2/3 plans executed
 
 Plans:
 - [ ] 02-01-PLAN.md — Stack setup: install deps, remove TWA SDK, Zustand stores, routing skeleton, api.js Bearer interceptor
@@ -245,7 +245,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Secure Foundation | 2/2 | Complete | 2026-03-02 |
-| 2. Web Foundation | 0/3 | Planned | — |
+| 2. Web Foundation | 2/3 | In Progress|  |
 | 3. Auth Refactor | 0/TBD | Not started | — |
 | 4. Character Stats | 0/TBD | Not started | — |
 | 5. Shop & Inventory | 0/TBD | Not started | — |
