@@ -23,12 +23,14 @@ const LeaderboardPage = ({
       
       {/* --- ФОН --- */}
       <div className="absolute inset-0 z-0">
-        <video
-          src={videos?.leader || ""}
-          autoPlay loop muted playsInline
-          className="w-full h-full object-cover opacity-100"
-          style={{ imageRendering: 'pixelated' }}
-        />
+        {videos?.leader && (
+          <video
+            src={videos.leader}
+            autoPlay loop muted playsInline
+            className="w-full h-full object-cover opacity-100"
+            style={{ imageRendering: 'pixelated' }}
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
       </div>
 

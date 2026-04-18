@@ -17,12 +17,14 @@ const InventoryPage = ({ character, videos }) => {
       
       {/* --- ЗАДНИЙ ФОН --- */}
       <div className="absolute inset-0 z-0 bg-black">
-        <video 
-          src={videos?.bag || ""} 
-          autoPlay loop muted playsInline
-          className="w-full h-full object-cover opacity-60"
-          style={{ imageRendering: 'pixelated' }}
-        />
+        {videos?.bag && (
+          <video
+            src={videos.bag}
+            autoPlay loop muted playsInline
+            className="w-full h-full object-cover opacity-60"
+            style={{ imageRendering: 'pixelated' }}
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-transparent to-black" />
       </div>
 

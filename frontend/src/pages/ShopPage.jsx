@@ -21,12 +21,14 @@ const ShopPage = ({ gold = 450, videos }) => {
       
       {/* --- ЗАДНИЙ ФОН --- */}
       <div className="absolute inset-0 z-0">
-        <video
-          src={videos?.shop || ""}
-          autoPlay loop muted playsInline
-          className="w-full h-full object-cover opacity-60"
-          style={{ imageRendering: 'pixelated' }}
-        />
+        {videos?.shop && (
+          <video
+            src={videos.shop}
+            autoPlay loop muted playsInline
+            className="w-full h-full object-cover opacity-60"
+            style={{ imageRendering: 'pixelated' }}
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-transparent to-black" />
       </div>
 

@@ -43,7 +43,7 @@ const CharacterPage = ({ character, setCharacter, videos, triggerHaptic }) => {
       console.error(err);
       setCharacter(prev => ({ ...prev, selected_avatar: oldAvatar }));
     }
-  }, [character.telegram_id, character.selected_avatar, setCharacter, triggerHaptic]);
+  }, [character?.telegram_id, character?.selected_avatar, setCharacter, triggerHaptic]);
 
   if (!character) return (
     <div className="min-h-screen bg-black flex items-center justify-center font-mono text-white/30 text-xs">
