@@ -10,7 +10,7 @@
 ## Phases
 
 - [x] **Phase 1: Secure Foundation** — HMAC-валидация Telegram initData + credentials в env (completed 2026-03-02)
-- [ ] **Phase 2: Web Foundation** — React Router, Zustand, react-query, responsive layout (sidebar/topbar), landing, legal pages. Удаление TWA SDK с фронта.
+- [x] **Phase 2: Web Foundation** — React Router, Zustand, react-query, responsive layout (sidebar/bottom-tabs), landing, legal pages. Удаление TWA SDK с фронта (completed 2026-04-18)
 - [ ] **Phase 3: Auth Refactor** — JWT (access + refresh), email/password регистрация и логин, Telegram Login Widget, миграция всех эндпоинтов на `get_current_user`. Alembic baseline.
 - [ ] **Phase 4: Character Stats** — 4 стата (Strength/Wisdom/Endurance/Charisma), категории квестов, рост статов, AI-промпт с учётом статов.
 - [ ] **Phase 5: Shop & Inventory** — каталог магазина, seed-данные, покупка за gold, инвентарь, активация бустов, экипировка скинов.
@@ -53,12 +53,12 @@
 7. Существующие экраны (Quests, Character, Shop, Inventory, Leaderboard) открываются под `/app/*`, старый tab-state удалён
 8. `@twa-dev/sdk` удалён из `package.json`, `<script telegram-web-app.js>` удалён из `index.html`
 
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans executed ✓
 
 Plans:
-- [ ] 02-01-PLAN.md — Stack setup: install deps, remove TWA SDK, Zustand stores, routing skeleton, api.js Bearer interceptor
-- [ ] 02-02-PLAN.md — Legal pages (/privacy, /terms, /public-offer) and cookie consent banner
-- [ ] 02-03-PLAN.md — AppLayout (responsive sidebar/bottom-tabs), landing page (6 sections), auth shells, final route wiring + human verify
+- [x] 02-01-PLAN.md — Stack setup: install deps, remove TWA SDK, Zustand stores, routing skeleton, api.js Bearer interceptor
+- [x] 02-02-PLAN.md — Legal pages (/privacy, /terms, /public-offer) and cookie consent banner
+- [x] 02-03-PLAN.md — AppLayout (responsive sidebar/bottom-tabs), landing page (6 sections), auth shells, final route wiring + human verify
 
 ---
 
@@ -79,7 +79,12 @@ Plans:
 6. Alembic baseline миграция = текущая схема; новая миграция добавляет `email`, `password_hash`, `email_verified_at`, `display_name`, `gems` в users; делает `telegram_id` nullable
 7. Существующий юзер с `telegram_id` может войти через Telegram Login и получить те же данные
 
-**Plans:** TBD
+**Plans:** 3 plans
+
+Plans:
+- [ ] 03-01-PLAN.md — Backend foundation: deps, Alembic baseline+migration, auth.py (JWT/bcrypt/TG-widget HMAC), models, schemas, crud, get_current_user dependency
+- [ ] 03-02-PLAN.md — Auth endpoints (register, login, refresh, telegram-login, verify-email) + migrate all endpoints to get_current_user + delete verify_telegram_init_data
+- [ ] 03-03-PLAN.md — Frontend: LoginPage + RegisterPage forms, Telegram Login Widget, 401-refresh interceptor with promise queue, QuestsPage + CharacterPage data fetching, remove DEV bypass
 
 ---
 
@@ -245,8 +250,8 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Secure Foundation | 2/2 | Complete | 2026-03-02 |
-| 2. Web Foundation | 2/3 | In Progress|  |
-| 3. Auth Refactor | 0/TBD | Not started | — |
+| 2. Web Foundation | 3/3 | Complete | 2026-04-18 |
+| 3. Auth Refactor | 0/3 | Not started | — |
 | 4. Character Stats | 0/TBD | Not started | — |
 | 5. Shop & Inventory | 0/TBD | Not started | — |
 | 6. AI Daily Quests | 0/TBD | Not started | — |
