@@ -1,54 +1,30 @@
 import axios from 'axios';
-
-/**
- * ВНИМАНИЕ: Ссылка из Cloudflare меняется при каждом перезапуске туннеля.
- * Не забывай обновлять её здесь перед деплоем на Vercel или используй
- * переменные окружения (.env)
- */
-const TUNNEL_URL = 'https://gameurlife.ru.tuna.am';
+import useAuthStore from '../stores/authStore';
 
 const api = axios.create({
-  baseURL: `${TUNNEL_URL}/api`,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  baseURL: import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000/api',
+  headers: { 'Content-Type': 'application/json' },
 });
 
-// Attach Telegram initData to every request as X-Telegram-Init-Data header.
-// The backend validates this HMAC-SHA256 signature to verify caller identity.
+// Attach Bearer token from authStore on every request.
+// Phase 2: token is a mock string. Phase 3 will replace with real JWT.
 api.interceptors.request.use((config) => {
-  const tg = window.Telegram?.WebApp;
-  const initData = tg?.initData;
-  if (initData) {
-    config.headers['X-Telegram-Init-Data'] = initData;
+  const token = useAuthStore.getState().accessToken;
+  if (token) {
+    config.headers['Authorization'] = `Bearer ${token}`;
   }
   return config;
 });
 
 export const userService = {
-  /**
-   * Получить профиль игрока или создать нового.
-   * Identity is extracted from the verified X-Telegram-Init-Data header on the backend.
-   */
   getProfile: async () => {
     const response = await api.get('/user/me');
     return response.data;
   },
-
-  /**
-   * Сменить аватар персонажа.
-   * @param {string} avatarId - Ключ аватара (avatar1, avatar2 и т.д.)
-   */
   updateAvatar: async (avatarId) => {
-    const res = await api.post('/user/update-avatar', null, {
-      params: { avatar_id: avatarId },
-    });
+    const res = await api.post('/user/update-avatar', null, { params: { avatar_id: avatarId } });
     return res.data;
   },
-
-  /**
-   * Проверка связи с сервером
-   */
   checkHealth: async () => {
     const response = await api.get('/health');
     return response.data;
