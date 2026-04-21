@@ -103,7 +103,13 @@ Plans:
 4. AI-промпт получает статы юзера и учитывает их при выставлении награды
 5. Alembic-миграция добавила `stat_strength / stat_wisdom / stat_endurance / stat_charisma` в users, `category` в quests
 
-**Plans:** TBD
+**Plans:** 4 plans
+
+Plans:
+- [ ] 04-01-PLAN.md — Backend foundation: Alembic migration (users +8 stat cols, quests +category), models.py + schemas.py extensions, game_logic.py utilities (STAT_GROWTH, CATEGORY_TO_STAT, max_xp_for_level, apply_stat_xp)
+- [ ] 04-02-PLAN.md — Router behavior: save_quest persists category, complete_quest applies stat XP and returns stat_gain, analyze_task prompt includes stats block + weak-stat boost rule
+- [ ] 04-03-PLAN.md — Frontend UI: AddTaskModal category chip picker, CharacterPage 2×2 stat grid, ProfileModal real stats (replaces stub)
+- [ ] 04-04-PLAN.md — Frontend wiring + human verify: QuestsPage passes category to /analyze and /quests/save, stat_gain completion toast, end-to-end blocking human-verify checkpoint
 
 ---
 
@@ -252,7 +258,7 @@ Plans:
 | 1. Secure Foundation | 2/2 | Complete | 2026-03-02 |
 | 2. Web Foundation | 3/3 | Complete | 2026-04-18 |
 | 3. Auth Refactor | 3/3 | Complete | 2026-04-18 |
-| 4. Character Stats | 0/TBD | Not started | — |
+| 4. Character Stats | 0/4 | Not started | — |
 | 5. Shop & Inventory | 0/TBD | Not started | — |
 | 6. AI Daily Quests | 0/TBD | Not started | — |
 | 7. Leaderboard | 0/TBD | Not started | — |
