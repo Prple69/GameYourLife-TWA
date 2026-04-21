@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../services/api';
+
+const QUEST_TOAST_DURATION = 3000;
 import Header from '../components/Header';
 import ConfirmModal from '../components/ConfirmModal';
 import AddTaskModal from '../components/AddTaskModal';
@@ -58,6 +60,12 @@ const QuestsPage = () => {
   const [selectedDetails, setSelectedDetails] = useState(null);
   const [optimisticTasks, setOptimisticTasks] = useState([]);
   const [statGainToast, setStatGainToast] = useState(null);
+  const [questToast, setQuestToast] = useState(null);
+
+  const showQuestToast = (msg) => {
+    setQuestToast(msg);
+    setTimeout(() => setQuestToast(null), QUEST_TOAST_DURATION);
+  };
 
   const [visualTick, setVisualTick] = useState(0);
   useEffect(() => {
@@ -84,6 +92,11 @@ const QuestsPage = () => {
   });
 
   const tasks = [...serverTasks, ...optimisticTasks];
+
+  // Active quest count for 5-slot cap
+  const activeCount = serverTasks.filter(t => !t.is_completed && !t.is_failed).length +
+    optimisticTasks.length;
+  const isAtQuestCap = activeCount >= 5;
 
   const completeMutation = useMutation({
     mutationFn: (questId) => api.post(`/quests/complete/${questId}`).then((r) => r.data),
@@ -114,6 +127,10 @@ const QuestsPage = () => {
 
   const onAddTask = async (basicData) => {
     if (!character) return;
+    if (isAtQuestCap) {
+      showQuestToast('Лимит 5/5. Заверши активные квесты');
+      return;
+    }
 
     const tempId = `tmp-${Date.now()}`;
     const tempTask = {
@@ -176,6 +193,10 @@ const QuestsPage = () => {
     } catch (error) {
       console.error('Ошибка при создании', error);
       setOptimisticTasks((prev) => prev.filter((t) => t.id !== tempId));
+      const detail = error?.response?.data?.detail;
+      if (error?.response?.status === 409 && detail === 'active_limit_reached') {
+        showQuestToast('Лимит 5/5 активных квестов');
+      }
     }
   };
 
@@ -271,12 +292,25 @@ const QuestsPage = () => {
           )}
 
           <div
-            onClick={() => setIsAddModalOpen(true)}
-            className="w-full border-2 border-dashed border-[#daa520]/20 p-6 mt-4 text-center bg-black/30 active:bg-black/50 transition-all cursor-pointer"
+            onClick={() => {
+              if (isAtQuestCap) {
+                showQuestToast('Лимит 5/5. Заверши активные квесты');
+              } else {
+                setIsAddModalOpen(true);
+              }
+            }}
+            className={`w-full border-2 border-dashed p-6 mt-4 text-center transition-all
+              ${isAtQuestCap
+                ? 'border-white/5 bg-black/10 opacity-50 cursor-not-allowed'
+                : 'border-[#daa520]/20 bg-black/30 active:bg-black/50 cursor-pointer'
+              }`}
           >
-            <span className="text-[11px] text-[#daa520]/60 uppercase font-black tracking-widest">
+            <span className={`text-[11px] uppercase font-black tracking-widest ${isAtQuestCap ? 'text-white/20' : 'text-[#daa520]/60'}`}>
               + НОВЫЙ КОНТРАКТ
             </span>
+            <p className={`text-[9px] font-mono mt-1 ${isAtQuestCap ? 'text-white/20' : 'text-white/30'}`}>
+              {activeCount}/5 квестов
+            </p>
           </div>
         </div>
       </div>
@@ -304,6 +338,14 @@ const QuestsPage = () => {
               НОВЫЙ УРОВЕНЬ: {STAT_LABELS[statGainToast.name]} LVL {statGainToast.new_level}
             </div>
           )}
+        </div>
+      )}
+      {questToast && (
+        <div
+          className="fixed bottom-[150px] left-1/2 -translate-x-1/2 z-[91] bg-[#0a0a0a] border border-[#daa520]/40 px-5 py-3 shadow-[6px_6px_0_#000] font-mono text-center min-w-[220px]"
+          onClick={() => setQuestToast(null)}
+        >
+          <span className="text-white text-[11px] uppercase font-black tracking-widest">{questToast}</span>
         </div>
       )}
     </div>
