@@ -31,7 +31,6 @@ Requirements for initial release. Checked items are already working in the exist
 - [ ] **SHOP-01**: User can browse a shop catalog showing items with name, description, and gold cost
 - [ ] **SHOP-02**: User can purchase XP multiplier boost items with earned gold
 - [ ] **SHOP-03**: User can purchase gold multiplier boost items with earned gold
-- [ ] **SHOP-04**: User can purchase additional active quest slots with earned gold
 - [ ] **SHOP-05**: User can purchase cosmetic avatar skins with earned gold
 
 ### Inventory
@@ -126,6 +125,7 @@ After 2026-04-18 pivot, social features moved into v1.0 scope.
 
 | Feature | Reason |
 |---------|--------|
+| SHOP-04 (quest slot purchase) | Quest slots are a hard cap (5), not purchasable — removed from product permanently |
 | Native iOS/Android app | Web-first; PWA при необходимости позже |
 | i18n (multi-language) | RU-only в v1.0, расширение после PMF |
 | Custom quest categories/tags | YAGNI; 4 категории (work/fitness/learning/social) достаточно |
@@ -155,7 +155,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SHOP-01 | Phase 4 | Pending |
 | SHOP-02 | Phase 4 | Pending |
 | SHOP-03 | Phase 4 | Pending |
-| SHOP-04 | Phase 4 | Pending |
+| SHOP-04 | — | Out of Scope |
 | SHOP-05 | Phase 4 | Pending |
 | INV-01 | Phase 4 | Pending |
 | INV-02 | Phase 4 | Pending |
@@ -198,7 +198,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 - Phase 2: Web Foundation (WEB-01..03, LEGAL-01..04)
 - Phase 3: Auth Refactor (AUTH-01..06)
 - Phase 4: Character Stats (PROG-02, PROG-03)
-- Phase 5: Shop & Inventory (SHOP-01..05, INV-01..03)
+- Phase 5: Shop & Inventory (SHOP-01..03, SHOP-05, INV-01..03)
 - Phase 6: AI Daily Quests (AI-01, AI-02)
 - Phase 7: Leaderboard (LEAD-01, LEAD-02)
 - Phase 8: Friends (SOCL-01, SOCL-02)
