@@ -13,7 +13,7 @@
 - [x] **Phase 2: Web Foundation** — React Router, Zustand, react-query, responsive layout (sidebar/bottom-tabs), landing, legal pages. Удаление TWA SDK с фронта (completed 2026-04-18)
 - [x] **Phase 3: Auth Refactor** — JWT (access + refresh), email/password регистрация и логин, Telegram Login Widget, миграция всех эндпоинтов на `get_current_user`, Alembic baseline + add_auth_fields (completed 2026-04-18)
 - [x] **Phase 4: Character Stats** — 4 стата (Strength/Wisdom/Endurance/Charisma), категории квестов, рост статов, AI-промпт с учётом статов. (completed 2026-04-21)
-- [ ] **Phase 5: Shop & Inventory** — каталог магазина, seed-данные, покупка за gold, инвентарь, активация бустов, экипировка скинов.
+- [x] **Phase 5: Shop & Inventory** — каталог магазина, seed-данные, покупка за gold, инвентарь, активация бустов, экипировка скинов. (completed 2026-04-22)
 - [ ] **Phase 6: AI Daily Quests** — on-demand daily suggestions, персонализация под статы, кеш в Redis.
 - [ ] **Phase 7: Leaderboard** — Redis sorted set, страница с топ-100 + позиция юзера.
 - [ ] **Phase 8: Social — Friends** — поиск, инвайты, friendship, feed активности друзей.
@@ -130,7 +130,7 @@ Plans:
 6. Экипировка скина меняет аватар персонажа
 7. Новые таблицы `shop_items`, `inventory_items` мигрированы через Alembic
 
-**Plans:** 5/6 plans executed
+**Plans:** 6/6 plans complete
 
 Plans:
 - [ ] 05-01-PLAN.md — DB foundation: Alembic migration (shop_items, inventory_items, idempotency_keys, +14 user boost cols), ORM models, Pydantic schemas, SHOP-04 Out of Scope
