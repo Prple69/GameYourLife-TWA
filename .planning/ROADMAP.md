@@ -103,7 +103,7 @@ Plans:
 4. AI-промпт получает статы юзера и учитывает их при выставлении награды
 5. Alembic-миграция добавила `stat_strength / stat_wisdom / stat_endurance / stat_charisma` в users, `category` в quests
 
-**Plans:** 1/4 plans executed
+**Plans:** 2/4 plans executed
 
 Plans:
 - [ ] 04-01-PLAN.md — Backend foundation: Alembic migration (users +8 stat cols, quests +category), models.py + schemas.py extensions, game_logic.py utilities (STAT_GROWTH, CATEGORY_TO_STAT, max_xp_for_level, apply_stat_xp)
@@ -258,7 +258,7 @@ Plans:
 | 1. Secure Foundation | 2/2 | Complete | 2026-03-02 |
 | 2. Web Foundation | 3/3 | Complete | 2026-04-18 |
 | 3. Auth Refactor | 3/3 | Complete | 2026-04-18 |
-| 4. Character Stats | 1/4 | In Progress|  |
+| 4. Character Stats | 2/4 | In Progress|  |
 | 5. Shop & Inventory | 0/TBD | Not started | — |
 | 6. AI Daily Quests | 0/TBD | Not started | — |
 | 7. Leaderboard | 0/TBD | Not started | — |
