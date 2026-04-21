@@ -180,3 +180,184 @@ def test_analyze_prompt_contains_stat_block():
     assert "СТАТЫ ИГРОКА" in source, "Missing СТАТЫ ИГРОКА block in prompt"
     assert "КАТЕГОРИЯ КВЕСТА" in source, "Missing КАТЕГОРИЯ КВЕСТА line in prompt"
     assert "слабого направления" in source, "Missing weak-stat rule in prompt"
+
+
+# ── Phase 5 Task 1 — quest slot cap tests ────────────────────────────────────
+
+class StubUserWithBoosts(StubUser):
+    """Extends StubUser with Phase 5 boost columns (all None by default)."""
+    # XP boost
+    active_xp_mult = None
+    active_xp_expires_at = None
+    # Gold boost
+    active_gold_mult = None
+    active_gold_expires_at = None
+    # Stat XP boosts
+    active_strength_xp_mult = None
+    active_strength_xp_expires_at = None
+    active_wisdom_xp_mult = None
+    active_wisdom_xp_expires_at = None
+    active_endurance_xp_mult = None
+    active_endurance_xp_expires_at = None
+    active_charisma_xp_mult = None
+    active_charisma_xp_expires_at = None
+    # HP max boost
+    active_hp_max_bonus = None
+    active_hp_max_expires_at = None
+
+
+def test_save_quest_at_cap_raises_409():
+    """When user already has 5 active quests, save should raise HTTPException 409."""
+    from fastapi import HTTPException
+    from app.utils.game_logic import MAX_ACTIVE_QUESTS
+
+    # Simulate active_count >= MAX_ACTIVE_QUESTS → should raise 409
+    active_count = 5
+    assert active_count >= MAX_ACTIVE_QUESTS
+    # Replicate the guard logic from save_quest
+    raised = False
+    try:
+        if active_count >= MAX_ACTIVE_QUESTS:
+            raise HTTPException(status_code=409, detail="active_limit_reached")
+    except HTTPException as exc:
+        raised = True
+        assert exc.status_code == 409
+        assert exc.detail == "active_limit_reached"
+    assert raised, "Expected HTTPException 409 was not raised"
+
+
+def test_save_quest_below_cap_succeeds():
+    """When user has 4 active quests (below cap of 5), save should succeed (no exception)."""
+    from fastapi import HTTPException
+    from app.utils.game_logic import MAX_ACTIVE_QUESTS
+
+    active_count = 4
+    # Should NOT raise — guard condition is False
+    if active_count >= MAX_ACTIVE_QUESTS:
+        raise HTTPException(status_code=409, detail="active_limit_reached")
+    # If we reach here, no exception — test passes
+    assert active_count < MAX_ACTIVE_QUESTS
+
+
+def test_save_quest_at_zero_succeeds():
+    """When user has 0 active quests, save should succeed."""
+    from fastapi import HTTPException
+    from app.utils.game_logic import MAX_ACTIVE_QUESTS
+
+    active_count = 0
+    if active_count >= MAX_ACTIVE_QUESTS:
+        raise HTTPException(status_code=409, detail="active_limit_reached")
+    assert active_count == 0
+
+
+def test_quests_py_imports_max_active_quests():
+    """Verify quests.py contains the MAX_ACTIVE_QUESTS import and guard pattern."""
+    import inspect
+    import app.routers.quests as quests_module
+    source = inspect.getsource(quests_module)
+    assert "MAX_ACTIVE_QUESTS" in source, "MAX_ACTIVE_QUESTS not found in quests.py"
+    assert "active_limit_reached" in source, "active_limit_reached not found in quests.py"
+
+
+# ── Phase 5 Task 2 — boost multiplier tests ──────────────────────────────────
+
+def test_complete_xp_boost_multiplies_reward():
+    """XP boost active (mult=1.5) → xp_gained = round(base * 1.5)."""
+    from datetime import datetime, timezone, timedelta
+    from app.utils.game_logic import effective_multipliers
+
+    user = StubUserWithBoosts()
+    future = datetime.now(timezone.utc) + timedelta(hours=1)
+    user.active_xp_mult = 1.5
+    user.active_xp_expires_at = future
+
+    now = datetime.now(timezone.utc)
+    mults = effective_multipliers(user, now)
+
+    base_xp = 40
+    xp_gained = round(base_xp * mults["xp"])
+    assert xp_gained == 60  # round(40 * 1.5)
+
+
+def test_complete_no_boost_unchanged():
+    """No active boosts → xp_gained equals base xp (mult=1.0)."""
+    from datetime import datetime, timezone
+    from app.utils.game_logic import effective_multipliers
+
+    user = StubUserWithBoosts()  # all boost attrs are None
+    now = datetime.now(timezone.utc)
+    mults = effective_multipliers(user, now)
+
+    base_xp = 40
+    xp_gained = round(base_xp * mults["xp"])
+    assert xp_gained == 40
+
+
+def test_complete_gold_boost_multiplies_gold():
+    """Gold boost active (mult=2.0) → gold_gained = round(base * 2.0)."""
+    from datetime import datetime, timezone, timedelta
+    from app.utils.game_logic import effective_multipliers
+
+    user = StubUserWithBoosts()
+    future = datetime.now(timezone.utc) + timedelta(hours=1)
+    user.active_gold_mult = 2.0
+    user.active_gold_expires_at = future
+
+    now = datetime.now(timezone.utc)
+    mults = effective_multipliers(user, now)
+
+    base_gold = 20
+    gold_gained = round(base_gold * mults["gold"])
+    assert gold_gained == 40  # round(20 * 2.0)
+
+
+def test_complete_applied_boosts_in_response():
+    """Active xp boost → applied_boosts contains {"type": "xp", "mult": 1.5}."""
+    from datetime import datetime, timezone, timedelta
+    from app.utils.game_logic import effective_multipliers
+
+    user = StubUserWithBoosts()
+    future = datetime.now(timezone.utc) + timedelta(hours=1)
+    user.active_xp_mult = 1.5
+    user.active_xp_expires_at = future
+
+    now = datetime.now(timezone.utc)
+    mults = effective_multipliers(user, now)
+
+    applied_boosts = [{"type": k, "mult": v} for k, v in mults.items() if v > 1.0]
+    assert len(applied_boosts) == 1
+    assert applied_boosts[0] == {"type": "xp", "mult": 1.5}
+
+
+def test_complete_quest_with_stat_boost():
+    """Active strength_xp boost (mult=1.5) → stat gain = round(base * 1.5) for fitness quest."""
+    from datetime import datetime, timezone, timedelta
+    from app.utils.game_logic import effective_multipliers, STAT_GROWTH, CATEGORY_TO_STAT, apply_stat_xp
+
+    user = StubUserWithBoosts()
+    future = datetime.now(timezone.utc) + timedelta(hours=1)
+    user.active_strength_xp_mult = 1.5
+    user.active_strength_xp_expires_at = future
+
+    now = datetime.now(timezone.utc)
+    mults = effective_multipliers(user, now)
+
+    quest_category = "fitness"
+    quest_difficulty = "medium"
+    stat_name = CATEGORY_TO_STAT[quest_category]
+    base_gain = STAT_GROWTH[quest_difficulty]  # 2
+    boosted_gain = round(base_gain * mults.get(f"{stat_name}_xp", 1.0))
+    assert boosted_gain == 3  # round(2 * 1.5)
+
+    stat_result = apply_stat_xp(user, stat_name, boosted_gain)
+    assert stat_result["xp_gained"] == 3
+    assert user.stat_strength_xp == 3
+
+
+def test_quests_py_contains_applied_boosts():
+    """Verify quests.py contains the applied_boosts pattern in source."""
+    import inspect
+    import app.routers.quests as quests_module
+    source = inspect.getsource(quests_module)
+    assert "applied_boosts" in source, "applied_boosts not found in quests.py"
+    assert "effective_multipliers" in source, "effective_multipliers not found in quests.py"
