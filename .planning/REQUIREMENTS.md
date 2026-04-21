@@ -138,43 +138,43 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| QUEST-01 | — | Complete (existing) |
-| QUEST-02 | — | Complete (existing) |
-| QUEST-03 | — | Complete (existing) |
-| QUEST-04 | — | Complete (existing) |
-| QUEST-05 | — | Complete (existing) |
-| PROG-01 | — | Complete (existing) |
-| PROF-01 | — | Complete (existing) |
-| PROF-02 | — | Complete (existing) |
-| SEC-01 | Phase 1 | Complete |
-| SEC-02 | Phase 1 | Complete |
-| PROG-02 | Phase 2 | Complete |
-| PROG-03 | Phase 2 | Complete |
-| AI-01 | Phase 3 | Pending |
-| AI-02 | Phase 3 | Pending |
-| SHOP-01 | Phase 4 | Complete |
-| SHOP-02 | Phase 4 | Complete |
-| SHOP-03 | Phase 4 | Complete |
-| SHOP-04 | — | Out of Scope |
-| SHOP-05 | Phase 4 | Complete |
-| INV-01 | Phase 4 | Complete |
-| INV-02 | Phase 4 | Complete |
-| INV-03 | Phase 4 | Complete |
+| QUEST-01 | — | Complete (existing, pre-v1.0) |
+| QUEST-02 | — | Complete (existing, pre-v1.0) |
+| QUEST-03 | — | Complete (existing, pre-v1.0) |
+| QUEST-04 | — | Complete (existing, pre-v1.0) |
+| QUEST-05 | — | Complete (existing, pre-v1.0) |
+| PROG-01 | — | Complete (existing, pre-v1.0) |
+| PROF-01 | — | Complete (existing, pre-v1.0) |
+| PROF-02 | — | Complete (existing, pre-v1.0) |
+| SEC-01 | Phase 1 | Complete (verified 2026-03-02; see Phase 1 notes re pivot) |
+| SEC-02 | Phase 1 | Complete (verified 2026-03-02) |
+| WEB-01 | Phase 2 → 5.1 (verify) | Pending verification |
+| WEB-02 | Phase 2 → 5.1 (verify) | Pending verification |
+| WEB-03 | Phase 2 → 5.1 (verify) | Pending verification |
+| LEGAL-01 | Phase 2 → 5.1 (verify) | Pending verification |
+| LEGAL-02 | Phase 2 → 5.1 (verify) | Pending verification |
+| LEGAL-03 | Phase 2 → 5.1 (verify) | Pending verification |
+| LEGAL-04 | Phase 2 → 5.1 (verify) | Pending verification |
+| AUTH-01 | Phase 3 → 5.2 (verify) | Pending verification |
+| AUTH-02 | Phase 3 → 5.2 (verify) | Pending verification |
+| AUTH-03 | Phase 3 → 5.2 (verify) | Pending verification |
+| AUTH-04 | Phase 3 → 5.2 (verify) | Pending verification |
+| AUTH-05 | Phase 3 → 5.2 (verify) + Phase 11 (SMTP) | Stub — token logged to console; SMTP delivery deferred to Phase 11 (PROD-03) |
+| AUTH-06 | Phase 3 → 5.2 (verify) | Pending verification |
+| PROG-02 | Phase 4 | Complete (verified 2026-04-21) |
+| PROG-03 | Phase 4 | Complete (verified 2026-04-21) |
+| SHOP-01 | Phase 5 | Complete (verified 2026-04-22) |
+| SHOP-02 | Phase 5 | Complete (verified 2026-04-22) |
+| SHOP-03 | Phase 5 | Complete (verified 2026-04-22) |
+| SHOP-04 | — | Out of Scope (quest slots hard cap 5) |
+| SHOP-05 | Phase 5 | Complete (verified 2026-04-22) |
+| INV-01 | Phase 5 | Complete (verified 2026-04-22) |
+| INV-02 | Phase 5 | Complete (verified 2026-04-22) |
+| INV-03 | Phase 5 | Complete (verified 2026-04-22) |
+| AI-01 | Phase 6 | Pending |
+| AI-02 | Phase 6 | Pending |
 | LEAD-01 | Phase 7 | Pending |
 | LEAD-02 | Phase 7 | Pending |
-| WEB-01 | Phase 2 | Complete |
-| WEB-02 | Phase 2 | Complete |
-| WEB-03 | Phase 2 | Pending |
-| LEGAL-01 | Phase 2 | Pending |
-| LEGAL-02 | Phase 2 | Complete |
-| LEGAL-03 | Phase 2 | Complete |
-| LEGAL-04 | Phase 2 | Complete |
-| AUTH-01 | Phase 3 | Pending |
-| AUTH-02 | Phase 3 | Pending |
-| AUTH-03 | Phase 3 | Pending |
-| AUTH-04 | Phase 3 | Pending |
-| AUTH-05 | Phase 3 | Pending |
-| AUTH-06 | Phase 3 | Pending |
 | SOCL-01 | Phase 8 | Pending |
 | SOCL-02 | Phase 8 | Pending |
 | GUILD-01 | Phase 9 | Pending |
@@ -184,28 +184,35 @@ Which phases cover which requirements. Updated during roadmap creation.
 | BILL-03 | Phase 10 | Pending |
 | PROD-01 | Phase 11 | Pending |
 | PROD-02 | Phase 11 | Pending |
-| PROD-03 | Phase 11 | Pending |
+| PROD-03 | Phase 11 | Pending (delivers AUTH-05 SMTP) |
 | PROD-04 | Phase 11 | Pending |
 | PROD-05 | Phase 11 | Pending |
 
-**Coverage:**
-- v1.0 requirements: 51 total (10 validated, 41 new in 2026-04-18 pivot)
-- Mapped to phases: 41 new + 2 complete (Phase 1)
+**Coverage (post audit 2026-04-22):**
+- v1.0 requirements: 51 total (10 validated pre-v1.0, 41 added in 2026-04-18 pivot; SHOP-04 moved to Out of Scope)
+- Verified: 11 (SEC-01/02, PROG-02/03, SHOP-01/02/03/05, INV-01/02/03)
+- Pending verification (implementation complete, needs VERIFICATION.md): 12 (WEB-01..03, LEGAL-01..04, AUTH-01..04, AUTH-06) — closed by Phase 5.1/5.2 gap closure
+- Stub (known deferral): 1 (AUTH-05 — SMTP delivery → Phase 11/PROD-03)
+- Unimplemented (future phases 6-11): 18 (AI-01/02, LEAD-01/02, SOCL-01/02, GUILD-01/02, BILL-01..03, PROD-01..05)
+- Out of Scope: 1 (SHOP-04)
 - Unmapped: 0 ✓
 
 **Phase mapping summary (post-pivot):**
-- Phase 1: Secure Foundation (SEC-01, SEC-02) — complete
-- Phase 2: Web Foundation (WEB-01..03, LEGAL-01..04)
-- Phase 3: Auth Refactor (AUTH-01..06)
-- Phase 4: Character Stats (PROG-02, PROG-03)
-- Phase 5: Shop & Inventory (SHOP-01..03, SHOP-05, INV-01..03)
+- Phase 1: Secure Foundation (SEC-01, SEC-02) — complete, verified
+- Phase 2: Web Foundation (WEB-01..03, LEGAL-01..04) — complete, verification in Phase 5.1
+- Phase 3: Auth Refactor (AUTH-01..06) — complete (AUTH-05 stub), verification in Phase 5.2
+- Phase 4: Character Stats (PROG-02, PROG-03) — complete, verified
+- Phase 5: Shop & Inventory (SHOP-01..03, SHOP-05, INV-01..03) — complete, verified
+- **Phase 5.1: Verify Phase 02** — retroactive gap closure (milestone v1.0 audit 2026-04-22)
+- **Phase 5.2: Verify Phase 03** — retroactive gap closure + AUTH-05 stub acknowledgment
 - Phase 6: AI Daily Quests (AI-01, AI-02)
 - Phase 7: Leaderboard (LEAD-01, LEAD-02)
 - Phase 8: Friends (SOCL-01, SOCL-02)
 - Phase 9: Guilds & Challenges (GUILD-01, GUILD-02)
 - Phase 10: Monetization (BILL-01..03)
-- Phase 11: Production Polish (PROD-01..05)
+- Phase 11: Production Polish (PROD-01..05) — delivers AUTH-05 SMTP via PROD-03
 
 ---
 *Requirements defined: 2026-03-01*
 *Pivot expansion: 2026-04-18 (41 new requirements added, v2 social promoted to v1.0)*
+*Traceability refresh + gap closure phases: 2026-04-22 (milestone v1.0 audit)*

@@ -14,6 +14,8 @@
 - [x] **Phase 3: Auth Refactor** — JWT (access + refresh), email/password регистрация и логин, Telegram Login Widget, миграция всех эндпоинтов на `get_current_user`, Alembic baseline + add_auth_fields (completed 2026-04-18)
 - [x] **Phase 4: Character Stats** — 4 стата (Strength/Wisdom/Endurance/Charisma), категории квестов, рост статов, AI-промпт с учётом статов. (completed 2026-04-21)
 - [x] **Phase 5: Shop & Inventory** — каталог магазина, seed-данные, покупка за gold, инвентарь, активация бустов, экипировка скинов. (completed 2026-04-22)
+- [ ] **Phase 5.1: Verify Phase 02 (Web Foundation)** — retroactive goal-backward verification + REQUIREMENTS sync для WEB-01..03, LEGAL-01..04. (milestone v1.0 gap closure, audit 2026-04-22)
+- [ ] **Phase 5.2: Verify Phase 03 (Auth Refactor)** — retroactive verification + REQUIREMENTS sync для AUTH-01..06, формальное acknowledgment AUTH-05 stub (Phase 11 scope).
 - [ ] **Phase 6: AI Daily Quests** — on-demand daily suggestions, персонализация под статы, кеш в Redis.
 - [ ] **Phase 7: Leaderboard** — Redis sorted set, страница с топ-100 + позиция юзера.
 - [ ] **Phase 8: Social — Friends** — поиск, инвайты, friendship, feed активности друзей.
@@ -142,6 +144,48 @@ Plans:
 
 ---
 
+### Phase 5.1: Verify Phase 02 (Web Foundation)
+
+**Goal:** Close milestone v1.0 audit gap G1 — retroactively produce `.planning/phases/02-web-foundation/02-VERIFICATION.md` по goal-backward методологии (gsd-verifier), синхронизировать чекбоксы REQUIREMENTS.md для WEB-01..03, LEGAL-01..04 с фактическим состоянием кода.
+
+**Gap Closure:** Milestone v1.0 audit (2026-04-22) — closes G1 (Phase 02 unverified, 7 requirements verification-gap). Integration wiring уже подтверждён gsd-integration-checker; задача — формально оформить verification.
+
+**Depends on:** Phase 2 (complete), Phase 5 (milestone audit complete)
+
+**Requirements:** WEB-01, WEB-02, WEB-03, LEGAL-01, LEGAL-02, LEGAL-03, LEGAL-04
+
+**Success Criteria:**
+1. `.planning/phases/02-web-foundation/02-VERIFICATION.md` создан по goal-backward методологии (gsd-verifier)
+2. Verification отвечает "Are you satisfied with how the system achieves [Phase 02 goal]?" и отдельно по каждому из 7 требований (SATISFIED / PARTIAL / UNSATISFIED)
+3. REQUIREMENTS.md чекбоксы обновлены: `WEB-03`, `LEGAL-01` → `[x]` если verify passed; остальные (`WEB-01/02`, `LEGAL-02/03/04`) подтверждены как `[x]`
+4. Traceability table: Phase column обновлён до `Phase 5.1 (verify)` для этих REQs, Status → `Verified`
+5. TODO-markers для реквизитов (tech debt из аудита) явно зафиксированы в 02-VERIFICATION.md как pre-launch checklist
+
+**Plans:** TBD — run `/gsd:plan-phase 5.1` after `/clear`
+
+---
+
+### Phase 5.2: Verify Phase 03 (Auth Refactor)
+
+**Goal:** Close milestone v1.0 audit gap G2 — retroactively produce `.planning/phases/03-auth-refactor/03-VERIFICATION.md` по goal-backward методологии, синхронизировать чекбоксы REQUIREMENTS.md для AUTH-01..06, формально задокументировать AUTH-05 stub-статус (G3 acknowledgment, SMTP delivery deferred to Phase 11/PROD-03).
+
+**Gap Closure:** Milestone v1.0 audit (2026-04-22) — closes G2 (Phase 03 unverified, 6 requirements verification-gap) + acknowledges G3 (AUTH-05 stub).
+
+**Depends on:** Phase 3 (complete), Phase 5 (milestone audit complete)
+
+**Requirements:** AUTH-01, AUTH-02, AUTH-03, AUTH-04, AUTH-05 (stub ack), AUTH-06
+
+**Success Criteria:**
+1. `.planning/phases/03-auth-refactor/03-VERIFICATION.md` создан по goal-backward методологии (gsd-verifier)
+2. Verification отвечает по каждому требованию AUTH-01..06, явно помечая AUTH-05 как `PARTIAL (stub)` с указанием "SMTP deferred to Phase 11"
+3. REQUIREMENTS.md чекбоксы обновлены: `AUTH-01`, `AUTH-02`, `AUTH-03`, `AUTH-04`, `AUTH-06` → `[x]` если verify passed; `AUTH-05` остаётся `[ ]` с inline-заметкой "stub — Phase 11 (PROD-03) delivers SMTP"
+4. REQUIREMENTS.md traceability table приведена к post-pivot phase numbers (убрана stale "Phase 2"/"Phase 3" нумерация по всей таблице)
+5. AUTH-05 stub-статус явно задокументирован (в 03-VERIFICATION.md + tech debt log) как accepted v1.0 deviation, blocking только public launch
+
+**Plans:** TBD — run `/gsd:plan-phase 5.2` after `/clear`
+
+---
+
 ### Phase 6: AI Daily Quests
 
 **Goal:** Пользователь получает 3 персонализированных AI-предложения каждый день, основанных на статах и истории.
@@ -267,7 +311,9 @@ Plans:
 | 2. Web Foundation | 3/3 | Complete | 2026-04-18 |
 | 3. Auth Refactor | 3/3 | Complete | 2026-04-18 |
 | 4. Character Stats | 4/4 | Complete   | 2026-04-21 |
-| 5. Shop & Inventory | 5/6 | In Progress|  |
+| 5. Shop & Inventory | 6/6 | Complete | 2026-04-22 |
+| 5.1 Verify Web Foundation (gap closure) | 0/TBD | Not started | — |
+| 5.2 Verify Auth Refactor (gap closure) | 0/TBD | Not started | — |
 | 6. AI Daily Quests | 0/TBD | Not started | — |
 | 7. Leaderboard | 0/TBD | Not started | — |
 | 8. Friends | 0/TBD | Not started | — |
