@@ -8,6 +8,20 @@ import QuestDetailsModal from '../components/QuestDetailsModal';
 
 const DEBUG_MODE = false;
 
+const STAT_LABELS = {
+  strength: 'СИЛА',
+  endurance: 'ВЫНОСЛИВОСТЬ',
+  wisdom: 'МУДРОСТЬ',
+  charisma: 'ОБАЯНИЕ',
+};
+
+const STAT_COLORS = {
+  strength: 'text-red-500',
+  endurance: 'text-green-500',
+  wisdom: 'text-blue-500',
+  charisma: 'text-yellow-500',
+};
+
 const RollingValue = ({ isAnalyzing, value, colorClass, label, prefix = '+' }) => {
   const [displayValue, setDisplayValue] = useState(0);
   useEffect(() => {
@@ -43,6 +57,7 @@ const QuestsPage = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedDetails, setSelectedDetails] = useState(null);
   const [optimisticTasks, setOptimisticTasks] = useState([]);
+  const [statGainToast, setStatGainToast] = useState(null);
 
   const [visualTick, setVisualTick] = useState(0);
   useEffect(() => {
@@ -72,7 +87,11 @@ const QuestsPage = () => {
 
   const completeMutation = useMutation({
     mutationFn: (questId) => api.post(`/quests/complete/${questId}`).then((r) => r.data),
-    onSuccess: () => {
+    onSuccess: (data) => {
+      if (data?.stat_gain) {
+        setStatGainToast(data.stat_gain);
+        setTimeout(() => setStatGainToast(null), 3500);
+      }
       queryClient.invalidateQueries({ queryKey: ['quests'] });
       queryClient.invalidateQueries({ queryKey: ['user'] });
     },
@@ -108,6 +127,13 @@ const QuestsPage = () => {
     };
 
     setOptimisticTasks((prev) => [...prev, tempTask]);
+
+    if (!basicData.category) {
+      console.error('onAddTask called without category — aborting');
+      setOptimisticTasks((prev) => prev.filter((t) => t.id !== tempId));
+      return;
+    }
+
     setIsAddModalOpen(false);
 
     try {
@@ -139,6 +165,7 @@ const QuestsPage = () => {
         title: basicData.title,
         deadline: basicData.deadline,
         difficulty: analyzedData.difficulty,
+        category: basicData.category,                        // Phase 4: persist category
         xp_reward: analyzedData.xp,
         gold_reward: analyzedData.gold,
         hp_penalty: analyzedData.hp_penalty,
@@ -266,6 +293,18 @@ const QuestsPage = () => {
       />
       {isAddModalOpen && (
         <AddTaskModal onAdd={onAddTask} onClose={() => setIsAddModalOpen(false)} />
+      )}
+      {statGainToast && (
+        <div className="fixed bottom-[150px] left-1/2 -translate-x-1/2 z-[90] bg-[#0a0a0a] border border-white/20 px-5 py-3 shadow-[6px_6px_0_#000] font-mono text-center space-y-1 min-w-[220px]">
+          <div className={`${STAT_COLORS[statGainToast.name]} text-[11px] font-black uppercase tracking-widest`}>
+            +{statGainToast.xp_gained} {STAT_LABELS[statGainToast.name]}
+          </div>
+          {statGainToast.leveled_up && (
+            <div className="text-[#daa520] text-[9px] font-black uppercase tracking-widest">
+              НОВЫЙ УРОВЕНЬ: {STAT_LABELS[statGainToast.name]} LVL {statGainToast.new_level}
+            </div>
+          )}
+        </div>
       )}
     </div>
   );
