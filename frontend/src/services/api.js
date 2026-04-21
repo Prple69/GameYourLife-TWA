@@ -91,4 +91,30 @@ export const userService = {
   },
 };
 
+export const shopService = {
+  getCatalog: async () => {
+    const response = await api.get('/shop');
+    return response.data;
+  },
+  buy: async (shopItemId, { idempotency_key }) => {
+    const response = await api.post(`/shop/buy/${shopItemId}`, { idempotency_key });
+    return response.data;
+  },
+};
+
+export const inventoryService = {
+  list: async () => {
+    const response = await api.get('/inventory');
+    return response.data;
+  },
+  activate: async (inventoryItemId, { idempotency_key }) => {
+    const response = await api.post(`/inventory/${inventoryItemId}/activate`, { idempotency_key });
+    return response.data;
+  },
+  equip: async (inventoryItemId, { idempotency_key }) => {
+    const response = await api.post(`/inventory/${inventoryItemId}/equip`, { idempotency_key });
+    return response.data;
+  },
+};
+
 export default api;
