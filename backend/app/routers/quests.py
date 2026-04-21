@@ -30,6 +30,7 @@ from app.config import get_settings
 from app.database import get_db
 from app.dependencies import get_current_user
 from app.models import get_msk_now
+from app.utils.game_logic import apply_stat_xp, STAT_GROWTH, CATEGORY_TO_STAT
 
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["quests"])
@@ -76,6 +77,7 @@ async def analyze_task(
         lvl = payload.get("lvl", user.lvl)
         current_hp = payload.get("current_hp", user.hp)
         max_hp = payload.get("max_hp", user.max_hp)
+        category = payload.get("category", "unknown")
 
         prompt = f""" Ты RPG мастер. Оцени контракт: "{title}".
         Сегодня: {current_day}. Дедлайн: {deadline}.
@@ -83,6 +85,14 @@ async def analyze_task(
         СТАТУС ИГРОКА:
         - Уровень: {lvl}
         - Текущее HP: {current_hp} / {max_hp}
+
+        СТАТЫ ИГРОКА (level):
+        - Сила: {user.stat_strength_level}
+        - Мудрость: {user.stat_wisdom_level}
+        - Выносливость: {user.stat_endurance_level}
+        - Обаяние: {user.stat_charisma_level}
+
+        КАТЕГОРИЯ КВЕСТА: {category}
 
         КРИТЕРИИ СЛОЖНОСТИ И НАГРАД:
         - easy: Рутина. Награда: gold 5-15, xp 10-30. Штраф при провале: 5-8 HP.
@@ -94,6 +104,9 @@ async def analyze_task(
         1. Если дедлайн критический (сегодня), сложность и награда растут.
         2. Оцени "hp_penalty" (штраф за провал) исходя из сложности.
         3. Если у игрока критически мало HP ({current_hp}), сделай штраф чуть мягче, но не ниже минимального для категории.
+        4. Если стат, соответствующий категории квеста ({category}), НИЖЕ среднего
+        по 4 статам — слегка увеличь XP/gold (+10%) и снизь hp_penalty (-10%),
+        чтобы поощрить прокачку слабого направления. Не меняй формат ответа.
 
         Верни ТОЛЬКО чистый JSON (без разметки markdown):
         {{
@@ -162,6 +175,7 @@ async def save_quest(
         gold_reward=quest_data.gold_reward,
         hp_penalty=quest_data.hp_penalty,
         deadline=quest_data.deadline,
+        category=quest_data.category,
         is_completed=False,
         is_failed=False,
     )
@@ -201,6 +215,13 @@ async def complete_quest(
         user.max_xp = int(user.max_xp * 1.2)
         leveled_up = True
 
+    # Phase 4: stat gain (no-op for legacy quests without category)
+    stat_gain = None
+    if quest.category is not None:
+        stat_name = CATEGORY_TO_STAT[quest.category]
+        xp_gain = STAT_GROWTH[quest.difficulty]
+        stat_gain = apply_stat_xp(user, stat_name, xp_gain)
+
     await db.commit()
     await db.refresh(user)
 
@@ -209,6 +230,7 @@ async def complete_quest(
         "leveled_up": leveled_up,
         "user": schemas.UserSchema.model_validate(user),
         "reward": {"xp": quest.xp_reward, "gold": quest.gold_reward},
+        "stat_gain": stat_gain,  # None for legacy category=NULL quests
     }
 
 
