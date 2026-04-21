@@ -12,7 +12,7 @@
 - [x] **Phase 1: Secure Foundation** — HMAC-валидация Telegram initData + credentials в env (completed 2026-03-02)
 - [x] **Phase 2: Web Foundation** — React Router, Zustand, react-query, responsive layout (sidebar/bottom-tabs), landing, legal pages. Удаление TWA SDK с фронта (completed 2026-04-18)
 - [x] **Phase 3: Auth Refactor** — JWT (access + refresh), email/password регистрация и логин, Telegram Login Widget, миграция всех эндпоинтов на `get_current_user`, Alembic baseline + add_auth_fields (completed 2026-04-18)
-- [x] **Phase 4: Character Stats** — 4 стата (Strength/Wisdom/Endurance/Charisma), категории квестов, рост статов, AI-промпт с учётом статов. (completed 2026-04-21)
+- [x] **Phase 4: Character Stats** — 4 стата (Strength/Wisdom/Endurance/Charisma), категории квестов, рост статов, AI-промпт с учётом статов. (completed 2026-04-21)
 - [x] **Phase 5: Shop & Inventory** — каталог магазина, seed-данные, покупка за gold, инвентарь, активация бустов, экипировка скинов. (completed 2026-04-22)
 - [ ] **Phase 5.1: Verify Phase 02 (Web Foundation)** — retroactive goal-backward verification + REQUIREMENTS sync для WEB-01..03, LEGAL-01..04. (milestone v1.0 gap closure, audit 2026-04-22)
 - [ ] **Phase 5.2: Verify Phase 03 (Auth Refactor)** — retroactive verification + REQUIREMENTS sync для AUTH-01..06, формальное acknowledgment AUTH-05 stub (Phase 11 scope).
@@ -185,7 +185,10 @@ Plans:
 4. REQUIREMENTS.md traceability table приведена к post-pivot phase numbers (убрана stale "Phase 2"/"Phase 3" нумерация по всей таблице)
 5. AUTH-05 stub-статус явно задокументирован (в 03-VERIFICATION.md + tech debt log) как accepted v1.0 deviation, blocking только public launch
 
-**Plans:** TBD — run `/gsd:plan-phase 5.2` after `/clear`
+**Plans:** 1 plan
+
+Plans:
+- [ ] 05.2-01-verification-PLAN.md — Write 03-VERIFICATION.md (goal-backward), sync REQUIREMENTS.md checkboxes + traceability + AUTH-05 stub acknowledgment, commit
 
 ---
 
@@ -316,7 +319,7 @@ Plans:
 | 4. Character Stats | 4/4 | Complete   | 2026-04-21 |
 | 5. Shop & Inventory | 6/6 | Complete | 2026-04-22 |
 | 5.1 Verify Web Foundation (gap closure) | 1/1 | Complete | 2026-04-22 |
-| 5.2 Verify Auth Refactor (gap closure) | 0/TBD | Not started | — |
+| 5.2 Verify Auth Refactor (gap closure) | 0/1 | Not started | — |
 | 6. AI Daily Quests | 0/TBD | Not started | — |
 | 7. Leaderboard | 0/TBD | Not started | — |
 | 8. Friends | 0/TBD | Not started | — |
