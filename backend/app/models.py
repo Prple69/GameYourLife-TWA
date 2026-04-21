@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, ForeignKey, Text, UniqueConstraint
 from sqlalchemy.orm import relationship, DeclarativeBase
 from datetime import datetime, timedelta, timezone
 
@@ -58,7 +58,24 @@ class User(Base):
     # Добавляем timezone=True для корректной работы с Postgres
     created_at = Column(DateTime(timezone=True), default=get_msk_now)
 
+    # Phase 5: active boost slots (denormalized — one slot per boost type)
+    active_xp_mult         = Column(Float, nullable=True)
+    active_xp_expires_at   = Column(DateTime(timezone=True), nullable=True)
+    active_gold_mult       = Column(Float, nullable=True)
+    active_gold_expires_at = Column(DateTime(timezone=True), nullable=True)
+    active_strength_xp_mult         = Column(Float, nullable=True)
+    active_strength_xp_expires_at   = Column(DateTime(timezone=True), nullable=True)
+    active_wisdom_xp_mult           = Column(Float, nullable=True)
+    active_wisdom_xp_expires_at     = Column(DateTime(timezone=True), nullable=True)
+    active_endurance_xp_mult        = Column(Float, nullable=True)
+    active_endurance_xp_expires_at  = Column(DateTime(timezone=True), nullable=True)
+    active_charisma_xp_mult         = Column(Float, nullable=True)
+    active_charisma_xp_expires_at   = Column(DateTime(timezone=True), nullable=True)
+    active_hp_max_bonus    = Column(Integer, nullable=True)
+    active_hp_max_expires_at = Column(DateTime(timezone=True), nullable=True)
+
     quests = relationship("Quest", back_populates="owner", cascade="all, delete-orphan")
+    inventory_items = relationship("InventoryItem", back_populates="user")
 
 
 class Quest(Base):
@@ -82,3 +99,46 @@ class Quest(Base):
     is_failed = Column(Boolean, default=False)
 
     owner = relationship("User", back_populates="quests")
+
+
+class ShopItem(Base):
+    __tablename__ = "shop_items"
+    id               = Column(Integer, primary_key=True, index=True)
+    item_type        = Column(String, nullable=False)   # booster_xp, booster_gold, booster_strength_xp, booster_wisdom_xp, booster_endurance_xp, booster_charisma_xp, booster_hp_max, potion_heal, skin
+    name             = Column(String, nullable=False, unique=True)
+    description      = Column(String, nullable=True)
+    icon             = Column(String, nullable=True)    # emoji or asset key
+    price_gold       = Column(Integer, nullable=False)
+    effect_multiplier = Column(Float, nullable=True)   # for booster_* (mult value)
+    duration_seconds = Column(Integer, nullable=True)  # for timer-based boosters
+    heal_amount      = Column(Integer, nullable=True)  # for potion_heal
+    hp_max_bonus     = Column(Integer, nullable=True)  # for booster_hp_max
+    avatar_key       = Column(String, nullable=True)   # for skin
+    is_active        = Column(Boolean, default=True, nullable=False)
+
+    inventory_items  = relationship("InventoryItem", back_populates="shop_item")
+
+
+class InventoryItem(Base):
+    __tablename__ = "inventory_items"
+    __table_args__ = (UniqueConstraint("user_id", "shop_item_id", name="uq_user_shop_item"),)
+
+    id           = Column(Integer, primary_key=True, index=True)
+    user_id      = Column(Integer, ForeignKey("users.id"), nullable=False)
+    shop_item_id = Column(Integer, ForeignKey("shop_items.id"), nullable=False)
+    quantity     = Column(Integer, nullable=False, default=1)
+    created_at   = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone(timedelta(hours=3))))
+
+    user       = relationship("User", back_populates="inventory_items")
+    shop_item  = relationship("ShopItem", back_populates="inventory_items")
+
+
+class IdempotencyKey(Base):
+    __tablename__ = "idempotency_keys"
+    __table_args__ = (UniqueConstraint("user_id", "key", name="uq_user_idem_key"),)
+
+    id            = Column(Integer, primary_key=True, index=True)
+    user_id       = Column(Integer, ForeignKey("users.id"), nullable=False)
+    key           = Column(String, nullable=False)
+    response_json = Column(Text, nullable=False)
+    created_at    = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone(timedelta(hours=3))))
