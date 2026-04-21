@@ -164,7 +164,7 @@ Plans:
 **Plans:** 1 plan
 
 Plans:
-- [ ] 05.1-01-verification-PLAN.md — Write 02-VERIFICATION.md (goal-backward), sync REQUIREMENTS.md checkboxes + traceability, commit
+- [x] 05.1-01-verification-PLAN.md — Write 02-VERIFICATION.md (goal-backward), sync REQUIREMENTS.md checkboxes + traceability, commit
 
 ---
 
@@ -315,7 +315,7 @@ Plans:
 | 3. Auth Refactor | 3/3 | Complete | 2026-04-18 |
 | 4. Character Stats | 4/4 | Complete   | 2026-04-21 |
 | 5. Shop & Inventory | 6/6 | Complete | 2026-04-22 |
-| 5.1 Verify Web Foundation (gap closure) | 0/TBD | Not started | — |
+| 5.1 Verify Web Foundation (gap closure) | 1/1 | Complete | 2026-04-22 |
 | 5.2 Verify Auth Refactor (gap closure) | 0/TBD | Not started | — |
 | 6. AI Daily Quests | 0/TBD | Not started | — |
 | 7. Leaderboard | 0/TBD | Not started | — |
