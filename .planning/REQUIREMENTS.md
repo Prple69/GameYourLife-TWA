@@ -23,8 +23,8 @@ Requirements for initial release. Checked items are already working in the exist
 ### Character Progression
 
 - [x] **PROG-01**: User character levels up when XP reaches threshold (threshold scales 1.2× per level)
-- [ ] **PROG-02**: Character has 4 named stats (Strength, Wisdom, Endurance, Charisma) visible on profile
-- [ ] **PROG-03**: Completing different quest types grows the corresponding character stat
+- [x] **PROG-02**: Character has 4 named stats (Strength, Wisdom, Endurance, Charisma) visible on profile
+- [x] **PROG-03**: Completing different quest types grows the corresponding character stat
 
 ### Shop
 
@@ -148,8 +148,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PROF-02 | — | Complete (existing) |
 | SEC-01 | Phase 1 | Complete |
 | SEC-02 | Phase 1 | Complete |
-| PROG-02 | Phase 2 | Pending |
-| PROG-03 | Phase 2 | Pending |
+| PROG-02 | Phase 2 | Complete |
+| PROG-03 | Phase 2 | Complete |
 | AI-01 | Phase 3 | Pending |
 | AI-02 | Phase 3 | Pending |
 | SHOP-01 | Phase 4 | Pending |

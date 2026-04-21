@@ -5,13 +5,13 @@ milestone_name: milestone
 current_phase: 1
 current_plan: Not started
 status: unknown
-last_updated: "2026-04-20T23:48:34.136Z"
+last_updated: "2026-04-21T00:18:47.265Z"
 progress:
   total_phases: 4
   completed_phases: 3
-  total_plans: 8
-  completed_plans: 8
-  percent: 80
+  total_plans: 12
+  completed_plans: 9
+  percent: 75
 ---
 
 ---
@@ -79,7 +79,7 @@ progress:
 **Current Phase:** Phase 1: Secure Foundation (complete)
 **Current Plan:** Not started
 **Execution Status:** Phase 1 complete — ready for Phase 2
-**Progress:** [████████░░] 80%
+**Progress:** [████████░░] 75%
 
 ---
 
@@ -115,6 +115,9 @@ Phase 1 planning must address security (SEC-01, SEC-02) before feature work.
 - [Phase 02-web-foundation]: LegalLayout extracted to separate file shared by all three legal pages — single source of truth for footer links
 - [Phase 02-web-foundation]: Phase 2 mock token pre-populated in authStore so ProtectedRoute passes without real auth until Phase 3 implements JWT
 - [Phase 02-web-foundation]: Nested Routes inside /app element is temporary scaffold; Plan 02-03 replaces with AppLayout + Outlet pattern
+- [Phase 04-character-stats]: Revision ID 06a41e12f90c; hand-wrote migration (no autogenerate) to avoid spurious drop_index calls
+- [Phase 04-character-stats]: Both default= and server_default= on stat columns: server_default for existing DB rows, default= for ORM inserts
+- [Phase 04-character-stats]: Literal type alias for QuestCategory (not Enum) - matches project convention for difficulty: str
 
 ## Session Continuity
 
@@ -124,7 +127,7 @@ Phase 1 planning must address security (SEC-01, SEC-02) before feature work.
 - `.planning/STATE.md` — This file, project memory and decision context
 - `.planning/REQUIREMENTS.md` — Traceability section updated with phase mappings
 
-**Last Session:** 2026-04-20T23:48:34.134Z
+**Last Session:** 2026-04-21T00:18:47.264Z
 **Next Step:** Run `/gsd:plan-phase 2` to decompose Phase 2 (Character Stats) into executable plans
 
 ---
@@ -142,6 +145,7 @@ Phase 1 planning must address security (SEC-01, SEC-02) before feature work.
 | Phase 01-secure-foundation P02 | 5 | 2 tasks | 6 files |
 | Phase 02-web-foundation P02 | 15 | 2 tasks | 6 files |
 | Phase 02-web-foundation P01 | 185 | 2 tasks | 12 files |
+| Phase 04-character-stats P01 | 3 | 3 tasks | 7 files |
 
 ## Accumulated Context
 
