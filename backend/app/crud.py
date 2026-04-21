@@ -259,3 +259,29 @@ async def update_user_avatar_by_id(db: AsyncSession, user_id: int, avatar_id: st
         await db.commit()
         await db.refresh(user)
     return user
+
+
+# --- Phase 5: Shop / Inventory CRUD -----------------------------------------
+
+async def get_catalog(db: AsyncSession) -> list:
+    """Return all active shop items ordered by price ascending."""
+    from sqlalchemy import select
+    result = await db.execute(
+        select(models.ShopItem)
+        .filter(models.ShopItem.is_active == True)
+        .order_by(models.ShopItem.price_gold.asc())
+    )
+    return result.scalars().all()
+
+
+async def get_inventory(db: AsyncSession, user_id: int) -> list:
+    """Return all inventory items for a user with shop_item eagerly loaded."""
+    from sqlalchemy import select
+    from sqlalchemy.orm import selectinload
+    result = await db.execute(
+        select(models.InventoryItem)
+        .filter(models.InventoryItem.user_id == user_id)
+        .options(selectinload(models.InventoryItem.shop_item))
+        .order_by(models.InventoryItem.created_at.asc())
+    )
+    return result.scalars().all()
