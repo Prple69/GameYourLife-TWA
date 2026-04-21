@@ -22,7 +22,7 @@ from typing import List
 
 from fastapi import APIRouter, Body, Depends, HTTPException
 from openai import AsyncOpenAI
-from sqlalchemy import or_, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import crud, models, schemas
@@ -30,7 +30,10 @@ from app.config import get_settings
 from app.database import get_db
 from app.dependencies import get_current_user
 from app.models import get_msk_now
-from app.utils.game_logic import apply_stat_xp, STAT_GROWTH, CATEGORY_TO_STAT
+from app.utils.game_logic import (
+    apply_stat_xp, STAT_GROWTH, CATEGORY_TO_STAT,
+    MAX_ACTIVE_QUESTS, effective_multipliers, effective_max_hp,
+)
 
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["quests"])
@@ -52,9 +55,14 @@ async def _fail_overdue_quests(db: AsyncSession, user: models.User) -> None:
     overdue = result.scalars().all()
     if not overdue:
         return
+    now = get_msk_now()
+    eff_max_hp = effective_max_hp(user, now)
     for q in overdue:
         q.is_failed = True
         user.hp = max(0, user.hp - 5)
+        # Clamp if hp_max boost expired since last read
+        if user.hp > eff_max_hp:
+            user.hp = eff_max_hp
     await db.commit()
 
 
@@ -167,6 +175,18 @@ async def save_quest(
     user: models.User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
+    # Phase 5: enforce quest slot cap
+    count_res = await db.execute(
+        select(func.count(models.Quest.id)).filter(
+            models.Quest.user_id == user.id,
+            models.Quest.is_completed == False,
+            models.Quest.is_failed == False,
+        )
+    )
+    active_count = count_res.scalar()
+    if active_count >= MAX_ACTIVE_QUESTS:
+        raise HTTPException(status_code=409, detail="active_limit_reached")
+
     quest = models.Quest(
         user_id=user.id,
         title=quest_data.title,
@@ -205,8 +225,14 @@ async def complete_quest(
 
     quest.is_completed = True
 
-    user.xp += int(quest.xp_reward * user.xp_multiplier)
-    user.gold += int(quest.gold_reward * user.gold_multiplier)
+    # Phase 5: apply active boost multipliers
+    now = get_msk_now()
+    mults = effective_multipliers(user, now)
+
+    xp_gained = round(quest.xp_reward * mults["xp"])
+    gold_gained = round(quest.gold_reward * mults["gold"])
+    user.xp += xp_gained
+    user.gold += gold_gained
 
     leveled_up = False
     while user.xp >= user.max_xp:
@@ -215,12 +241,21 @@ async def complete_quest(
         user.max_xp = int(user.max_xp * 1.2)
         leveled_up = True
 
-    # Phase 4: stat gain (no-op for legacy quests without category)
+    # Phase 4+5: stat gain with boost multiplier (no-op for legacy quests without category)
     stat_gain = None
     if quest.category is not None:
         stat_name = CATEGORY_TO_STAT[quest.category]
-        xp_gain = STAT_GROWTH[quest.difficulty]
-        stat_gain = apply_stat_xp(user, stat_name, xp_gain)
+        stat_mult_key = f"{stat_name}_xp"
+        base_stat_gain = STAT_GROWTH[quest.difficulty]
+        boosted_stat_gain = round(base_stat_gain * mults.get(stat_mult_key, 1.0))
+        stat_gain = apply_stat_xp(user, stat_name, boosted_stat_gain)
+
+    # Build applied_boosts list for response
+    applied_boosts = [
+        {"type": k, "mult": v}
+        for k, v in mults.items()
+        if v > 1.0
+    ]
 
     await db.commit()
     await db.refresh(user)
@@ -231,6 +266,7 @@ async def complete_quest(
         "user": schemas.UserSchema.model_validate(user),
         "reward": {"xp": quest.xp_reward, "gold": quest.gold_reward},
         "stat_gain": stat_gain,  # None for legacy category=NULL quests
+        "applied_boosts": applied_boosts,
     }
 
 
