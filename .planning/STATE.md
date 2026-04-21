@@ -5,13 +5,13 @@ milestone_name: milestone
 current_phase: 04
 current_plan: Not started
 status: unknown
-last_updated: "2026-04-21T03:58:43.533Z"
+last_updated: "2026-04-21T03:59:22.239Z"
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 18
-  completed_plans: 13
-  percent: 72
+  completed_plans: 14
+  percent: 78
 ---
 
 ---
@@ -79,7 +79,7 @@ progress:
 **Current Phase:** Phase 1: Secure Foundation (complete)
 **Current Plan:** Not started
 **Execution Status:** Phase 1 complete — ready for Phase 2
-**Progress:** [███████░░░] 72%
+**Progress:** [████████░░] 78%
 
 ---
 
@@ -127,6 +127,9 @@ Phase 1 planning must address security (SEC-01, SEC-02) before feature work.
 - [Phase 05-shop-inventory]: Lazy expiry in effective_multipliers: exp > now (strictly greater) — expires_at == now is treated as expired to prevent edge-case exploitation
 - [Phase 05-shop-inventory]: BOOST_MULT_TYPES tuple drives effective_multipliers generically via getattr — adding a new boost type requires only updating this tuple
 - [Phase 05-shop-inventory]: Wave 0 scaffold pattern: pass-only test files created in Plan 02 so Plans 03/04 can fill in without import errors during parallel development
+- [Phase 05-shop-inventory]: Hand-wrote migration c203bdcc4819 (no autogenerate) — avoids spurious drop_index calls per Phase 4 pattern
+- [Phase 05-shop-inventory]: SHOP-04 permanently removed from scope: quest slots are hard cap (5), not purchasable
+- [Phase 05-shop-inventory]: Denormalized active boost columns on User (14 nullable columns) — one slot per boost type
 
 ## Session Continuity
 
@@ -136,7 +139,7 @@ Phase 1 planning must address security (SEC-01, SEC-02) before feature work.
 - `.planning/STATE.md` — This file, project memory and decision context
 - `.planning/REQUIREMENTS.md` — Traceability section updated with phase mappings
 
-**Last Session:** 2026-04-21T03:58:43.531Z
+**Last Session:** 2026-04-21T03:59:22.238Z
 **Next Step:** Run `/gsd:plan-phase 2` to decompose Phase 2 (Character Stats) into executable plans
 
 ---
@@ -159,6 +162,7 @@ Phase 1 planning must address security (SEC-01, SEC-02) before feature work.
 | Phase 04-character-stats P02 | 15 | 2 tasks | 2 files |
 | Phase 04-character-stats P04 | 20 | 2 tasks | 1 files |
 | Phase 05 P02 | 12 | 3 tasks | 5 files |
+| Phase 05-shop-inventory P01 | 2 | 3 tasks | 4 files |
 
 ## Accumulated Context
 

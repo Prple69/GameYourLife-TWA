@@ -28,16 +28,16 @@ Requirements for initial release. Checked items are already working in the exist
 
 ### Shop
 
-- [ ] **SHOP-01**: User can browse a shop catalog showing items with name, description, and gold cost
+- [x] **SHOP-01**: User can browse a shop catalog showing items with name, description, and gold cost
 - [x] **SHOP-02**: User can purchase XP multiplier boost items with earned gold
 - [x] **SHOP-03**: User can purchase gold multiplier boost items with earned gold
-- [ ] **SHOP-05**: User can purchase cosmetic avatar skins with earned gold
+- [x] **SHOP-05**: User can purchase cosmetic avatar skins with earned gold
 
 ### Inventory
 
-- [ ] **INV-01**: User can view all owned items in their inventory
+- [x] **INV-01**: User can view all owned items in their inventory
 - [x] **INV-02**: User can activate owned boost items from inventory (applies effect immediately)
-- [ ] **INV-03**: User can equip owned avatar skins from inventory
+- [x] **INV-03**: User can equip owned avatar skins from inventory
 
 ### Leaderboard
 
@@ -152,14 +152,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PROG-03 | Phase 2 | Complete |
 | AI-01 | Phase 3 | Pending |
 | AI-02 | Phase 3 | Pending |
-| SHOP-01 | Phase 4 | Pending |
+| SHOP-01 | Phase 4 | Complete |
 | SHOP-02 | Phase 4 | Complete |
 | SHOP-03 | Phase 4 | Complete |
 | SHOP-04 | — | Out of Scope |
-| SHOP-05 | Phase 4 | Pending |
-| INV-01 | Phase 4 | Pending |
+| SHOP-05 | Phase 4 | Complete |
+| INV-01 | Phase 4 | Complete |
 | INV-02 | Phase 4 | Complete |
-| INV-03 | Phase 4 | Pending |
+| INV-03 | Phase 4 | Complete |
 | LEAD-01 | Phase 7 | Pending |
 | LEAD-02 | Phase 7 | Pending |
 | WEB-01 | Phase 2 | Complete |
