@@ -12,7 +12,7 @@
 - [x] **Phase 1: Secure Foundation** — HMAC-валидация Telegram initData + credentials в env (completed 2026-03-02)
 - [x] **Phase 2: Web Foundation** — React Router, Zustand, react-query, responsive layout (sidebar/bottom-tabs), landing, legal pages. Удаление TWA SDK с фронта (completed 2026-04-18)
 - [x] **Phase 3: Auth Refactor** — JWT (access + refresh), email/password регистрация и логин, Telegram Login Widget, миграция всех эндпоинтов на `get_current_user`, Alembic baseline + add_auth_fields (completed 2026-04-18)
-- [ ] **Phase 4: Character Stats** — 4 стата (Strength/Wisdom/Endurance/Charisma), категории квестов, рост статов, AI-промпт с учётом статов.
+- [x] **Phase 4: Character Stats** — 4 стата (Strength/Wisdom/Endurance/Charisma), категории квестов, рост статов, AI-промпт с учётом статов. (completed 2026-04-21)
 - [ ] **Phase 5: Shop & Inventory** — каталог магазина, seed-данные, покупка за gold, инвентарь, активация бустов, экипировка скинов.
 - [ ] **Phase 6: AI Daily Quests** — on-demand daily suggestions, персонализация под статы, кеш в Redis.
 - [ ] **Phase 7: Leaderboard** — Redis sorted set, страница с топ-100 + позиция юзера.
@@ -103,7 +103,7 @@ Plans:
 4. AI-промпт получает статы юзера и учитывает их при выставлении награды
 5. Alembic-миграция добавила `stat_strength / stat_wisdom / stat_endurance / stat_charisma` в users, `category` в quests
 
-**Plans:** 3/4 plans executed
+**Plans:** 4/4 plans complete
 
 Plans:
 - [ ] 04-01-PLAN.md — Backend foundation: Alembic migration (users +8 stat cols, quests +category), models.py + schemas.py extensions, game_logic.py utilities (STAT_GROWTH, CATEGORY_TO_STAT, max_xp_for_level, apply_stat_xp)
@@ -258,7 +258,7 @@ Plans:
 | 1. Secure Foundation | 2/2 | Complete | 2026-03-02 |
 | 2. Web Foundation | 3/3 | Complete | 2026-04-18 |
 | 3. Auth Refactor | 3/3 | Complete | 2026-04-18 |
-| 4. Character Stats | 3/4 | In Progress|  |
+| 4. Character Stats | 4/4 | Complete   | 2026-04-21 |
 | 5. Shop & Inventory | 0/TBD | Not started | — |
 | 6. AI Daily Quests | 0/TBD | Not started | — |
 | 7. Leaderboard | 0/TBD | Not started | — |
