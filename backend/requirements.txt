@@ -29,3 +29,6 @@ email-validator==2.1.0
 
 # Utilities
 alembic==1.13.1
+
+# Testing
+pytest==8.1.1
