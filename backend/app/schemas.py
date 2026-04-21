@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, ConfigDict, EmailStr
-from typing import Optional, List
+from typing import Literal, Optional, List
 from datetime import datetime
 
 # --- Схемы Пользователя ---
@@ -21,6 +21,16 @@ class UserSchema(BaseModel):
     max_hp: int
     xp_multiplier: float
     gold_multiplier: float
+
+    # Phase 4: character stats
+    stat_strength_level: int = 1
+    stat_strength_xp: int = 0
+    stat_wisdom_level: int = 1
+    stat_wisdom_xp: int = 0
+    stat_endurance_level: int = 1
+    stat_endurance_xp: int = 0
+    stat_charisma_level: int = 1
+    stat_charisma_xp: int = 0
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -61,6 +71,9 @@ class RefreshRequest(BaseModel):
 
 # --- Схемы Квестов ---
 
+QuestCategory = Literal["work", "fitness", "learning", "social"]
+
+
 class QuestBase(BaseModel):
     title: str
     deadline: str  # Формат YYYY-MM-DD
@@ -71,6 +84,7 @@ class QuestCreate(QuestBase):
     current_hp: int
     max_hp: int
     lvl: int
+    category: QuestCategory
 
 class QuestSave(QuestBase):
     """Данные для сохранения в БД после ИИ анализа"""
@@ -78,6 +92,7 @@ class QuestSave(QuestBase):
     xp_reward: int
     gold_reward: int
     hp_penalty: int  # <--- Добавлено
+    category: QuestCategory
 
 class QuestSchema(QuestBase):
     """Полная схема квеста для фронтенда"""
@@ -87,6 +102,7 @@ class QuestSchema(QuestBase):
     xp_reward: int
     gold_reward: int
     hp_penalty: int  # <--- Добавлено
+    category: Optional[QuestCategory] = None  # Phase 4: nullable for legacy quests
     is_completed: bool
     is_failed: bool
     created_at: datetime  

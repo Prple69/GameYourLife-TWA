@@ -27,6 +27,16 @@ class User(Base):
     display_name = Column(String, nullable=True)
     gems = Column(Integer, default=0, nullable=False, server_default="0")
 
+    # Phase 4: character stats (8 columns, mirrors gems NOT NULL+server_default pattern)
+    stat_strength_level  = Column(Integer, default=1, nullable=False, server_default="1")
+    stat_strength_xp     = Column(Integer, default=0, nullable=False, server_default="0")
+    stat_wisdom_level    = Column(Integer, default=1, nullable=False, server_default="1")
+    stat_wisdom_xp       = Column(Integer, default=0, nullable=False, server_default="0")
+    stat_endurance_level = Column(Integer, default=1, nullable=False, server_default="1")
+    stat_endurance_xp    = Column(Integer, default=0, nullable=False, server_default="0")
+    stat_charisma_level  = Column(Integer, default=1, nullable=False, server_default="1")
+    stat_charisma_xp     = Column(Integer, default=0, nullable=False, server_default="0")
+
     # Кастомизация персонажа
     selected_avatar = Column(String, default="avatar1")
     char_class = Column(String, default="knight")
@@ -63,7 +73,8 @@ class Quest(Base):
     xp_reward = Column(Integer)
     gold_reward = Column(Integer)
     hp_penalty = Column(Integer)
-    
+    category = Column(String, nullable=True)  # Phase 4: nullable for legacy quests
+
     deadline = Column(String) # Формат YYYY-MM-DD
     created_at = Column(DateTime(timezone=True), default=get_msk_now)
     
