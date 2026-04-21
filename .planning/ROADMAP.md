@@ -130,7 +130,15 @@ Plans:
 6. Экипировка скина меняет аватар персонажа
 7. Новые таблицы `shop_items`, `inventory_items` мигрированы через Alembic
 
-**Plans:** TBD
+**Plans:** 6 plans
+
+Plans:
+- [ ] 05-01-PLAN.md — DB foundation: Alembic migration (shop_items, inventory_items, idempotency_keys, +14 user boost cols), ORM models, Pydantic schemas, SHOP-04 Out of Scope
+- [ ] 05-02-PLAN.md — game_logic.py TDD: effective_multipliers, effective_max_hp, MAX_ACTIVE_QUESTS + Wave 0 test scaffolds
+- [ ] 05-03-PLAN.md — Backend routers: GET /api/shop, POST /api/shop/buy, GET /api/inventory, POST activate/equip, wired into main.py
+- [ ] 05-04-PLAN.md — quests.py modifications: 5-slot cap in save_quest, boost multipliers in complete_quest + HP clamp
+- [ ] 05-05-PLAN.md — Frontend: ShopPage catalog+buy, InventoryPage sections, Header boost timers, QuestsPage cap, AvatarSelector locks
+- [ ] 05-06-PLAN.md — Human verify: end-to-end shop+inventory flow in browser
 
 ---
 
