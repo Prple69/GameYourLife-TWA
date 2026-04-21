@@ -130,7 +130,7 @@ Plans:
 6. Экипировка скина меняет аватар персонажа
 7. Новые таблицы `shop_items`, `inventory_items` мигрированы через Alembic
 
-**Plans:** 4/6 plans executed
+**Plans:** 5/6 plans executed
 
 Plans:
 - [ ] 05-01-PLAN.md — DB foundation: Alembic migration (shop_items, inventory_items, idempotency_keys, +14 user boost cols), ORM models, Pydantic schemas, SHOP-04 Out of Scope
@@ -267,7 +267,7 @@ Plans:
 | 2. Web Foundation | 3/3 | Complete | 2026-04-18 |
 | 3. Auth Refactor | 3/3 | Complete | 2026-04-18 |
 | 4. Character Stats | 4/4 | Complete   | 2026-04-21 |
-| 5. Shop & Inventory | 4/6 | In Progress|  |
+| 5. Shop & Inventory | 5/6 | In Progress|  |
 | 6. AI Daily Quests | 0/TBD | Not started | — |
 | 7. Leaderboard | 0/TBD | Not started | — |
 | 8. Friends | 0/TBD | Not started | — |
