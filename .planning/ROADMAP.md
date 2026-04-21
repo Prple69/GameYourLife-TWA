@@ -161,7 +161,10 @@ Plans:
 4. Traceability table: Phase column обновлён до `Phase 5.1 (verify)` для этих REQs, Status → `Verified`
 5. TODO-markers для реквизитов (tech debt из аудита) явно зафиксированы в 02-VERIFICATION.md как pre-launch checklist
 
-**Plans:** TBD — run `/gsd:plan-phase 5.1` after `/clear`
+**Plans:** 1 plan
+
+Plans:
+- [ ] 05.1-01-verification-PLAN.md — Write 02-VERIFICATION.md (goal-backward), sync REQUIREMENTS.md checkboxes + traceability, commit
 
 ---
 
