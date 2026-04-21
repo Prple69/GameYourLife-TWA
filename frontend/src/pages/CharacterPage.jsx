@@ -13,6 +13,17 @@ import avatar3 from '../assets/avatar3.png';
 
 const avatarMap = { avatar1, avatar2, avatar3 };
 
+// Phase 4: mirror backend max_xp_for_level formula (ensure single source in tests eventually)
+const maxXpForStatLevel = (lvl) =>
+  Math.max(1, Math.round(10 * Math.pow(1.2, Math.max(1, lvl) - 1)));
+
+const STAT_META = [
+  { key: 'strength',  label: 'СИЛА',         labelColor: 'text-red-500',    barClass: 'bg-gradient-to-r from-red-600 to-red-400',       shadow: 'rgba(239,68,68,0.5)' },
+  { key: 'endurance', label: 'ВЫНОСЛИВОСТЬ', labelColor: 'text-green-500',  barClass: 'bg-gradient-to-r from-green-600 to-green-400',   shadow: 'rgba(34,197,94,0.5)' },
+  { key: 'wisdom',    label: 'МУДРОСТЬ',     labelColor: 'text-blue-500',   barClass: 'bg-gradient-to-r from-blue-600 to-blue-400',     shadow: 'rgba(59,130,246,0.5)' },
+  { key: 'charisma',  label: 'ОБАЯНИЕ',      labelColor: 'text-yellow-500', barClass: 'bg-gradient-to-r from-yellow-600 to-yellow-400', shadow: 'rgba(234,179,8,0.5)' },
+];
+
 const TITLES = {
   knight: 'РЫЦАРЬ СМЕРТИ',
   mage: 'ВЕРХОВНАЯ МАГИНЯ',
@@ -106,6 +117,30 @@ const CharacterPage = () => {
             barClass="bg-gradient-to-r from-[#b8860b] to-[#ffd700]"
             shadowColor="rgba(218,165,32,0.5)"
           />
+        </div>
+
+        <div className="w-full max-w-[400px] mt-4 px-2 grid grid-cols-2 gap-3">
+          {STAT_META.map(({ key, label, labelColor, barClass, shadow }) => {
+            const level = character[`stat_${key}_level`] ?? 1;
+            const xp = character[`stat_${key}_xp`] ?? 0;
+            const maxXp = maxXpForStatLevel(level);
+            return (
+              <div key={key} className="bg-white/5 border border-white/10 p-2 space-y-1">
+                <div className="flex justify-between text-[9px] font-black uppercase tracking-widest">
+                  <span className={labelColor}>{label}</span>
+                  <span className="text-white/60 tabular-nums">LVL {level}</span>
+                </div>
+                <ProgressBar
+                  label=""
+                  value={xp}
+                  max={maxXp}
+                  labelColor={labelColor}
+                  barClass={barClass}
+                  shadowColor={shadow}
+                />
+              </div>
+            );
+          })}
         </div>
       </div>
 
