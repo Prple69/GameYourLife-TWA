@@ -1,13 +1,13 @@
 import React from 'react';
 
 const ProfileModal = ({ isOpen, onClose, character }) => {
-  if (!isOpen) return null;
+  if (!isOpen || !character) return null;
 
   const stats = [
-    { label: 'СИЛА', val: '14', color: 'text-red-500' },
-    { label: 'ЛОВКОСТЬ', val: '22', color: 'text-green-500' },
-    { label: 'ИНТЕЛЛЕКТ', val: '18', color: 'text-blue-500' },
-    { label: 'УДАЧА', val: '7', color: 'text-yellow-500' },
+    { label: 'СИЛА',         val: character.stat_strength_level,  color: 'text-red-500' },
+    { label: 'ВЫНОСЛИВОСТЬ', val: character.stat_endurance_level, color: 'text-green-500' },
+    { label: 'МУДРОСТЬ',     val: character.stat_wisdom_level,    color: 'text-blue-500' },
+    { label: 'ОБАЯНИЕ',      val: character.stat_charisma_level,  color: 'text-yellow-500' },
   ];
 
   return (
