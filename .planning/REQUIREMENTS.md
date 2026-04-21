@@ -58,11 +58,11 @@ Requirements for initial release. Checked items are already working in the exist
 
 - [x] **WEB-01**: Сайт открывается и работает в любом современном браузере (Chrome, Safari, Firefox) без зависимости от Telegram SDK или контейнера
 - [x] **WEB-02**: Каждый экран приложения имеет собственный URL (React Router); навигация через адресную строку; закладки работают
-- [ ] **WEB-03**: Layout responsive — на desktop (≥1024px) sidebar-навигация; на mobile (<1024px) bottom-tabs; retro-эстетика сохранена
+- [x] **WEB-03**: Layout responsive — на desktop (≥1024px) sidebar-навигация; на mobile (<1024px) bottom-tabs; retro-эстетика сохранена
 
 ### Legal & Compliance (added 2026-04-18 pivot)
 
-- [ ] **LEGAL-01**: Публичный landing на `/` с hero / фичи / pricing / FAQ / footer
+- [x] **LEGAL-01**: Публичный landing на `/` с hero / фичи / pricing / FAQ / footer
 - [x] **LEGAL-02**: Страницы `/privacy`, `/terms`, `/public-offer` с контентом (152-ФЗ соответствие)
 - [x] **LEGAL-03**: Cookie consent banner при первом визите, с сохранением выбора пользователя
 - [x] **LEGAL-04**: В footer есть ссылки на все legal-страницы, email для связи
@@ -148,13 +148,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PROF-02 | — | Complete (existing, pre-v1.0) |
 | SEC-01 | Phase 1 | Complete (verified 2026-03-02; see Phase 1 notes re pivot) |
 | SEC-02 | Phase 1 | Complete (verified 2026-03-02) |
-| WEB-01 | Phase 2 → 5.1 (verify) | Pending verification |
-| WEB-02 | Phase 2 → 5.1 (verify) | Pending verification |
-| WEB-03 | Phase 2 → 5.1 (verify) | Pending verification |
-| LEGAL-01 | Phase 2 → 5.1 (verify) | Pending verification |
-| LEGAL-02 | Phase 2 → 5.1 (verify) | Pending verification |
-| LEGAL-03 | Phase 2 → 5.1 (verify) | Pending verification |
-| LEGAL-04 | Phase 2 → 5.1 (verify) | Pending verification |
+| WEB-01 | Phase 5.1 (verify) | Verified |
+| WEB-02 | Phase 5.1 (verify) | Verified |
+| WEB-03 | Phase 5.1 (verify) | Verified |
+| LEGAL-01 | Phase 5.1 (verify) | Verified |
+| LEGAL-02 | Phase 5.1 (verify) | Verified |
+| LEGAL-03 | Phase 5.1 (verify) | Verified |
+| LEGAL-04 | Phase 5.1 (verify) | Verified |
 | AUTH-01 | Phase 3 → 5.2 (verify) | Pending verification |
 | AUTH-02 | Phase 3 → 5.2 (verify) | Pending verification |
 | AUTH-03 | Phase 3 → 5.2 (verify) | Pending verification |
