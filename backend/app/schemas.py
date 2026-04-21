@@ -32,6 +32,22 @@ class UserSchema(BaseModel):
     stat_charisma_level: int = 1
     stat_charisma_xp: int = 0
 
+    # Phase 5: active boost slots — nullable, computed lazy at read-time
+    active_xp_mult: Optional[float] = None
+    active_xp_expires_at: Optional[datetime] = None
+    active_gold_mult: Optional[float] = None
+    active_gold_expires_at: Optional[datetime] = None
+    active_strength_xp_mult: Optional[float] = None
+    active_strength_xp_expires_at: Optional[datetime] = None
+    active_wisdom_xp_mult: Optional[float] = None
+    active_wisdom_xp_expires_at: Optional[datetime] = None
+    active_endurance_xp_mult: Optional[float] = None
+    active_endurance_xp_expires_at: Optional[datetime] = None
+    active_charisma_xp_mult: Optional[float] = None
+    active_charisma_xp_expires_at: Optional[datetime] = None
+    active_hp_max_bonus: Optional[int] = None
+    active_hp_max_expires_at: Optional[datetime] = None
+
     model_config = ConfigDict(from_attributes=True)
 
 
@@ -125,3 +141,45 @@ class UserUpdate(BaseModel):
     gold: int
     lvl: Optional[int] = None
     hp: Optional[int] = None
+
+
+# --- Phase 5: Shop & Inventory schemas ---
+
+class ShopItemSchema(BaseModel):
+    id: int
+    item_type: str
+    name: str
+    description: Optional[str] = None
+    icon: Optional[str] = None
+    price_gold: int
+    effect_multiplier: Optional[float] = None
+    duration_seconds: Optional[int] = None
+    heal_amount: Optional[int] = None
+    hp_max_bonus: Optional[int] = None
+    avatar_key: Optional[str] = None
+    is_active: bool
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class InventoryItemSchema(BaseModel):
+    id: int
+    user_id: int
+    shop_item_id: int
+    quantity: int
+    created_at: Optional[datetime] = None
+    shop_item: ShopItemSchema
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class PurchaseRequest(BaseModel):
+    idempotency_key: str  # UUIDv4 string
+
+
+class ActivateRequest(BaseModel):
+    idempotency_key: str
+
+
+class EquipRequest(BaseModel):
+    idempotency_key: str
