@@ -231,7 +231,7 @@ Plans:
 3. `GET /api/leaderboard/me` возвращает позицию и ±5 вокруг юзера
 4. На `/app/leaderboard` отображаются display_name, lvl, xp; позиция юзера подсвечена
 
-**Plans:** 2/4 plans executed
+**Plans:** 3/4 plans executed
 
 Plans:
 - [ ] 07-01-PLAN.md — Backend domain module (leaderboard.py: score_for, update, get_top, get_me, seed_if_empty), Pydantic schemas, StubRedis sorted set ops, unit tests
@@ -333,7 +333,7 @@ Plans:
 | 5.1 Verify Web Foundation (gap closure) | 1/1 | Complete | 2026-04-22 |
 | 5.2 Verify Auth Refactor (gap closure) | 1/1 | Complete   | 2026-04-22 |
 | 6. AI Daily Quests | 4/4 | Complete   | 2026-04-22 |
-| 7. Leaderboard | 2/4 | In Progress|  |
+| 7. Leaderboard | 3/4 | In Progress|  |
 | 8. Friends | 0/TBD | Not started | — |
 | 9. Guilds & Challenges | 0/TBD | Not started | — |
 | 10. Monetization | 0/TBD | Not started | — |
