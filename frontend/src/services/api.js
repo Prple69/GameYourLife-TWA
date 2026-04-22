@@ -117,4 +117,26 @@ export const inventoryService = {
   },
 };
 
+export const dailyService = {
+  /**
+   * GET /api/daily/suggestions
+   * Returns { suggestions, rerolls_remaining, reset_time }
+   * Triggers LLM generation if not cached; returns cache otherwise.
+   */
+  getSuggestions: () => api.get('/daily/suggestions').then(r => r.data),
+
+  /**
+   * POST /api/daily/accept/:index
+   * Accepts suggestion at index, creates quest. Returns { quest_id, remaining_suggestions }.
+   */
+  accept: (index) => api.post(`/daily/accept/${index}`).then(r => r.data),
+
+  /**
+   * POST /api/daily/reroll/:index
+   * Rerolls suggestion at index. Returns updated DailySuggestionsResponse.
+   * 429 if rerolls exhausted.
+   */
+  reroll: (index) => api.post(`/daily/reroll/${index}`).then(r => r.data),
+};
+
 export default api;
