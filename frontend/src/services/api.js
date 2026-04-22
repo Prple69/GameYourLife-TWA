@@ -139,4 +139,26 @@ export const dailyService = {
   reroll: (index) => api.post(`/daily/reroll/${index}`).then(r => r.data),
 };
 
+export const leaderboardService = {
+  /**
+   * Получить топ лидерборда с пагинацией
+   * @param {number} offset - Начальная позиция (default 0)
+   * @param {number} limit - Количество записей (default 100, max 100)
+   */
+  getTop: async (offset = 0, limit = 100) => {
+    const response = await api.get('/leaderboard', {
+      params: { offset, limit }
+    });
+    return response.data; // { entries: [...], total: N }
+  },
+
+  /**
+   * Получить ранг текущего пользователя и ±5 соседей
+   */
+  getMe: async () => {
+    const response = await api.get('/leaderboard/me');
+    return response.data; // { rank, total_users, neighbors: [...] }
+  },
+};
+
 export default api;
