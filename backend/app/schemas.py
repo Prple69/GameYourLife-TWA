@@ -183,3 +183,21 @@ class ActivateRequest(BaseModel):
 
 class EquipRequest(BaseModel):
     idempotency_key: str
+
+
+# --- Phase 6: Daily AI Suggestions ---
+
+class DailySuggestion(BaseModel):
+    """One AI-generated quest suggestion. Shape matches analyze_task response + category."""
+    title: str
+    category: QuestCategory
+    difficulty: Literal["easy", "medium", "hard", "epic"]
+    xp: int
+    gold: int
+    hp_penalty: int
+
+class DailySuggestionsResponse(BaseModel):
+    """Response for GET /api/daily/suggestions."""
+    suggestions: List[DailySuggestion]
+    rerolls_remaining: int  # 0-2
+    reset_time: str         # ISO8601 MSK midnight of next day

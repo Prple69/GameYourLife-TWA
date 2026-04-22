@@ -164,18 +164,22 @@ async def get_active_quests(db: AsyncSession, tg_id: str):
     )
     return result.scalars().all()
 
-async def get_quest_history(db: AsyncSession, tg_id: str):
-    """Архив: выполненные или проваленные"""
+async def get_quest_history(db: AsyncSession, tg_id: str, limit: int = 0):
+    """Архив: выполненные или проваленные. limit=0 means no limit (backwards compat)."""
     user = await get_user_by_tg_id(db, tg_id)
     if not user:
         return []
 
-    result = await db.execute(
+    q = (
         select(models.Quest).filter(
             models.Quest.user_id == user.id,
             or_(models.Quest.is_completed == True, models.Quest.is_failed == True)
         ).order_by(models.Quest.created_at.desc())
     )
+    if limit > 0:
+        q = q.limit(limit)
+
+    result = await db.execute(q)
     return result.scalars().all()
 
 
