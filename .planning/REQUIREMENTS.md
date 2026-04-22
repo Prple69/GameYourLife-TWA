@@ -69,12 +69,12 @@ Requirements for initial release. Checked items are already working in the exist
 
 ### Auth (added 2026-04-18 pivot)
 
-- [ ] **AUTH-01**: `POST /api/auth/register` с email + password + display_name, отправка email-подтверждения
-- [ ] **AUTH-02**: `POST /api/auth/login` возвращает access (15min) + refresh (30days) токены
-- [ ] **AUTH-03**: `POST /api/auth/telegram-login` принимает данные от Telegram Login Widget, валидирует HMAC, создаёт/находит юзера
-- [ ] **AUTH-04**: Все существующие эндпоинты мигрированы на `Depends(get_current_user)`; `verify_telegram_init_data` удалён
-- [ ] **AUTH-05**: User может сбросить пароль по email; реализованы `request-password-reset` и `reset-password`
-- [ ] **AUTH-06**: Существующий Telegram-юзер при первом входе через Login Widget находится по `telegram_id` без потери данных
+- [x] **AUTH-01**: `POST /api/auth/register` с email + password + display_name, отправка email-подтверждения
+- [x] **AUTH-02**: `POST /api/auth/login` возвращает access (15min) + refresh (30days) токены
+- [x] **AUTH-03**: `POST /api/auth/telegram-login` принимает данные от Telegram Login Widget, валидирует HMAC, создаёт/находит юзера
+- [x] **AUTH-04**: Все существующие эндпоинты мигрированы на `Depends(get_current_user)`; `verify_telegram_init_data` удалён
+- [ ] **AUTH-05**: User может сбросить пароль по email; реализованы `request-password-reset` и `reset-password` — stub — Phase 11 (PROD-03) delivers SMTP
+- [x] **AUTH-06**: Существующий Telegram-юзер при первом входе через Login Widget находится по `telegram_id` без потери данных
 
 ### Monetization (added 2026-04-18 pivot)
 
@@ -155,12 +155,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | LEGAL-02 | Phase 5.1 (verify) | Verified |
 | LEGAL-03 | Phase 5.1 (verify) | Verified |
 | LEGAL-04 | Phase 5.1 (verify) | Verified |
-| AUTH-01 | Phase 3 → 5.2 (verify) | Pending verification |
-| AUTH-02 | Phase 3 → 5.2 (verify) | Pending verification |
-| AUTH-03 | Phase 3 → 5.2 (verify) | Pending verification |
-| AUTH-04 | Phase 3 → 5.2 (verify) | Pending verification |
-| AUTH-05 | Phase 3 → 5.2 (verify) + Phase 11 (SMTP) | Stub — token logged to console; SMTP delivery deferred to Phase 11 (PROD-03) |
-| AUTH-06 | Phase 3 → 5.2 (verify) | Pending verification |
+| AUTH-01 | Phase 5.2 (verify) | Verified (stub: email tokens logged) |
+| AUTH-02 | Phase 5.2 (verify) | Verified |
+| AUTH-03 | Phase 5.2 (verify) | Verified |
+| AUTH-04 | Phase 5.2 (verify) | Verified |
+| AUTH-05 | Phase 5.2 (verify) + Phase 11 (PROD-03) | Verified (stub) — token logged to console; SMTP delivery deferred to Phase 11 (PROD-03) |
+| AUTH-06 | Phase 5.2 (verify) | Verified |
 | PROG-02 | Phase 4 | Complete (verified 2026-04-21) |
 | PROG-03 | Phase 4 | Complete (verified 2026-04-21) |
 | SHOP-01 | Phase 5 | Complete (verified 2026-04-22) |
@@ -190,8 +190,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 **Coverage (post audit 2026-04-22):**
 - v1.0 requirements: 51 total (10 validated pre-v1.0, 41 added in 2026-04-18 pivot; SHOP-04 moved to Out of Scope)
-- Verified: 11 (SEC-01/02, PROG-02/03, SHOP-01/02/03/05, INV-01/02/03)
-- Pending verification (implementation complete, needs VERIFICATION.md): 12 (WEB-01..03, LEGAL-01..04, AUTH-01..04, AUTH-06) — closed by Phase 5.1/5.2 gap closure
+- Verified: 16 (SEC-01/02, PROG-02/03, SHOP-01/02/03/05, INV-01/02/03, WEB-01..03, LEGAL-01..04, AUTH-01..04, AUTH-06)
+- Pending verification (implementation complete, needs VERIFICATION.md): 0 — all closed by Phase 5.1 (WEB/LEGAL) and Phase 5.2 (AUTH)
 - Stub (known deferral): 1 (AUTH-05 — SMTP delivery → Phase 11/PROD-03)
 - Unimplemented (future phases 6-11): 18 (AI-01/02, LEAD-01/02, SOCL-01/02, GUILD-01/02, BILL-01..03, PROD-01..05)
 - Out of Scope: 1 (SHOP-04)
