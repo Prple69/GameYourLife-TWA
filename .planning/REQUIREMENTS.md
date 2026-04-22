@@ -17,8 +17,8 @@ Requirements for initial release. Checked items are already working in the exist
 
 ### AI Features
 
-- [ ] **AI-01**: User receives 3 AI-generated quest suggestions refreshed each day
-- [ ] **AI-02**: Daily AI quests are personalized based on user's character stats and recent completion history
+- [x] **AI-01**: User receives 3 AI-generated quest suggestions refreshed each day
+- [x] **AI-02**: Daily AI quests are personalized based on user's character stats and recent completion history
 
 ### Character Progression
 
@@ -171,8 +171,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | INV-01 | Phase 5 | Complete (verified 2026-04-22) |
 | INV-02 | Phase 5 | Complete (verified 2026-04-22) |
 | INV-03 | Phase 5 | Complete (verified 2026-04-22) |
-| AI-01 | Phase 6 | Pending |
-| AI-02 | Phase 6 | Pending |
+| AI-01 | Phase 6 | Complete |
+| AI-02 | Phase 6 | Complete |
 | LEAD-01 | Phase 7 | Pending |
 | LEAD-02 | Phase 7 | Pending |
 | SOCL-01 | Phase 8 | Pending |
