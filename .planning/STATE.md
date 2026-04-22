@@ -5,12 +5,12 @@ milestone_name: milestone
 current_phase: 05.2
 current_plan: Not started
 status: unknown
-last_updated: "2026-04-21T22:55:57.243Z"
+last_updated: "2026-04-22T02:42:45.118Z"
 progress:
   total_phases: 7
-  completed_phases: 6
-  total_plans: 19
-  completed_plans: 19
+  completed_phases: 7
+  total_plans: 20
+  completed_plans: 20
   percent: 100
 ---
 
@@ -155,6 +155,8 @@ Phase 1 planning must address security (SEC-01, SEC-02) before feature work.
 - [Phase 05.1-verify-web-foundation]: Retroactive goal-backward verification pattern: docs-only gap closure phase produces VERIFICATION.md and syncs REQUIREMENTS.md traceability in a single commit
 - [Phase 05.1-verify-web-foundation]: Pre-Launch Checklist section in VERIFICATION.md tracks non-blocking tech-debt TODOs separate from gaps array — preserves visibility for release prep without re-opening the phase
 - [Phase 05.1-verify-web-foundation]: Traceability collapses dual-phase labels (Phase 2 → 5.1 verify) to single label (Phase 5.1 verify) once Verified — durable label is where verification passed, not where first implemented
+- [Phase 05.2]: AUTH-05 stub acknowledged as accepted v1.0 deviation — SMTP deferred to Phase 11/PROD-03; does not block Phases 6-10
+- [Phase 05.2]: Traceability label convention: single Phase 5.2 (verify) label replaces dual Phase 3 → 5.2 (verify) once verified — durable label is where verification passed
 
 ## Session Continuity
 
@@ -164,7 +166,7 @@ Phase 1 planning must address security (SEC-01, SEC-02) before feature work.
 - `.planning/STATE.md` — This file, project memory and decision context
 - `.planning/REQUIREMENTS.md` — Traceability section updated with phase mappings
 
-**Last Session:** 2026-04-21T22:51:38.554Z
+**Last Session:** 2026-04-22T02:42:45.116Z
 **Next Step:** Run `/gsd:plan-phase 2` to decompose Phase 2 (Character Stats) into executable plans
 
 ---
@@ -192,6 +194,7 @@ Phase 1 planning must address security (SEC-01, SEC-02) before feature work.
 | Phase 05-shop-inventory P03 | 202 | 2 tasks | 6 files |
 | Phase 05-shop-inventory P05 | 45 | 2 tasks | 7 files |
 | Phase 05.1 P01 | 3 | 3 tasks | 2 files |
+| Phase 05.2 P01 | 138 | 3 tasks | 2 files |
 
 ## Accumulated Context
 
