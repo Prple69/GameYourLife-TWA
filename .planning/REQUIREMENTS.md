@@ -41,8 +41,8 @@ Requirements for initial release. Checked items are already working in the exist
 
 ### Leaderboard
 
-- [ ] **LEAD-01**: User can view a global leaderboard of players ranked by level and XP
-- [ ] **LEAD-02**: User's own rank and position are highlighted on the leaderboard
+- [x] **LEAD-01**: User can view a global leaderboard of players ranked by level and XP
+- [x] **LEAD-02**: User's own rank and position are highlighted on the leaderboard
 
 ### Profile
 
@@ -173,8 +173,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | INV-03 | Phase 5 | Complete (verified 2026-04-22) |
 | AI-01 | Phase 6 | Complete |
 | AI-02 | Phase 6 | Complete |
-| LEAD-01 | Phase 7 | Pending |
-| LEAD-02 | Phase 7 | Pending |
+| LEAD-01 | Phase 7 | Complete |
+| LEAD-02 | Phase 7 | Complete |
 | SOCL-01 | Phase 8 | Pending |
 | SOCL-02 | Phase 8 | Pending |
 | GUILD-01 | Phase 9 | Pending |
