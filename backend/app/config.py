@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     DEBUG_MODE: bool = False
     JWT_SECRET_KEY: str
     JWT_ALGORITHM: str = "HS256"
+    REDIS_URL: str = "redis://localhost:6379/0"
 
     model_config = SettingsConfigDict(
         env_file=_ENV_FILE,
