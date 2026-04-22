@@ -207,7 +207,7 @@ Plans:
 4. User может принять (создаёт квест) или отклонить (перегенерировать, но не более 2 раз в день)
 5. AI-промпт включает lvl, last 10 quests, stats
 
-**Plans:** 1/4 plans executed
+**Plans:** 3/4 plans executed
 
 Plans:
 - [ ] 06-01-PLAN.md — Redis infra (cache.py, REDIS_URL config, requirements, DailySuggestion schemas, crud.get_quest_history limit param)
@@ -326,7 +326,7 @@ Plans:
 | 5. Shop & Inventory | 6/6 | Complete | 2026-04-22 |
 | 5.1 Verify Web Foundation (gap closure) | 1/1 | Complete | 2026-04-22 |
 | 5.2 Verify Auth Refactor (gap closure) | 1/1 | Complete   | 2026-04-22 |
-| 6. AI Daily Quests | 1/4 | In Progress|  |
+| 6. AI Daily Quests | 3/4 | In Progress|  |
 | 7. Leaderboard | 0/TBD | Not started | — |
 | 8. Friends | 0/TBD | Not started | — |
 | 9. Guilds & Challenges | 0/TBD | Not started | — |
