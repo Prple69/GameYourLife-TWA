@@ -207,7 +207,13 @@ Plans:
 4. User может принять (создаёт квест) или отклонить (перегенерировать, но не более 2 раз в день)
 5. AI-промпт включает lvl, last 10 quests, stats
 
-**Plans:** TBD
+**Plans:** 4 plans
+
+Plans:
+- [ ] 06-01-PLAN.md — Redis infra (cache.py, REDIS_URL config, requirements, DailySuggestion schemas, crud.get_quest_history limit param)
+- [ ] 06-02-PLAN.md — Backend router (daily.py: GET suggestions, POST accept, POST reroll) + main.py wiring + unit tests
+- [ ] 06-03-PLAN.md — Frontend: dailyService in api.js, DailyQuestCard component, QuestsPage integration
+- [ ] 06-04-PLAN.md — Human verify: end-to-end daily quests flow in browser
 
 ---
 
