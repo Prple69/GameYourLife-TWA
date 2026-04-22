@@ -16,7 +16,7 @@
 - [x] **Phase 5: Shop & Inventory** — каталог магазина, seed-данные, покупка за gold, инвентарь, активация бустов, экипировка скинов. (completed 2026-04-22)
 - [ ] **Phase 5.1: Verify Phase 02 (Web Foundation)** — retroactive goal-backward verification + REQUIREMENTS sync для WEB-01..03, LEGAL-01..04. (milestone v1.0 gap closure, audit 2026-04-22)
 - [x] **Phase 5.2: Verify Phase 03 (Auth Refactor)** — retroactive verification + REQUIREMENTS sync для AUTH-01..06, формальное acknowledgment AUTH-05 stub (Phase 11 scope). (completed 2026-04-22)
-- [ ] **Phase 6: AI Daily Quests** — on-demand daily suggestions, персонализация под статы, кеш в Redis.
+- [x] **Phase 6: AI Daily Quests** — on-demand daily suggestions, персонализация под статы, кеш в Redis. (completed 2026-04-22)
 - [ ] **Phase 7: Leaderboard** — Redis sorted set, страница с топ-100 + позиция юзера.
 - [ ] **Phase 8: Social — Friends** — поиск, инвайты, friendship, feed активности друзей.
 - [ ] **Phase 9: Social — Guilds & Challenges** — CRUD гильдий, членство, групповые челленджи.
@@ -207,7 +207,7 @@ Plans:
 4. User может принять (создаёт квест) или отклонить (перегенерировать, но не более 2 раз в день)
 5. AI-промпт включает lvl, last 10 quests, stats
 
-**Plans:** 3/4 plans executed
+**Plans:** 4/4 plans complete
 
 Plans:
 - [ ] 06-01-PLAN.md — Redis infra (cache.py, REDIS_URL config, requirements, DailySuggestion schemas, crud.get_quest_history limit param)
@@ -326,7 +326,7 @@ Plans:
 | 5. Shop & Inventory | 6/6 | Complete | 2026-04-22 |
 | 5.1 Verify Web Foundation (gap closure) | 1/1 | Complete | 2026-04-22 |
 | 5.2 Verify Auth Refactor (gap closure) | 1/1 | Complete   | 2026-04-22 |
-| 6. AI Daily Quests | 3/4 | In Progress|  |
+| 6. AI Daily Quests | 4/4 | Complete   | 2026-04-22 |
 | 7. Leaderboard | 0/TBD | Not started | — |
 | 8. Friends | 0/TBD | Not started | — |
 | 9. Guilds & Challenges | 0/TBD | Not started | — |
