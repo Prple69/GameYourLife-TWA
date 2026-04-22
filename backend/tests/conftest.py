@@ -6,6 +6,7 @@ class StubRedis:
     def __init__(self):
         self._store: dict = {}
         self._ttls: dict = {}
+        self._zsets: dict[str, dict[str, float]] = {}
 
     async def get(self, key: str):
         return self._store.get(key)
@@ -24,6 +25,46 @@ class StubRedis:
 
     async def expire(self, key: str, ttl: int):
         self._ttls[key] = ttl
+
+    # --- Sorted set operations (Phase 7: Leaderboard) ---
+
+    async def zadd(self, key: str, mapping: dict) -> int:
+        """Add members with scores to sorted set. Returns number of new members added."""
+        zset = self._zsets.setdefault(key, {})
+        added = 0
+        for member, score in mapping.items():
+            if member not in zset:
+                added += 1
+            zset[member] = float(score)
+        return added
+
+    async def zrevrange(self, key: str, start: int, stop: int) -> list:
+        """Return members sorted by score DESC, sliced [start:stop+1]. stop=-1 means to end."""
+        zset = self._zsets.get(key, {})
+        sorted_members = sorted(zset.keys(), key=lambda m: zset[m], reverse=True)
+        if stop == -1:
+            return sorted_members[start:]
+        return sorted_members[start:stop + 1]
+
+    async def zrevrank(self, key: str, member: str):
+        """Return 0-based rank of member in DESC-sorted set, or None if not found."""
+        zset = self._zsets.get(key, {})
+        sorted_members = sorted(zset.keys(), key=lambda m: zset[m], reverse=True)
+        try:
+            return sorted_members.index(member)
+        except ValueError:
+            return None
+
+    async def zcard(self, key: str) -> int:
+        """Return count of members in sorted set."""
+        return len(self._zsets.get(key, {}))
+
+    async def exists(self, key: str) -> int:
+        """Return 1 if key has members in sorted set, 0 otherwise."""
+        zset = self._zsets.get(key)
+        if zset:
+            return 1
+        return 0
 
 
 class StubShopItem:

@@ -201,3 +201,26 @@ class DailySuggestionsResponse(BaseModel):
     suggestions: List[DailySuggestion]
     rerolls_remaining: int  # 0-2
     reset_time: str         # ISO8601 MSK midnight of next day
+
+
+# --- Phase 7: Leaderboard schemas ---
+
+class LeaderboardEntryResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    rank: int
+    user_id: int
+    display_name: str
+    avatar: Optional[str] = None
+    lvl: int
+    xp: int
+
+
+class LeaderboardResponse(BaseModel):
+    entries: list[LeaderboardEntryResponse]
+    total: int
+
+
+class LeaderboardMeResponse(BaseModel):
+    rank: Optional[int]
+    total_users: int
+    neighbors: list[LeaderboardEntryResponse]
