@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import api from '../services/api';
+import api, { dailyService } from '../services/api';
+import DailyQuestCard from '../components/DailyQuestCard';
 
 const QUEST_TOAST_DURATION = 3000;
 import Header from '../components/Header';
@@ -61,6 +62,14 @@ const QuestsPage = () => {
   const [optimisticTasks, setOptimisticTasks] = useState([]);
   const [statGainToast, setStatGainToast] = useState(null);
   const [questToast, setQuestToast] = useState(null);
+
+  // Daily quests state
+  const [dailySuggestions, setDailySuggestions] = useState(null); // null = not fetched, [] = fetched+empty
+  const [dailyRerollsRemaining, setDailyRerollsRemaining] = useState(2);
+  const [dailyResetTime, setDailyResetTime] = useState(null);
+  const [isDailyLoading, setIsDailyLoading] = useState(false);
+  const [acceptingIndex, setAcceptingIndex] = useState(null);
+  const [rerollingIndex, setRerollingIndex] = useState(null);
 
   const showQuestToast = (msg) => {
     setQuestToast(msg);
@@ -200,6 +209,60 @@ const QuestsPage = () => {
     }
   };
 
+  const handleGetDailySuggestions = async () => {
+    setIsDailyLoading(true);
+    try {
+      const data = await dailyService.getSuggestions();
+      setDailySuggestions(data.suggestions);
+      setDailyRerollsRemaining(data.rerolls_remaining);
+      setDailyResetTime(data.reset_time);
+    } catch (err) {
+      showQuestToast('Ошибка получения квестов дня');
+    } finally {
+      setIsDailyLoading(false);
+    }
+  };
+
+  const handleAcceptSuggestion = async (index) => {
+    setAcceptingIndex(index);
+    try {
+      await dailyService.accept(index);
+      // Re-fetch suggestions to get updated list from backend
+      const data = await dailyService.getSuggestions();
+      setDailySuggestions(data.suggestions);
+      setDailyRerollsRemaining(data.rerolls_remaining);
+      // Invalidate active quests query to show new quest
+      queryClient.invalidateQueries({ queryKey: ['quests'] });
+      showQuestToast('Квест добавлен!');
+    } catch (err) {
+      if (err.response?.status === 409) {
+        showQuestToast('Освободи слот (5/5 активных)');
+      } else {
+        showQuestToast('Ошибка принятия квеста');
+      }
+    } finally {
+      setAcceptingIndex(null);
+    }
+  };
+
+  const handleRerollSuggestion = async (index) => {
+    if (dailyRerollsRemaining <= 0) return;
+    setRerollingIndex(index);
+    try {
+      const data = await dailyService.reroll(index);
+      setDailySuggestions(data.suggestions);
+      setDailyRerollsRemaining(data.rerolls_remaining);
+    } catch (err) {
+      if (err.response?.status === 429) {
+        showQuestToast('Лимит рероллов исчерпан (2/2)');
+      } else {
+        showQuestToast('Ошибка реролла');
+      }
+    } finally {
+      setRerollingIndex(null);
+    }
+  };
+
   const finalizeTask = async () => {
     if (!confirmTask) return;
     try {
@@ -222,6 +285,65 @@ const QuestsPage = () => {
         <Header title="Задания" subtitle={DEBUG_MODE ? 'DEBUG ACTIVE' : 'Контракты'} />
 
         <div className="flex-1 w-full max-w-2xl overflow-y-auto overflow-x-hidden space-y-4 pt-4 mb-[130px] custom-scrollbar">
+          {/* ── Квесты дня ─────────────────────────────────────────────── */}
+          <div className="mb-4">
+            <div className="flex justify-between items-center mb-2">
+              <h2
+                className="text-yellow-400 text-[10px] font-mono uppercase tracking-widest"
+                style={{ fontFamily: "'Press Start 2P', monospace" }}
+              >
+                ⚔ КВЕСТЫ ДНЯ
+              </h2>
+              {dailySuggestions !== null && dailyRerollsRemaining < 2 && (
+                <span
+                  className="text-gray-500 text-[8px] font-mono"
+                  style={{ fontFamily: "'Press Start 2P', monospace" }}
+                >
+                  Рероллов: {2 - dailyRerollsRemaining}/2
+                </span>
+              )}
+            </div>
+
+            {dailySuggestions === null ? (
+              // Not yet fetched — show trigger button
+              <button
+                onClick={handleGetDailySuggestions}
+                disabled={isDailyLoading}
+                className="w-full border border-yellow-500 text-yellow-400 text-[9px] py-3 font-mono hover:bg-yellow-900 disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{ fontFamily: "'Press Start 2P', monospace" }}
+              >
+                {isDailyLoading ? 'ГЕНЕРАЦИЯ...' : '► ПОЛУЧИТЬ КВЕСТЫ ДНЯ'}
+              </button>
+            ) : dailySuggestions.length === 0 ? (
+              // Empty state — all accepted or rerolls exhausted
+              <div
+                className="text-center py-4 text-gray-500 text-[9px] font-mono border border-gray-700"
+                style={{ fontFamily: "'Press Start 2P', monospace" }}
+              >
+                <div className="mb-2">📜</div>
+                <div>Завтра новые квесты</div>
+              </div>
+            ) : (
+              // Render cards
+              <>
+                {dailySuggestions.map((suggestion, idx) => (
+                  <DailyQuestCard
+                    key={`daily-${idx}-${suggestion.title}`}
+                    suggestion={suggestion}
+                    index={idx}
+                    onAccept={handleAcceptSuggestion}
+                    onReroll={handleRerollSuggestion}
+                    acceptDisabled={activeCount >= 5}
+                    rerollDisabled={dailyRerollsRemaining <= 0}
+                    isAccepting={acceptingIndex === idx}
+                    isRerolling={rerollingIndex === idx}
+                  />
+                ))}
+              </>
+            )}
+          </div>
+          {/* ── /Квесты дня ─────────────────────────────────────────────── */}
+
           {Array.isArray(tasks) && tasks.length > 0 ? (
             tasks.map((task) => {
               const diff = getDifficultyStyles(task);
