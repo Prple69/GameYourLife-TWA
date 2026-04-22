@@ -14,8 +14,8 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app import database
-from app.routers import auth, quests, shop, inventory
+from app import database, cache
+from app.routers import auth, quests, shop, inventory, daily
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -24,7 +24,9 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await database.init_db()
+    await cache.init_redis()
     yield
+    await cache.close_redis()
 
 
 app = FastAPI(lifespan=lifespan, redirect_slashes=False)
@@ -45,6 +47,7 @@ app.include_router(auth.router)
 app.include_router(quests.router)
 app.include_router(shop.router)
 app.include_router(inventory.router)
+app.include_router(daily.router)
 
 
 @app.get("/api/health")
