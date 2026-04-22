@@ -1,9 +1,12 @@
+import logging
 from datetime import datetime, timezone
 from typing import Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update, or_
 from . import models, schemas
+
+logger = logging.getLogger(__name__)
 
 # --- ЛОГИКА ПОЛЬЗОВАТЕЛЕЙ ---
 
@@ -65,6 +68,15 @@ async def add_reward(db: AsyncSession, tg_id: str, xp_amount: int, gold_amount: 
     
     await db.commit()
     await db.refresh(user)
+
+    # Phase 7: Update leaderboard rank after XP/level change
+    try:
+        from app import cache as _cache, leaderboard as _leaderboard
+        if _cache._redis_client is not None:
+            await _leaderboard.update(_cache._redis_client, user)
+    except Exception as e:
+        logger.warning(f"Leaderboard update failed in add_reward: {e}")
+
     return user, leveled_up
 
 # --- ЛОГИКА КВЕСТОВ ---
