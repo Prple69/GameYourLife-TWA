@@ -15,7 +15,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app import database, cache, leaderboard
-from app.routers import auth, quests, shop, inventory, daily, leaderboard as leaderboard_router, friends
+from app.routers import auth, quests, shop, inventory, daily, leaderboard as leaderboard_router, friends, guilds
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -56,6 +56,7 @@ app.include_router(inventory.router)
 app.include_router(daily.router)
 app.include_router(leaderboard_router.router)
 app.include_router(friends.router)
+app.include_router(guilds.router)
 
 
 @app.get("/api/health")
