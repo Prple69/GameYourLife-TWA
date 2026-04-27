@@ -285,21 +285,24 @@ Plans:
 
 ---
 
-### Phase 10: Monetization
+### Phase 10: Gems Foundation
 
-**Goal:** Пользователь покупает gems за рубли через ЮKassa; gems тратятся в магазине.
+**Goal:** Каталог магазина поддерживает gem-валюту; пользователь видит страницу `/app/gems` с пакетами (UI-заглушка). Реальная оплата вынесена в будущую фазу.
+
+**Scope note:** Scope A (foundation only) — оплата ЮKassa, webhooks, `gem_transactions` lifecycle, идемпотентность отложены в отдельную будущую фазу «Gems Payments» (TBD). Решение пользователя 2026-04-27: сначала закрыть UI и схему, потом интегрировать платежи.
 
 **Depends on:** Phase 5
 
-**Requirements:** BILL-01, BILL-02, BILL-03
+**Requirements:** BILL-01 (partial — каталог); BILL-02, BILL-03 deferred to future Payments phase
 
 **Success Criteria:**
-1. В каталоге shop_items появляются товары за gems (price_gems)
-2. Страница `/app/gems` — три пака (100 / 500 / 1500)
-3. `POST /api/billing/gems/create` создаёт платёж в ЮKassa (test mode), возвращает confirmation_url
-4. `POST /api/billing/yookassa/webhook` валидирует подпись, зачисляет gems в транзакции (SELECT FOR UPDATE)
-5. `gem_transactions` отражает lifecycle (pending → succeeded/failed)
-6. Идемпотентность: повторный webhook не зачисляет gems дважды
+1. `price_gems` колонка в `shop_items` (nullable INTEGER) + миграция
+2. Страница `/app/gems` — три пака (100 / 500 / 1500), вёрстка в стиле проекта, кнопка-заглушка «Скоро» (disabled)
+3. Минимум один gem-товар в каталоге (seed/fixture) виден на `/app/shop` с ценой в gems рядом с ценой в gold
+4. `User.gems` (уже есть в модели от Phase 5) отображается в HUD/character-панели рядом с gold
+5. Никаких `/api/billing/*` endpoints в этой фазе — gems нельзя получить через UI
+
+**Existing assets:** `User.gems` колонка с server_default=0 уже создана в Phase 5 — миграция не нужна для пользователя, только для shop_items.
 
 **Plans:** TBD
 
@@ -341,7 +344,7 @@ Plans:
 | 7. Leaderboard | 3/4 | In Progress|  |
 | 8. Friends | 3/3 | Complete   | 2026-04-27 |
 | 9. Guilds & Challenges | 3/3 | Complete   | 2026-04-27 |
-| 10. Monetization | 0/TBD | Not started | — |
+| 10. Gems Foundation | 0/TBD | Not started | — |
 | 11. Production Polish | 0/TBD | Not started | — |
 
 ---
