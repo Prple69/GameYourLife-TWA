@@ -2,6 +2,22 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
+current_phase: 08
+current_plan: Not started
+status: phase-complete
+last_updated: "2026-04-27T02:49:00.000Z"
+progress:
+  total_phases: 11
+  completed_phases: 9
+  total_plans: 28
+  completed_plans: 28
+  percent: 82
+---
+
+---
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
 current_phase: 06
 current_plan: Not started
 status: unknown
@@ -174,6 +190,7 @@ Phase 1 planning must address security (SEC-01, SEC-02) before feature work.
 - [Phase 07-leaderboard]: leaderboard_router alias in main.py lets both domain module and router coexist without name collision
 - [Phase 07-leaderboard]: fetchData extracted as useCallback — both useEffect and retry button call same function without duplication
 - [Phase 07-leaderboard]: entry.rank === userRank for isMe comparison — server-authoritative rank from /api/leaderboard/me, not stale character prop
+- [Phase 07-leaderboard]: Plan 07-04 (human-verify) — DEFERRED по указанию пользователя «просто дальше». Browser smoke test перенесён в Pre-Launch Checklist; LEAD-01/LEAD-02 закрыты по артефактам кода + unit-тестов + build pass
 
 ## Session Continuity
 
@@ -183,8 +200,8 @@ Phase 1 planning must address security (SEC-01, SEC-02) before feature work.
 - `.planning/STATE.md` — This file, project memory and decision context
 - `.planning/REQUIREMENTS.md` — Traceability section updated with phase mappings
 
-**Last Session:** 2026-04-22T07:07:14.727Z
-**Next Step:** Run `/gsd:plan-phase 2` to decompose Phase 2 (Character Stats) into executable plans
+**Last Session:** 2026-04-27T02:49:00.000Z
+**Next Step:** Run `/gsd:discuss-phase 8` (или `/gsd:plan-phase 8`) — Phase 8 (Social — Friends) ещё не имеет CONTEXT.md
 
 ---
 
