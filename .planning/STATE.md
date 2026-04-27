@@ -5,13 +5,13 @@ milestone_name: milestone
 current_phase: 06
 current_plan: Not started
 status: unknown
-last_updated: "2026-04-27T03:16:28.291Z"
+last_updated: "2026-04-27T03:20:41.312Z"
 progress:
   total_phases: 10
-  completed_phases: 9
+  completed_phases: 10
   total_plans: 31
-  completed_plans: 30
-  percent: 97
+  completed_plans: 31
+  percent: 100
 ---
 
 ---
@@ -127,7 +127,7 @@ progress:
 **Current Phase:** Phase 1: Secure Foundation (complete)
 **Current Plan:** Not started
 **Execution Status:** Phase 1 complete — ready for Phase 2
-**Progress:** [██████████] 97%
+**Progress:** [██████████] 100%
 
 ---
 
@@ -211,6 +211,8 @@ Phase 1 planning must address security (SEC-01, SEC-02) before feature work.
 - [Phase 08-social-friends]: No SQLAlchemy relationship() backrefs on User model for Friendship — router queries directly, avoids circular import risk
 - [Phase 08-social-friends]: FriendshipStatus inherits str+enum.Enum — enables direct Pydantic serialization without custom validator
 - [Phase 08-social-friends]: Plain int defaults for limit/offset (not Query objects) on router functions — enables stub test direct invocation without TypeError while FastAPI still validates bounds at HTTP request time
+- [Phase 08-social-friends]: Used leaderIcon as placeholder for ДРУЗЬЯ nav tab — no friends icon in assets; label differentiates it
+- [Phase 08-social-friends]: friendsService import path is ./api (not ../api) — api.js is co-located in src/services/
 
 ## Session Continuity
 
@@ -220,7 +222,7 @@ Phase 1 planning must address security (SEC-01, SEC-02) before feature work.
 - `.planning/STATE.md` — This file, project memory and decision context
 - `.planning/REQUIREMENTS.md` — Traceability section updated with phase mappings
 
-**Last Session:** 2026-04-27T03:16:28.289Z
+**Last Session:** 2026-04-27T03:20:41.310Z
 **Next Step:** Run `/gsd:discuss-phase 8` (или `/gsd:plan-phase 8`) — Phase 8 (Social — Friends) ещё не имеет CONTEXT.md
 
 ---
@@ -258,6 +260,7 @@ Phase 1 planning must address security (SEC-01, SEC-02) before feature work.
 | Phase 07-leaderboard P03 | 1 | 2 tasks | 2 files |
 | Phase 08 P01 | 2 | 3 tasks | 3 files |
 | Phase 08-social-friends P02 | 3 | 2 tasks | 3 files |
+| Phase 08 P03 | 5 | 2 tasks | 7 files |
 
 ## Accumulated Context
 

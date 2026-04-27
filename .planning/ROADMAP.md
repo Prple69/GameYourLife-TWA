@@ -18,7 +18,7 @@
 - [x] **Phase 5.2: Verify Phase 03 (Auth Refactor)** — retroactive verification + REQUIREMENTS sync для AUTH-01..06, формальное acknowledgment AUTH-05 stub (Phase 11 scope). (completed 2026-04-22)
 - [x] **Phase 6: AI Daily Quests** — on-demand daily suggestions, персонализация под статы, кеш в Redis. (completed 2026-04-22)
 - [ ] **Phase 7: Leaderboard** — Redis sorted set, страница с топ-100 + позиция юзера.
-- [ ] **Phase 8: Social — Friends** — поиск, инвайты, friendship, feed активности друзей.
+- [x] **Phase 8: Social — Friends** — поиск, инвайты, friendship, feed активности друзей. (completed 2026-04-27)
 - [ ] **Phase 9: Social — Guilds & Challenges** — CRUD гильдий, членство, групповые челленджи.
 - [ ] **Phase 10: Monetization** — gems как валюта, ЮKassa SDK интеграция, webhook, gem-паки в магазине.
 - [ ] **Phase 11: Production Polish** — Sentry, rate-limiting, SMTP-email, health-checks, prod-деплой на `gameyourlife.ru`, CI/CD.
@@ -256,7 +256,7 @@ Plans:
 4. `/app/friends` — страница с поиском, списком, feed активности
 5. Новая таблица `friendships` (UNIQUE requester_id + addressee_id)
 
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 - [ ] 08-01-PLAN.md — DB foundation: Friendship model, Alembic migration (friendships table + UNIQUE constraint), Pydantic schemas
@@ -339,7 +339,7 @@ Plans:
 | 5.2 Verify Auth Refactor (gap closure) | 1/1 | Complete   | 2026-04-22 |
 | 6. AI Daily Quests | 4/4 | Complete   | 2026-04-22 |
 | 7. Leaderboard | 3/4 | In Progress|  |
-| 8. Friends | 2/3 | In Progress|  |
+| 8. Friends | 3/3 | Complete   | 2026-04-27 |
 | 9. Guilds & Challenges | 0/TBD | Not started | — |
 | 10. Monetization | 0/TBD | Not started | — |
 | 11. Production Polish | 0/TBD | Not started | — |
