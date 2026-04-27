@@ -13,6 +13,7 @@ const tabs = [
   { to: '/app/leaderboard', label: 'ЛИДЕРЫ',  icon: leaderIcon },
   { to: '/app/friends',     label: 'ДРУЗЬЯ',  icon: leaderIcon },
   { to: '/app/guilds',      label: 'ГИЛЬДИИ', icon: leaderIcon },
+  { to: '/app/gems',        label: 'GEMS',    icon: leaderIcon },
 ];
 
 const Navigation = () => {
