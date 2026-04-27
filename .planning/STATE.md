@@ -5,13 +5,13 @@ milestone_name: milestone
 current_phase: 08
 current_plan: Not started
 status: unknown
-last_updated: "2026-04-27T09:55:04.895Z"
+last_updated: "2026-04-27T10:59:05.020Z"
 progress:
   total_phases: 11
-  completed_phases: 10
+  completed_phases: 11
   total_plans: 34
-  completed_plans: 33
-  percent: 97
+  completed_plans: 34
+  percent: 100
 ---
 
 ---
@@ -127,7 +127,7 @@ progress:
 **Current Phase:** Phase 1: Secure Foundation (complete)
 **Current Plan:** Not started
 **Execution Status:** Phase 1 complete — ready for Phase 2
-**Progress:** [██████████] 97%
+**Progress:** [██████████] 100%
 
 ---
 
@@ -219,6 +219,9 @@ Phase 1 planning must address security (SEC-01, SEC-02) before feature work.
 - [Phase 09-social-guilds]: [09-02] slugify fallback via try/except ImportError — stdlib re-based fallback for ASCII guild names
 - [Phase 09-social-guilds]: [09-02] get_guild_member() shared async helper — avoids duplicated queries across join/leave/challenges/permission
 - [Phase 09-social-guilds]: [09-02] StubDB.refresh assigns id when None — simulates DB auto-increment for GuildChallenge without prior flush
+- [Phase 09-social-guilds]: [09-03] guildsService mirrors friendsService pattern — named export, same api.js axios instance
+- [Phase 09-social-guilds]: [09-03] Promise.all([getGuild, getChallenges]) with catch fallback — detail opens even if challenges endpoint fails
+- [Phase 09-social-guilds]: [09-03] Owner leave button is disabled span with tooltip — prevents accidental ownership abandonment
 
 ## Session Continuity
 
@@ -228,7 +231,7 @@ Phase 1 planning must address security (SEC-01, SEC-02) before feature work.
 - `.planning/STATE.md` — This file, project memory and decision context
 - `.planning/REQUIREMENTS.md` — Traceability section updated with phase mappings
 
-**Last Session:** 2026-04-27T09:55:04.892Z
+**Last Session:** 2026-04-27T10:59:05.018Z
 **Next Step:** Run `/gsd:discuss-phase 8` (или `/gsd:plan-phase 8`) — Phase 8 (Social — Friends) ещё не имеет CONTEXT.md
 
 ---
@@ -269,6 +272,7 @@ Phase 1 planning must address security (SEC-01, SEC-02) before feature work.
 | Phase 08 P03 | 5 | 2 tasks | 7 files |
 | Phase 09-social-guilds P01 | 85 | 3 tasks | 3 files |
 | Phase 09-social-guilds P02 | 171 | 2 tasks | 3 files |
+| Phase 09-social-guilds P03 | 15 | 3 tasks | 7 files |
 
 ## Accumulated Context
 
