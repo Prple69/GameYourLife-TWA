@@ -101,8 +101,8 @@ After 2026-04-18 pivot, social features moved into v1.0 scope.
 
 ### Social — Friends
 
-- [ ] **SOCL-01**: User может искать по display_name и добавлять друзей
-- [ ] **SOCL-02**: User видит прогресс друзей и feed их активности
+- [x] **SOCL-01**: User может искать по display_name и добавлять друзей
+- [x] **SOCL-02**: User видит прогресс друзей и feed их активности
 
 ## Deferred (not in v1.0)
 
@@ -175,8 +175,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AI-02 | Phase 6 | Complete |
 | LEAD-01 | Phase 7 | Complete |
 | LEAD-02 | Phase 7 | Complete |
-| SOCL-01 | Phase 8 | Pending |
-| SOCL-02 | Phase 8 | Pending |
+| SOCL-01 | Phase 8 | Complete |
+| SOCL-02 | Phase 8 | Complete |
 | GUILD-01 | Phase 9 | Pending |
 | GUILD-02 | Phase 9 | Pending |
 | BILL-01 | Phase 10 | Pending |

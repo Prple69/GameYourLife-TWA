@@ -2,6 +2,22 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
+current_phase: 06
+current_plan: Not started
+status: unknown
+last_updated: "2026-04-27T03:11:38.119Z"
+progress:
+  total_phases: 10
+  completed_phases: 9
+  total_plans: 31
+  completed_plans: 29
+  percent: 94
+---
+
+---
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
 current_phase: 08
 current_plan: Not started
 status: phase-complete
@@ -111,7 +127,7 @@ progress:
 **Current Phase:** Phase 1: Secure Foundation (complete)
 **Current Plan:** Not started
 **Execution Status:** Phase 1 complete — ready for Phase 2
-**Progress:** [██████████] 96%
+**Progress:** [█████████░] 94%
 
 ---
 
@@ -191,6 +207,9 @@ Phase 1 planning must address security (SEC-01, SEC-02) before feature work.
 - [Phase 07-leaderboard]: fetchData extracted as useCallback — both useEffect and retry button call same function without duplication
 - [Phase 07-leaderboard]: entry.rank === userRank for isMe comparison — server-authoritative rank from /api/leaderboard/me, not stale character prop
 - [Phase 07-leaderboard]: Plan 07-04 (human-verify) — DEFERRED по указанию пользователя «просто дальше». Browser smoke test перенесён в Pre-Launch Checklist; LEAD-01/LEAD-02 закрыты по артефактам кода + unit-тестов + build pass
+- [Phase 08-social-friends]: Hand-wrote migration 49ecd4b23ffe (no autogenerate) — avoids spurious drop_index calls per Phase 4/5 pattern
+- [Phase 08-social-friends]: No SQLAlchemy relationship() backrefs on User model for Friendship — router queries directly, avoids circular import risk
+- [Phase 08-social-friends]: FriendshipStatus inherits str+enum.Enum — enables direct Pydantic serialization without custom validator
 
 ## Session Continuity
 
@@ -200,7 +219,7 @@ Phase 1 planning must address security (SEC-01, SEC-02) before feature work.
 - `.planning/STATE.md` — This file, project memory and decision context
 - `.planning/REQUIREMENTS.md` — Traceability section updated with phase mappings
 
-**Last Session:** 2026-04-27T02:49:00.000Z
+**Last Session:** 2026-04-27T03:11:38.117Z
 **Next Step:** Run `/gsd:discuss-phase 8` (или `/gsd:plan-phase 8`) — Phase 8 (Social — Friends) ещё не имеет CONTEXT.md
 
 ---
@@ -236,6 +255,7 @@ Phase 1 planning must address security (SEC-01, SEC-02) before feature work.
 | Phase 07-leaderboard P01 | 15 | 2 tasks | 4 files |
 | Phase 07-leaderboard P02 | 2 | 2 tasks | 3 files |
 | Phase 07-leaderboard P03 | 1 | 2 tasks | 2 files |
+| Phase 08 P01 | 2 | 3 tasks | 3 files |
 
 ## Accumulated Context
 
