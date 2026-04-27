@@ -152,6 +152,7 @@ class ShopItemSchema(BaseModel):
     description: Optional[str] = None
     icon: Optional[str] = None
     price_gold: int
+    price_gems: Optional[int] = None  # Phase 10: gem-currency price
     effect_multiplier: Optional[float] = None
     duration_seconds: Optional[int] = None
     heal_amount: Optional[int] = None

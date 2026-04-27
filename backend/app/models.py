@@ -110,6 +110,7 @@ class ShopItem(Base):
     description      = Column(String, nullable=True)
     icon             = Column(String, nullable=True)    # emoji or asset key
     price_gold       = Column(Integer, nullable=False)
+    price_gems       = Column(Integer, nullable=True)   # Phase 10: gem-currency price
     effect_multiplier = Column(Float, nullable=True)   # for booster_* (mult value)
     duration_seconds = Column(Integer, nullable=True)  # for timer-based boosters
     heal_amount      = Column(Integer, nullable=True)  # for potion_heal
