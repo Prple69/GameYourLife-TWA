@@ -5,13 +5,13 @@ milestone_name: milestone
 current_phase: 09
 current_plan: Not started
 status: unknown
-last_updated: "2026-04-27T18:09:49.079Z"
+last_updated: "2026-04-27T18:13:47.874Z"
 progress:
   total_phases: 12
-  completed_phases: 11
+  completed_phases: 12
   total_plans: 36
-  completed_plans: 35
-  percent: 97
+  completed_plans: 36
+  percent: 100
 ---
 
 ---
@@ -127,7 +127,7 @@ progress:
 **Current Phase:** Phase 1: Secure Foundation (complete)
 **Current Plan:** Not started
 **Execution Status:** Phase 1 complete — ready for Phase 2
-**Progress:** [██████████] 97%
+**Progress:** [██████████] 100%
 
 ---
 
@@ -225,6 +225,9 @@ Phase 1 planning must address security (SEC-01, SEC-02) before feature work.
 - [Phase 10-gems-foundation]: [10-01] Revision ID 7f3f7a1cafc5; hand-wrote migration (no autogenerate) — avoids spurious drop_index calls per Phase 4/5/8/9 pattern
 - [Phase 10-gems-foundation]: [10-01] price_gold=0 for gem-priced seed item — NOT NULL column requires placeholder; item not purchasable with gold
 - [Phase 10-gems-foundation]: [10-01] price_gems: Optional[int] = None in ShopItemSchema — nullable column; existing rows return NULL
+- [Phase 10-gems-foundation]: [10-02] GemsPage uses hardcoded PACKS const — no backend fetch; packs are static until billing implemented
+- [Phase 10-gems-foundation]: [10-02] user?.gems != null guard handles both undefined and null; gems=0 still renders
+- [Phase 10-gems-foundation]: [10-02] price_gems truthy check drives both gem badge and disabled Скоро button in ShopPage
 
 ## Session Continuity
 
@@ -234,7 +237,7 @@ Phase 1 planning must address security (SEC-01, SEC-02) before feature work.
 - `.planning/STATE.md` — This file, project memory and decision context
 - `.planning/REQUIREMENTS.md` — Traceability section updated with phase mappings
 
-**Last Session:** 2026-04-27T18:09:49.077Z
+**Last Session:** 2026-04-27T18:13:47.871Z
 **Next Step:** Run `/gsd:discuss-phase 8` (или `/gsd:plan-phase 8`) — Phase 8 (Social — Friends) ещё не имеет CONTEXT.md
 
 ---
@@ -277,6 +280,7 @@ Phase 1 planning must address security (SEC-01, SEC-02) before feature work.
 | Phase 09-social-guilds P02 | 171 | 2 tasks | 3 files |
 | Phase 09-social-guilds P03 | 15 | 3 tasks | 7 files |
 | Phase 10-gems-foundation P01 | 94 | 3 tasks | 4 files |
+| Phase 10-gems-foundation P02 | 15 | 3 tasks | 5 files |
 
 ## Accumulated Context
 
