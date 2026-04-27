@@ -278,3 +278,68 @@ class PendingRequestItem(BaseModel):
     other_avatar: str | None = None
     direction: str           # "incoming" | "outgoing"
     created_at: datetime
+
+
+# ── Phase 9: Social – Guilds & Challenges ─────────────────────────────────
+
+class GuildCreate(BaseModel):
+    name: str
+    description: str | None = None
+
+
+class GuildMemberItem(BaseModel):
+    id: int
+    display_name: str
+    avatar: str | None = None
+    lvl: int
+    role: str  # "owner" | "officer" | "member"
+
+
+class GuildListItem(BaseModel):
+    id: int
+    slug: str
+    name: str
+    description: str | None = None
+    member_count: int
+    owner_id: int
+
+
+class GuildDetail(BaseModel):
+    id: int
+    slug: str
+    name: str
+    description: str | None = None
+    owner_id: int
+    member_count: int
+    members: list[GuildMemberItem]
+    my_role: str | None = None  # role of requesting user, None if not a member
+
+
+class GuildChallengeCreate(BaseModel):
+    name: str
+    description: str | None = None
+    target_xp: int
+    start_date: datetime
+    end_date: datetime
+
+
+class GuildChallengeItem(BaseModel):
+    id: int
+    guild_id: int
+    name: str
+    description: str | None = None
+    target_xp: int
+    start_date: datetime
+    end_date: datetime
+
+
+class GuildChallengeWithProgress(BaseModel):
+    id: int
+    guild_id: int
+    name: str
+    description: str | None = None
+    target_xp: int
+    current_xp: int
+    progress_percent: int
+    start_date: datetime
+    end_date: datetime
