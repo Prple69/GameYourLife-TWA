@@ -78,7 +78,7 @@ Requirements for initial release. Checked items are already working in the exist
 
 ### Monetization (added 2026-04-18 pivot)
 
-- [ ] **BILL-01**: User покупает пак gems (100/500/1500) за рубли через ЮKassa; возвращается confirmation_url
+- [x] **BILL-01**: User покупает пак gems (100/500/1500) за рубли через ЮKassa; возвращается confirmation_url
 - [ ] **BILL-02**: ЮKassa webhook валидирует подпись, атомарно зачисляет gems в транзакции (idempotent)
 - [ ] **BILL-03**: В каталоге shop_items есть товары за gems (price_gems); покупка списывает gems
 
@@ -179,7 +179,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SOCL-02 | Phase 8 | Complete |
 | GUILD-01 | Phase 9 | Complete |
 | GUILD-02 | Phase 9 | Complete |
-| BILL-01 | Phase 10 | Pending |
+| BILL-01 | Phase 10 | Complete |
 | BILL-02 | Phase 10 | Pending |
 | BILL-03 | Phase 10 | Pending |
 | PROD-01 | Phase 11 | Pending |
