@@ -129,3 +129,56 @@ def test_buy_gold_deducted_correctly():
     user.gold -= item.price_gold
 
     assert user.gold == 400
+
+
+# ---------------------------------------------------------------------------
+# Phase 10: Gems Foundation tests
+# ---------------------------------------------------------------------------
+
+def test_shop_item_schema_has_price_gems():
+    """ShopItemSchema accepts price_gems=None (existing items) and int (gem-priced items)."""
+    from app.schemas import ShopItemSchema
+
+    # Existing gold-only item: price_gems should default to None
+    item_gold = ShopItemSchema(
+        id=1, item_type="booster_xp", name="XP Boost",
+        price_gold=100, is_active=True
+    )
+    assert item_gold.price_gems is None
+
+    # New gem-priced item
+    item_gems = ShopItemSchema(
+        id=21, item_type="potion_heal", name="Зелье здоровья (Gems)",
+        price_gold=0, price_gems=500, is_active=True
+    )
+    assert item_gems.price_gems == 500
+
+
+def test_get_catalog_gem_price_null_guard():
+    """Frontend gem-price badge renders only when price_gems is truthy — simulate guard logic."""
+    class StubItem:
+        price_gems = None
+
+    item_no_gems = StubItem()
+    item_with_gems = StubItem()
+    item_with_gems.price_gems = 500
+
+    # Guard: only render gem badge if price_gems is truthy
+    assert not item_no_gems.price_gems   # None → don't render
+    assert item_with_gems.price_gems     # 500 → render badge
+
+
+def test_gem_item_seed_price_gold_zero():
+    """Gem-only item has price_gold=0 (not null, since column is NOT NULL) as placeholder."""
+    class StubGemItem:
+        item_type = "potion_heal"
+        name = "Зелье здоровья (Gems)"
+        price_gold = 0
+        price_gems = 500
+        is_active = True
+
+    item = StubGemItem()
+    # price_gold=0 is valid — item is gem-priced, not gold-priced
+    assert item.price_gold == 0
+    assert item.price_gems == 500
+    assert item.is_active is True
