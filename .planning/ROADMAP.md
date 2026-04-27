@@ -256,7 +256,7 @@ Plans:
 4. `/app/friends` — страница с поиском, списком, feed активности
 5. Новая таблица `friendships` (UNIQUE requester_id + addressee_id)
 
-**Plans:** 3 plans
+**Plans:** 2/3 plans executed
 
 Plans:
 - [ ] 08-01-PLAN.md — DB foundation: Friendship model, Alembic migration (friendships table + UNIQUE constraint), Pydantic schemas
@@ -339,7 +339,7 @@ Plans:
 | 5.2 Verify Auth Refactor (gap closure) | 1/1 | Complete   | 2026-04-22 |
 | 6. AI Daily Quests | 4/4 | Complete   | 2026-04-22 |
 | 7. Leaderboard | 3/4 | In Progress|  |
-| 8. Friends | 0/3 | Not started | — |
+| 8. Friends | 2/3 | In Progress|  |
 | 9. Guilds & Challenges | 0/TBD | Not started | — |
 | 10. Monetization | 0/TBD | Not started | — |
 | 11. Production Polish | 0/TBD | Not started | — |
