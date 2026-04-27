@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, ForeignKey, Text, UniqueConstraint
+import enum
+from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, ForeignKey, Text, UniqueConstraint, Enum
 from sqlalchemy.orm import relationship, DeclarativeBase
 from datetime import datetime, timedelta, timezone
 
@@ -142,3 +143,23 @@ class IdempotencyKey(Base):
     key           = Column(String, nullable=False)
     response_json = Column(Text, nullable=False)
     created_at    = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone(timedelta(hours=3))))
+
+
+# ── Phase 8: Social – Friends ──────────────────────────────────────────────
+
+class FriendshipStatus(str, enum.Enum):
+    pending = "pending"
+    accepted = "accepted"
+
+
+class Friendship(Base):
+    __tablename__ = "friendships"
+    __table_args__ = (
+        UniqueConstraint("requester_id", "addressee_id", name="uq_friendship"),
+    )
+
+    id = Column(Integer, primary_key=True, index=True)
+    requester_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    addressee_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    status = Column(Enum(FriendshipStatus), nullable=False, default=FriendshipStatus.pending)
+    created_at = Column(DateTime(timezone=True), default=get_msk_now)
