@@ -188,18 +188,35 @@ const ShopPage = ({ videos }) => {
                         </p>
                       </div>
 
-                      {/* BUY BUTTON */}
-                      <button
-                        onClick={() => handleBuyClick(item)}
-                        className={`h-12 px-4 sm:px-6 font-black text-sm sm:text-lg uppercase shadow-[0_3px_0_#966e00] active:shadow-none active:translate-y-0.5 transition-all outline-none border border-black/20
-                          ${canAfford
-                            ? 'bg-[#daa520] text-black'
-                            : 'bg-[#daa520]/30 text-red-400 opacity-50 cursor-not-allowed'
-                          }`}
-                        style={{ WebkitTapHighlightColor: 'transparent' }}
-                      >
-                        {item.price_gold}
-                      </button>
+                      {/* BUY BUTTON / GEM PRICE */}
+                      <div className="flex flex-col items-end gap-1 shrink-0">
+                        {item.price_gems && (
+                          <span className="text-[#9966ff] text-[10px] font-black uppercase tracking-widest">
+                            💎 {item.price_gems}
+                          </span>
+                        )}
+                        {item.price_gems ? (
+                          <button
+                            disabled
+                            className="h-12 px-4 sm:px-6 font-black text-sm sm:text-lg uppercase bg-[#333] text-white/40 opacity-60 cursor-not-allowed border border-white/10"
+                            style={{ WebkitTapHighlightColor: 'transparent' }}
+                          >
+                            Скоро
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleBuyClick(item)}
+                            className={`h-12 px-4 sm:px-6 font-black text-sm sm:text-lg uppercase shadow-[0_3px_0_#966e00] active:shadow-none active:translate-y-0.5 transition-all outline-none border border-black/20
+                              ${canAfford
+                                ? 'bg-[#daa520] text-black'
+                                : 'bg-[#daa520]/30 text-red-400 opacity-50 cursor-not-allowed'
+                              }`}
+                            style={{ WebkitTapHighlightColor: 'transparent' }}
+                          >
+                            {item.price_gold}
+                          </button>
+                        )}
+                      </div>
                     </div>
                   );
                 })}

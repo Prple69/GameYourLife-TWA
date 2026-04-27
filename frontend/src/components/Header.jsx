@@ -63,8 +63,18 @@ const Header = ({ title, subtitle, gold }) => {
           )}
         </div>
 
-        {/* RIGHT — gold */}
-        <div className="w-16 flex justify-end shrink-0 z-20">
+        {/* RIGHT — gems + gold */}
+        <div className="w-16 flex justify-end shrink-0 z-20 gap-1">
+          {/* Gems badge */}
+          {user?.gems != null && (
+            <div className="relative flex items-center gap-1 bg-[#111]/80 backdrop-blur-md px-2 py-1 border border-[#9966ff]/40 shadow-[2px_2px_0_#000]">
+              <span className="text-[#9966ff] font-bold text-[3.2vw] sm:text-sm tracking-tighter leading-none">
+                {user.gems}
+              </span>
+              <span className="text-[3vw] sm:text-sm leading-none">💎</span>
+            </div>
+          )}
+          {/* Gold badge (unchanged) */}
           {gold !== undefined && gold !== null && (
             <div className="relative flex items-center gap-1.5 bg-[#111]/80 backdrop-blur-md px-2 py-1 border border-[#f7d51d]/40 shadow-[2px_2px_0_#000]">
               <span className="text-[#f7d51d] font-bold text-[3.2vw] sm:text-sm tracking-tighter leading-none">
