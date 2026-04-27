@@ -281,7 +281,7 @@ Plans:
 5. `/app/guilds` — list, detail, join-flow
 6. Новые таблицы `guilds`, `guild_members`, `guild_challenges`
 
-**Plans:** TBD
+**Plans:** 2/3 plans executed
 
 ---
 
@@ -340,7 +340,7 @@ Plans:
 | 6. AI Daily Quests | 4/4 | Complete   | 2026-04-22 |
 | 7. Leaderboard | 3/4 | In Progress|  |
 | 8. Friends | 3/3 | Complete   | 2026-04-27 |
-| 9. Guilds & Challenges | 0/TBD | Not started | — |
+| 9. Guilds & Challenges | 2/3 | In Progress|  |
 | 10. Monetization | 0/TBD | Not started | — |
 | 11. Production Polish | 0/TBD | Not started | — |
 
