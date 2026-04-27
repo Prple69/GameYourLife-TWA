@@ -348,7 +348,7 @@ Plans:
 | 7. Leaderboard | 3/4 | In Progress|  |
 | 8. Friends | 3/3 | Complete   | 2026-04-27 |
 | 9. Guilds & Challenges | 3/3 | Complete   | 2026-04-27 |
-| 10. Gems Foundation | 2/2 | Complete   | 2026-04-27 |
+| 10. Gems Foundation | 2/2 | Complete    | 2026-04-27 |
 | 11. Production Polish | 0/TBD | Not started | — |
 
 ---
