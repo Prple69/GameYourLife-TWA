@@ -21,6 +21,7 @@
 - [x] **Phase 8: Social — Friends** — поиск, инвайты, friendship, feed активности друзей. (completed 2026-04-27)
 - [x] **Phase 9: Social — Guilds & Challenges** — CRUD гильдий, членство, групповые челленджи. (completed 2026-04-27)
 - [x] **Phase 10: Gems Foundation** — gems как валюта (schema + UI-заглушка), /app/gems страница, HUD display. (completed 2026-04-27)
+- [ ] **Phase 10.1: Fix Leaderboard Stale-Rank + Verify Phase 7** — закрытие gap'ов G1+G2 milestone v1.0 audit (2026-04-28): wire `leaderboard.update` в `complete_quest` + retroactive `07-VERIFICATION.md`.
 - [ ] **Phase 11: Production Polish** — Sentry, rate-limiting, SMTP-email, health-checks, prod-деплой на `gameyourlife.ru`, CI/CD.
 
 ---
@@ -312,6 +313,28 @@ Plans:
 
 ---
 
+### Phase 10.1: Fix Leaderboard Stale-Rank + Verify Phase 7
+
+**Goal:** После завершения квеста через `POST /api/quests/complete/{id}` Redis ZSET `leaderboard:global` сразу обновляется, ранг пользователя на `/app/leaderboard` отражает актуальный XP/lvl. Phase 7 формально верифицирована goal-backward методологией.
+
+**Gap Closure:** Milestone v1.0 audit (2026-04-28) — closes G1 (Phase 7 unverified, нет 07-VERIFICATION.md) + G2 (functional bug INT-01: `routers/quests.py::complete_quest` не вызывает `leaderboard.update`; единственный вызов живёт в orphaned `crud.add_reward`).
+
+**Depends on:** Phase 7 (complete), Phase 10 (milestone audit complete)
+
+**Requirements:** LEAD-01, LEAD-02
+
+**Success Criteria:**
+1. `routers/quests.py::complete_quest` принимает `redis_client: aioredis.Redis = Depends(cache.get_redis)` и после `db.commit()` вызывает `await leaderboard.update(redis_client, user)` с try/except guard (Redis-сбой не ломает quest completion — паттерн из `crud.py:73-78`)
+2. Unit-тест проверяет, что `leaderboard.update` вызывается после успешного complete_quest (mock redis_client → ZADD assertion)
+3. Решена судьба orphaned `leaderboard.update` в `crud.add_reward` (удалить вызов или пометить функцию `_legacy_`)
+4. `.planning/phases/07-leaderboard/07-VERIFICATION.md` создан по goal-backward методологии (gsd-verifier); отвечает по LEAD-01 и LEAD-02 (SATISFIED после фикса G2); явно фиксирует deferred-status плана 07-04 (browser human-verify → Pre-Launch Checklist)
+5. REQUIREMENTS.md traceability: `LEAD-01`, `LEAD-02` → Phase column "Phase 10.1 (verify+fix)", Status `Verified`; чекбоксы `[x]` восстановлены после прохождения верификации
+6. Все 102 backend-теста проходят (regression check); новый тест на `leaderboard.update` в complete_quest добавляет 103-й кейс
+
+**Plans:** TBD (1 plan ожидается — small isolated fix + verification doc)
+
+---
+
 ### Phase 11: Production Polish
 
 **Goal:** Сайт готов к публичному запуску: мониторинг, защита, нотификации, деплой.
@@ -349,6 +372,7 @@ Plans:
 | 8. Friends | 3/3 | Complete   | 2026-04-27 |
 | 9. Guilds & Challenges | 3/3 | Complete   | 2026-04-27 |
 | 10. Gems Foundation | 2/2 | Complete    | 2026-04-27 |
+| 10.1 Verify Phase 7 + Fix Stale-Rank (gap closure) | 0/TBD | Not started | — |
 | 11. Production Polish | 0/TBD | Not started | — |
 
 ---

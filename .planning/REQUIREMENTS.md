@@ -41,8 +41,8 @@ Requirements for initial release. Checked items are already working in the exist
 
 ### Leaderboard
 
-- [x] **LEAD-01**: User can view a global leaderboard of players ranked by level and XP
-- [x] **LEAD-02**: User's own rank and position are highlighted on the leaderboard
+- [ ] **LEAD-01**: User can view a global leaderboard of players ranked by level and XP — partial (G2 stale-rank bug: `complete_quest` не обновляет Redis ZSET); fix in Phase 10.1
+- [ ] **LEAD-02**: User's own rank and position are highlighted on the leaderboard — partial (same G2 root cause); fix in Phase 10.1
 
 ### Profile
 
@@ -173,8 +173,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | INV-03 | Phase 5 | Complete (verified 2026-04-22) |
 | AI-01 | Phase 6 | Complete |
 | AI-02 | Phase 6 | Complete |
-| LEAD-01 | Phase 7 | Complete |
-| LEAD-02 | Phase 7 | Complete |
+| LEAD-01 | Phase 7 → Phase 10.1 (verify+fix) | Pending (G2 stale-rank bug — `complete_quest` doesn't update Redis ZSET; fix + retroactive verify in Phase 10.1) |
+| LEAD-02 | Phase 7 → Phase 10.1 (verify+fix) | Pending (same G2 root cause — Redis ZSET drift; fix + retroactive verify in Phase 10.1) |
 | SOCL-01 | Phase 8 | Complete |
 | SOCL-02 | Phase 8 | Complete |
 | GUILD-01 | Phase 9 | Complete |
@@ -188,12 +188,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PROD-04 | Phase 11 | Pending |
 | PROD-05 | Phase 11 | Pending |
 
-**Coverage (post audit 2026-04-22):**
+**Coverage (post audit 2026-04-28):**
 - v1.0 requirements: 51 total (10 validated pre-v1.0, 41 added in 2026-04-18 pivot; SHOP-04 moved to Out of Scope)
-- Verified: 16 (SEC-01/02, PROG-02/03, SHOP-01/02/03/05, INV-01/02/03, WEB-01..03, LEGAL-01..04, AUTH-01..04, AUTH-06)
-- Pending verification (implementation complete, needs VERIFICATION.md): 0 — all closed by Phase 5.1 (WEB/LEGAL) and Phase 5.2 (AUTH)
+- Verified: 22 (SEC-01/02, PROG-02/03, SHOP-01/02/03/05, INV-01/02/03, WEB-01..03, LEGAL-01..04, AUTH-01..04, AUTH-06, AI-01/02, SOCL-01/02, GUILD-01/02)
+- Partial (gap closure pending): 2 (LEAD-01, LEAD-02 — G2 stale-rank functional bug, fix in Phase 10.1)
+- Partial (catalog only — accepted scope split): 1 (BILL-01 — gem catalog/UI shell delivered, ЮKassa deferred to future Payments phase)
 - Stub (known deferral): 1 (AUTH-05 — SMTP delivery → Phase 11/PROD-03)
-- Unimplemented (future phases 6-11): 18 (AI-01/02, LEAD-01/02, SOCL-01/02, GUILD-01/02, BILL-01..03, PROD-01..05)
+- Unimplemented (future phases): 7 (BILL-02/03, PROD-01..05)
 - Out of Scope: 1 (SHOP-04)
 - Unmapped: 0 ✓
 
@@ -206,13 +207,15 @@ Which phases cover which requirements. Updated during roadmap creation.
 - **Phase 5.1: Verify Phase 02** — retroactive gap closure (milestone v1.0 audit 2026-04-22)
 - **Phase 5.2: Verify Phase 03** — retroactive gap closure + AUTH-05 stub acknowledgment
 - Phase 6: AI Daily Quests (AI-01, AI-02)
-- Phase 7: Leaderboard (LEAD-01, LEAD-02)
+- Phase 7: Leaderboard (LEAD-01, LEAD-02) — partial; verify+fix in Phase 10.1
 - Phase 8: Friends (SOCL-01, SOCL-02)
 - Phase 9: Guilds & Challenges (GUILD-01, GUILD-02)
-- Phase 10: Monetization (BILL-01..03)
+- Phase 10: Gems Foundation (BILL-01 partial — catalog only; BILL-02/03 deferred to future Payments phase)
+- **Phase 10.1: Verify Phase 07 + Fix Stale-Rank** — retroactive gap closure (milestone v1.0 audit 2026-04-28; closes G1+G2)
 - Phase 11: Production Polish (PROD-01..05) — delivers AUTH-05 SMTP via PROD-03
 
 ---
 *Requirements defined: 2026-03-01*
 *Pivot expansion: 2026-04-18 (41 new requirements added, v2 social promoted to v1.0)*
 *Traceability refresh + gap closure phases: 2026-04-22 (milestone v1.0 audit)*
+*Gap closure refresh: 2026-04-28 (milestone v1.0 audit — Phase 10.1 added for G1+G2 closure: LEAD-01/02 marked partial pending stale-rank fix)*
