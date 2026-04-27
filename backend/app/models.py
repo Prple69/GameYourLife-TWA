@@ -163,3 +163,56 @@ class Friendship(Base):
     addressee_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     status = Column(Enum(FriendshipStatus), nullable=False, default=FriendshipStatus.pending)
     created_at = Column(DateTime(timezone=True), default=get_msk_now)
+
+
+# ── Phase 9: Social – Guilds & Challenges ─────────────────────────────────
+
+class GuildRole(str, enum.Enum):
+    owner = "owner"
+    officer = "officer"
+    member = "member"
+
+
+class Guild(Base):
+    __tablename__ = "guilds"
+
+    id = Column(Integer, primary_key=True, index=True)
+    owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    slug = Column(String, unique=True, index=True, nullable=False)
+    name = Column(String, nullable=False)
+    description = Column(String, nullable=True)
+    created_at = Column(DateTime(timezone=True), default=get_msk_now)
+
+    members = relationship("GuildMember", back_populates="guild", cascade="all, delete-orphan")
+    challenges = relationship("GuildChallenge", back_populates="guild", cascade="all, delete-orphan")
+
+
+class GuildMember(Base):
+    __tablename__ = "guild_members"
+    __table_args__ = (
+        UniqueConstraint("guild_id", "user_id", name="uq_guild_user"),
+    )
+
+    id = Column(Integer, primary_key=True, index=True)
+    guild_id = Column(Integer, ForeignKey("guilds.id", ondelete="CASCADE"), nullable=False, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    role = Column(Enum(GuildRole), nullable=False, default=GuildRole.member)
+    joined_at = Column(DateTime(timezone=True), default=get_msk_now)
+
+    guild = relationship("Guild", back_populates="members")
+    user = relationship("User")
+
+
+class GuildChallenge(Base):
+    __tablename__ = "guild_challenges"
+
+    id = Column(Integer, primary_key=True, index=True)
+    guild_id = Column(Integer, ForeignKey("guilds.id", ondelete="CASCADE"), nullable=False, index=True)
+    name = Column(String, nullable=False)
+    description = Column(String, nullable=True)
+    target_xp = Column(Integer, nullable=False, default=0)
+    start_date = Column(DateTime(timezone=True), nullable=False)
+    end_date = Column(DateTime(timezone=True), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=get_msk_now)
+
+    guild = relationship("Guild", back_populates="challenges")
