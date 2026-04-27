@@ -224,3 +224,57 @@ class LeaderboardMeResponse(BaseModel):
     rank: Optional[int]
     total_users: int
     neighbors: list[LeaderboardEntryResponse]
+
+
+# ── Phase 8: Social – Friends ──────────────────────────────────────────────
+
+class UserSearchResult(BaseModel):
+    id: int
+    display_name: str
+    avatar: str | None = None
+    lvl: int
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class FriendListItem(BaseModel):
+    id: int
+    display_name: str
+    avatar: str | None = None
+    lvl: int
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ActivityFeedItem(BaseModel):
+    user_id: int
+    display_name: str
+    avatar: str | None = None
+    event_type: str          # "quest_completed"
+    event_data: dict         # {"quest_title": str, "difficulty": str}
+    timestamp: datetime
+
+
+class FriendsResponse(BaseModel):
+    friends: list[FriendListItem]
+    activity: list[ActivityFeedItem]
+
+
+class FriendRequestOut(BaseModel):
+    id: int
+    requester_id: int
+    addressee_id: int
+    status: str
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class PendingRequestItem(BaseModel):
+    """Incoming or outgoing friend request visible to the addressee/requester."""
+    id: int
+    other_user_id: int
+    other_display_name: str
+    other_avatar: str | None = None
+    direction: str           # "incoming" | "outgoing"
+    created_at: datetime
