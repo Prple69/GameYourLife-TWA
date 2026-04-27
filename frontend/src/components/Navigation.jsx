@@ -11,6 +11,7 @@ const tabs = [
   { to: '/app/character',   label: 'ЛАГЕРЬ',  icon: campIcon },
   { to: '/app/quests',      label: 'ЗАДАНИЯ', icon: questsIcon },
   { to: '/app/leaderboard', label: 'ЛИДЕРЫ',  icon: leaderIcon },
+  { to: '/app/friends',     label: 'ДРУЗЬЯ',  icon: leaderIcon },
 ];
 
 const Navigation = () => {
