@@ -21,6 +21,7 @@ const InventoryPage   = lazy(() => import('./pages/InventoryPage'));
 const LeaderboardPage = lazy(() => import('./pages/LeaderboardPage'));
 const FriendsPage     = lazy(() => import('./pages/FriendsPage'));
 const GuildsPage      = lazy(() => import('./pages/GuildsPage'));
+const GemsPage        = lazy(() => import('./pages/GemsPage'));
 
 const AppSuspense = ({ children }) => (
   <Suspense fallback={<LoadingPage progress={80} isLoaded={false} />}>
@@ -68,6 +69,7 @@ export default function App() {
         <Route path="leaderboard" element={<AppSuspense><LeaderboardPage /></AppSuspense>} />
         <Route path="friends"     element={<AppSuspense><FriendsPage /></AppSuspense>} />
         <Route path="guilds"      element={<AppSuspense><GuildsPage /></AppSuspense>} />
+        <Route path="gems"        element={<AppSuspense><GemsPage /></AppSuspense>} />
         <Route path="settings"    element={<NotFoundPage />} />
       </Route>
 
