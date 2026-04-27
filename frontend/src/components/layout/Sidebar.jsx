@@ -11,6 +11,7 @@ const navItems = [
   { to: '/app/shop',        label: 'ЛАВКА',     icon: shopIcon },
   { to: '/app/inventory',   label: 'СУМКА',     icon: invIcon },
   { to: '/app/leaderboard', label: 'ЛИДЕРЫ',    icon: leaderIcon },
+  { to: '/app/guilds',      label: 'ГИЛЬДИИ',   icon: leaderIcon },
 ];
 
 export default function Sidebar() {

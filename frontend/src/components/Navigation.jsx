@@ -12,6 +12,7 @@ const tabs = [
   { to: '/app/quests',      label: 'ЗАДАНИЯ', icon: questsIcon },
   { to: '/app/leaderboard', label: 'ЛИДЕРЫ',  icon: leaderIcon },
   { to: '/app/friends',     label: 'ДРУЗЬЯ',  icon: leaderIcon },
+  { to: '/app/guilds',      label: 'ГИЛЬДИИ', icon: leaderIcon },
 ];
 
 const Navigation = () => {
