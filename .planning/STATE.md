@@ -5,13 +5,13 @@ milestone_name: milestone
 current_phase: 08
 current_plan: Not started
 status: unknown
-last_updated: "2026-04-27T03:24:19.841Z"
+last_updated: "2026-04-27T09:50:01.830Z"
 progress:
-  total_phases: 10
+  total_phases: 11
   completed_phases: 10
-  total_plans: 31
-  completed_plans: 31
-  percent: 100
+  total_plans: 34
+  completed_plans: 32
+  percent: 94
 ---
 
 ---
@@ -127,7 +127,7 @@ progress:
 **Current Phase:** Phase 1: Secure Foundation (complete)
 **Current Plan:** Not started
 **Execution Status:** Phase 1 complete — ready for Phase 2
-**Progress:** [██████████] 100%
+**Progress:** [█████████░] 94%
 
 ---
 
@@ -213,6 +213,9 @@ Phase 1 planning must address security (SEC-01, SEC-02) before feature work.
 - [Phase 08-social-friends]: Plain int defaults for limit/offset (not Query objects) on router functions — enables stub test direct invocation without TypeError while FastAPI still validates bounds at HTTP request time
 - [Phase 08-social-friends]: Used leaderIcon as placeholder for ДРУЗЬЯ nav tab — no friends icon in assets; label differentiates it
 - [Phase 08-social-friends]: friendsService import path is ./api (not ../api) — api.js is co-located in src/services/
+- [Phase 09-social-guilds]: [09-01] GuildRole inherits str+enum.Enum — enables direct Pydantic serialization without custom validator, consistent with FriendshipStatus pattern
+- [Phase 09-social-guilds]: [09-01] No relationship() backrefs on User for GuildMember — router queries directly, avoids circular import risk per Phase 8 pattern
+- [Phase 09-social-guilds]: [09-01] Revision ID 3e157d3ff620; hand-wrote migration (no autogenerate) — avoids spurious drop_index calls per Phase 4/5/8 pattern
 
 ## Session Continuity
 
@@ -222,7 +225,7 @@ Phase 1 planning must address security (SEC-01, SEC-02) before feature work.
 - `.planning/STATE.md` — This file, project memory and decision context
 - `.planning/REQUIREMENTS.md` — Traceability section updated with phase mappings
 
-**Last Session:** 2026-04-27T03:20:41.310Z
+**Last Session:** 2026-04-27T09:50:01.828Z
 **Next Step:** Run `/gsd:discuss-phase 8` (или `/gsd:plan-phase 8`) — Phase 8 (Social — Friends) ещё не имеет CONTEXT.md
 
 ---
@@ -261,6 +264,7 @@ Phase 1 planning must address security (SEC-01, SEC-02) before feature work.
 | Phase 08 P01 | 2 | 3 tasks | 3 files |
 | Phase 08-social-friends P02 | 3 | 2 tasks | 3 files |
 | Phase 08 P03 | 5 | 2 tasks | 7 files |
+| Phase 09-social-guilds P01 | 85 | 3 tasks | 3 files |
 
 ## Accumulated Context
 

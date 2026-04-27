@@ -84,8 +84,8 @@ Requirements for initial release. Checked items are already working in the exist
 
 ### Guilds (added 2026-04-18 pivot)
 
-- [ ] **GUILD-01**: User создаёт гильдию (slug/name/description), становится owner
-- [ ] **GUILD-02**: User вступает/покидает публичную гильдию; роли owner / officer / member
+- [x] **GUILD-01**: User создаёт гильдию (slug/name/description), становится owner
+- [x] **GUILD-02**: User вступает/покидает публичную гильдию; роли owner / officer / member
 
 ### Production (added 2026-04-18 pivot)
 
@@ -177,8 +177,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | LEAD-02 | Phase 7 | Complete |
 | SOCL-01 | Phase 8 | Complete |
 | SOCL-02 | Phase 8 | Complete |
-| GUILD-01 | Phase 9 | Pending |
-| GUILD-02 | Phase 9 | Pending |
+| GUILD-01 | Phase 9 | Complete |
+| GUILD-02 | Phase 9 | Complete |
 | BILL-01 | Phase 10 | Pending |
 | BILL-02 | Phase 10 | Pending |
 | BILL-03 | Phase 10 | Pending |
