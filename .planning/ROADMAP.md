@@ -331,7 +331,10 @@ Plans:
 5. REQUIREMENTS.md traceability: `LEAD-01`, `LEAD-02` → Phase column "Phase 10.1 (verify+fix)", Status `Verified`; чекбоксы `[x]` восстановлены после прохождения верификации
 6. Все 102 backend-теста проходят (regression check); новый тест на `leaderboard.update` в complete_quest добавляет 103-й кейс
 
-**Plans:** TBD (1 plan ожидается — small isolated fix + verification doc)
+**Plans:** 1 plan
+
+Plans:
+- [ ] 10.1-01-PLAN.md — Fix complete_quest leaderboard wiring (G2) + 07-VERIFICATION.md (G1) + REQUIREMENTS.md sync
 
 ---
 
@@ -372,7 +375,7 @@ Plans:
 | 8. Friends | 3/3 | Complete   | 2026-04-27 |
 | 9. Guilds & Challenges | 3/3 | Complete   | 2026-04-27 |
 | 10. Gems Foundation | 2/2 | Complete    | 2026-04-27 |
-| 10.1 Verify Phase 7 + Fix Stale-Rank (gap closure) | 0/TBD | Not started | — |
+| 10.1 Verify Phase 7 + Fix Stale-Rank (gap closure) | 0/1 | Not started | — |
 | 11. Production Polish | 0/TBD | Not started | — |
 
 ---
