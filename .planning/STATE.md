@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 10
-current_plan: Not started
-status: unknown
-last_updated: "2026-04-27T18:17:11.935Z"
+current_phase: 10.1
+current_plan: Complete
+status: phase-complete
+last_updated: "2026-04-28T04:30:35.693Z"
 progress:
-  total_phases: 12
-  completed_phases: 12
-  total_plans: 36
-  completed_plans: 36
+  total_phases: 13
+  completed_phases: 13
+  total_plans: 37
+  completed_plans: 37
   percent: 100
 ---
 
@@ -96,9 +96,9 @@ progress:
 
 # STATE: Game Your Life Roadmap Execution
 
-**Current Date:** 2026-03-01
+**Current Date:** 2026-04-28
 **Milestone:** v1
-**Current Phase:** 10
+**Current Phase:** 10.1 (complete — milestone v1.0 audit gaps G1+G2 closed)
 
 ---
 
@@ -228,6 +228,9 @@ Phase 1 planning must address security (SEC-01, SEC-02) before feature work.
 - [Phase 10-gems-foundation]: [10-02] GemsPage uses hardcoded PACKS const — no backend fetch; packs are static until billing implemented
 - [Phase 10-gems-foundation]: [10-02] user?.gems != null guard handles both undefined and null; gems=0 still renders
 - [Phase 10-gems-foundation]: [10-02] price_gems truthy check drives both gem badge and disabled Скоро button in ShopPage
+- [Phase 10.1-verify-leaderboard-and-fix-stale-rank]: [10.1-01] Place leaderboard.update AFTER db.commit() AND db.refresh(user) so score reflects DB-side state, not pre-mutation snapshot
+- [Phase 10.1-verify-leaderboard-and-fix-stale-rank]: [10.1-01] Defense-in-depth try/except in router despite leaderboard.update having internal guard — explicit per-call-site warning log + execution-flow guarantee independent of internal contract
+- [Phase 10.1-verify-leaderboard-and-fix-stale-rank]: [10.1-01] Retroactive verification artifact pattern extends to dual gap closure (G1 + G2) in single docs commit — Phase 7 verified retroactively while G2 functional fix lands in same plan
 
 ## Session Continuity
 
@@ -237,7 +240,7 @@ Phase 1 planning must address security (SEC-01, SEC-02) before feature work.
 - `.planning/STATE.md` — This file, project memory and decision context
 - `.planning/REQUIREMENTS.md` — Traceability section updated with phase mappings
 
-**Last Session:** 2026-04-27T18:13:47.871Z
+**Last Session:** 2026-04-28T04:30:35.691Z
 **Next Step:** Run `/gsd:discuss-phase 8` (или `/gsd:plan-phase 8`) — Phase 8 (Social — Friends) ещё не имеет CONTEXT.md
 
 ---
@@ -281,6 +284,7 @@ Phase 1 planning must address security (SEC-01, SEC-02) before feature work.
 | Phase 09-social-guilds P03 | 15 | 3 tasks | 7 files |
 | Phase 10-gems-foundation P01 | 94 | 3 tasks | 4 files |
 | Phase 10-gems-foundation P02 | 15 | 3 tasks | 5 files |
+| Phase 10.1-verify-leaderboard-and-fix-stale-rank P01 | 6 | 2 tasks | 5 files |
 
 ## Accumulated Context
 

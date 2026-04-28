@@ -21,7 +21,7 @@
 - [x] **Phase 8: Social — Friends** — поиск, инвайты, friendship, feed активности друзей. (completed 2026-04-27)
 - [x] **Phase 9: Social — Guilds & Challenges** — CRUD гильдий, членство, групповые челленджи. (completed 2026-04-27)
 - [x] **Phase 10: Gems Foundation** — gems как валюта (schema + UI-заглушка), /app/gems страница, HUD display. (completed 2026-04-27)
-- [ ] **Phase 10.1: Fix Leaderboard Stale-Rank + Verify Phase 7** — закрытие gap'ов G1+G2 milestone v1.0 audit (2026-04-28): wire `leaderboard.update` в `complete_quest` + retroactive `07-VERIFICATION.md`.
+- [x] **Phase 10.1: Fix Leaderboard Stale-Rank + Verify Phase 7** — закрытие gap'ов G1+G2 milestone v1.0 audit (2026-04-28): wire `leaderboard.update` в `complete_quest` + retroactive `07-VERIFICATION.md`. (completed 2026-04-28)
 - [ ] **Phase 11: Production Polish** — Sentry, rate-limiting, SMTP-email, health-checks, prod-деплой на `gameyourlife.ru`, CI/CD.
 
 ---
@@ -331,7 +331,7 @@ Plans:
 5. REQUIREMENTS.md traceability: `LEAD-01`, `LEAD-02` → Phase column "Phase 10.1 (verify+fix)", Status `Verified`; чекбоксы `[x]` восстановлены после прохождения верификации
 6. Все 102 backend-теста проходят (regression check); новый тест на `leaderboard.update` в complete_quest добавляет 103-й кейс
 
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
 - [ ] 10.1-01-PLAN.md — Fix complete_quest leaderboard wiring (G2) + 07-VERIFICATION.md (G1) + REQUIREMENTS.md sync
@@ -375,7 +375,7 @@ Plans:
 | 8. Friends | 3/3 | Complete   | 2026-04-27 |
 | 9. Guilds & Challenges | 3/3 | Complete   | 2026-04-27 |
 | 10. Gems Foundation | 2/2 | Complete    | 2026-04-27 |
-| 10.1 Verify Phase 7 + Fix Stale-Rank (gap closure) | 0/1 | Not started | — |
+| 10.1 Verify Phase 7 + Fix Stale-Rank (gap closure) | 1/1 | Complete   | 2026-04-28 |
 | 11. Production Polish | 0/TBD | Not started | — |
 
 ---
