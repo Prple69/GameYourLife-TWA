@@ -361,3 +361,127 @@ def test_quests_py_contains_applied_boosts():
     source = inspect.getsource(quests_module)
     assert "applied_boosts" in source, "applied_boosts not found in quests.py"
     assert "effective_multipliers" in source, "effective_multipliers not found in quests.py"
+
+
+# ── Phase 10.1 Task 1 — leaderboard.update wired into complete_quest ─────────
+
+
+class StubUserForLeaderboard(StubUserWithBoosts):
+    """Extends StubUserWithBoosts with id + display_name for leaderboard score_for."""
+    id = 42
+    display_name = "Hero"
+    username = None
+    selected_avatar = "avatar1"
+
+
+class StubQuestModel:
+    """Minimal Quest with attributes used by complete_quest."""
+    def __init__(self, quest_id=1, user_id=42):
+        self.id = quest_id
+        self.user_id = user_id
+        self.xp_reward = 50
+        self.gold_reward = 5
+        self.hp_penalty = 0
+        self.difficulty = "easy"
+        self.category = None  # legacy quest avoids stat-gain branch
+        self.is_completed = False
+        self.is_failed = False
+
+
+class StubScalars:
+    def __init__(self, items):
+        self._items = list(items)
+
+    def all(self):
+        return list(self._items)
+
+    def first(self):
+        return self._items[0] if self._items else None
+
+
+class StubResult:
+    def __init__(self, items):
+        self._items = list(items)
+
+    def scalars(self):
+        return StubScalars(self._items)
+
+
+class StubDB:
+    """Async DB stub: execute returns the configured result, commit/refresh are no-ops."""
+    def __init__(self, quest):
+        self._quest = quest
+        self.commit_called = 0
+        self.refresh_called = 0
+
+    async def execute(self, *args, **kwargs):
+        return StubResult([self._quest])
+
+    async def commit(self):
+        self.commit_called += 1
+
+    async def refresh(self, _obj):
+        self.refresh_called += 1
+
+
+def test_complete_quest_updates_leaderboard():
+    """After complete_quest succeeds, Redis ZSET leaderboard:global has user's entry."""
+    import asyncio
+    from app.routers.quests import complete_quest
+    from app import leaderboard
+    from tests.conftest import StubRedis
+
+    async def _run():
+        user = StubUserForLeaderboard()
+        quest = StubQuestModel(quest_id=1, user_id=user.id)
+        db = StubDB(quest)
+        redis = StubRedis()
+
+        response = await complete_quest(
+            quest_id=1, user=user, db=db, redis_client=redis
+        )
+
+        # ZADD wrote the user's entry to the global leaderboard sorted set
+        assert "leaderboard:global" in redis._zsets, "Leaderboard key not created"
+        zset = redis._zsets["leaderboard:global"]
+        assert str(user.id) in zset, f"User {user.id} not in leaderboard ZSET"
+
+        # Score equals leaderboard.score_for(user) (post quest XP gain applied)
+        expected_score = leaderboard.score_for(user)
+        assert zset[str(user.id)] == expected_score, (
+            f"Score mismatch: got {zset[str(user.id)]}, expected {expected_score}"
+        )
+
+        # Endpoint succeeded with a response
+        assert response is not None
+        assert isinstance(response, dict)
+        assert response.get("status") == "success"
+
+    asyncio.run(_run())
+
+
+def test_complete_quest_redis_failure_doesnt_break_completion():
+    """If Redis ZADD raises, complete_quest still returns success — never propagates."""
+    import asyncio
+    from app.routers.quests import complete_quest
+    from tests.conftest import StubRedis
+
+    class BrokenRedis(StubRedis):
+        async def zadd(self, key, mapping):
+            raise RuntimeError("redis down")
+
+    async def _run():
+        user = StubUserForLeaderboard()
+        quest = StubQuestModel(quest_id=1, user_id=user.id)
+        db = StubDB(quest)
+        redis = BrokenRedis()
+
+        # Must not raise — try/except guard absorbs Redis failures
+        response = await complete_quest(
+            quest_id=1, user=user, db=db, redis_client=redis
+        )
+        assert response is not None
+        assert isinstance(response, dict)
+        assert response.get("status") == "success"
+
+    asyncio.run(_run())
