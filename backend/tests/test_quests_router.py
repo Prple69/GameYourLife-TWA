@@ -367,11 +367,19 @@ def test_quests_py_contains_applied_boosts():
 
 
 class StubUserForLeaderboard(StubUserWithBoosts):
-    """Extends StubUserWithBoosts with id + display_name for leaderboard score_for."""
+    """Extends StubUserWithBoosts with id + display_name for leaderboard score_for.
+
+    Also includes the minimum set of attrs UserSchema.model_validate requires
+    (the endpoint serializes user via from_attributes after the leaderboard ZADD).
+    """
     id = 42
-    display_name = "Hero"
+    telegram_id = None
     username = None
+    email = None
+    display_name = "Hero"
+    gems = 0
     selected_avatar = "avatar1"
+    char_class = "knight"
 
 
 class StubQuestModel:

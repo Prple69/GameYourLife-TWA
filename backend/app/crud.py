@@ -49,6 +49,8 @@ async def update_user_avatar(db: AsyncSession, tg_id: str, avatar_id: str):
 
 # --- ЛОГИКА НАГРАД ---
 
+# Legacy Telegram-id path — unreachable from JWT routers.
+# Leaderboard update moved to routers/quests.py::complete_quest (Phase 10.1).
 async def add_reward(db: AsyncSession, tg_id: str, xp_amount: int, gold_amount: int):
     """Начислить опыт и золото с проверкой Level Up"""
     user = await get_user_by_tg_id(db, tg_id)
@@ -65,17 +67,9 @@ async def add_reward(db: AsyncSession, tg_id: str, xp_amount: int, gold_amount: 
         user.lvl += 1
         user.max_xp = int(user.max_xp * 1.2)
         leveled_up = True
-    
+
     await db.commit()
     await db.refresh(user)
-
-    # Phase 7: Update leaderboard rank after XP/level change
-    try:
-        from app import cache as _cache, leaderboard as _leaderboard
-        if _cache._redis_client is not None:
-            await _leaderboard.update(_cache._redis_client, user)
-    except Exception as e:
-        logger.warning(f"Leaderboard update failed in add_reward: {e}")
 
     return user, leveled_up
 

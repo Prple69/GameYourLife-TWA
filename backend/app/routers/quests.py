@@ -20,12 +20,13 @@ import logging
 import re
 from typing import List
 
+import redis.asyncio as aioredis
 from fastapi import APIRouter, Body, Depends, HTTPException
 from openai import AsyncOpenAI
 from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app import crud, models, schemas
+from app import cache, crud, leaderboard, models, schemas
 from app.config import get_settings
 from app.database import get_db
 from app.dependencies import get_current_user
@@ -210,6 +211,7 @@ async def complete_quest(
     quest_id: int,
     user: models.User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
+    redis_client: aioredis.Redis = Depends(cache.get_redis),
 ):
     result = await db.execute(
         select(models.Quest).filter(
@@ -259,6 +261,13 @@ async def complete_quest(
 
     await db.commit()
     await db.refresh(user)
+
+    # Phase 10.1: keep Redis ZSET in sync with DB after every quest completion.
+    # Graceful guard — Redis outages must not break quest completion.
+    try:
+        await leaderboard.update(redis_client, user)
+    except Exception as e:  # noqa: BLE001
+        logger.warning(f"Leaderboard update failed for user {user.id}: {e}")
 
     return {
         "status": "success",
