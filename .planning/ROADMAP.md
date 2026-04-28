@@ -375,7 +375,7 @@ Plans:
 | 8. Friends | 3/3 | Complete   | 2026-04-27 |
 | 9. Guilds & Challenges | 3/3 | Complete   | 2026-04-27 |
 | 10. Gems Foundation | 2/2 | Complete    | 2026-04-27 |
-| 10.1 Verify Phase 7 + Fix Stale-Rank (gap closure) | 1/1 | Complete   | 2026-04-28 |
+| 10.1 Verify Phase 7 + Fix Stale-Rank (gap closure) | 1/1 | Complete    | 2026-04-28 |
 | 11. Production Polish | 0/TBD | Not started | — |
 
 ---
