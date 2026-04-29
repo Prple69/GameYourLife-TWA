@@ -18,7 +18,7 @@
 2. **Настройте переменные окружения:**
 Создайте файл `.env` в папке бэкенда:
 ```env
-DATABASE_URL=postgresql+asyncpg://postgres:purple666@127.0.0.1:5432/game_db
+DATABASE_URL=postgresql+asyncpg://postgres:password@127.0.0.1:5432/game_db
 OPENAI_API_KEY=your_key_here
 
 ```
