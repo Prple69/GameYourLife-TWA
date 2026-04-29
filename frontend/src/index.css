@@ -1,6 +1,68 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
+/* --- DESIGN TOKENS — NEON RPG / ROYAL QUEST --- */
+/* Source: .superpowers/brainstorm/4251-1777427323/content/tokens.html */
+@theme {
+  /* I. Surfaces */
+  --color-bg-base: #0a0612;
+  --color-bg-elev-1: #120822;
+  --color-bg-elev-2: #1a0e30;
+  --color-bg-elev-3: #231542;
+
+  /* II. Brand — Gold */
+  --color-gold-1: #facc15;
+  --color-gold-2: #daa520;
+  --color-gold-3: #9a7515;
+
+  /* II. Brand — Violet */
+  --color-violet-1: #c084fc;
+  --color-violet-2: #a855f7;
+  --color-violet-3: #7c3aed;
+
+  /* III. Semantic */
+  --color-emerald: #10b981;
+  --color-crimson: #ef4444;
+  --color-azure: #3b82f6;
+
+  /* IV. Text */
+  --color-text-1: #fef3c7;
+  --color-text-2: #e8e2f0;
+  --color-text-3: rgba(232, 226, 240, 0.65);
+  --color-text-4: rgba(232, 226, 240, 0.35);
+
+  /* IV. Borders */
+  --color-border-1: rgba(218, 165, 32, 0.4);
+  --color-border-2: rgba(168, 85, 247, 0.3);
+  --color-border-3: rgba(255, 255, 255, 0.08);
+
+  /* V. Fonts */
+  --font-display: "Press Start 2P", monospace;
+  --font-mono: "JetBrains Mono", monospace;
+
+  /* VI. Spacing scale (8px-grid; complementary to Tailwind defaults — keeps default spacing utilities working) */
+  --spacing-sp-1: 4px;
+  --spacing-sp-2: 8px;
+  --spacing-sp-3: 12px;
+  --spacing-sp-4: 16px;
+  --spacing-sp-5: 24px;
+  --spacing-sp-6: 32px;
+  --spacing-sp-7: 48px;
+
+  /* VII. Shadows */
+  --shadow-glow-gold: 0 0 0 1px rgba(218, 165, 32, 0.4), 0 0 24px rgba(218, 165, 32, 0.18);
+  --shadow-glow-violet: 0 0 0 1px rgba(168, 85, 247, 0.4), 0 0 24px rgba(168, 85, 247, 0.2);
+  --shadow-retro: 6px 6px 0 #000;
+  --shadow-lift: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-pulse: inset 0 0 0 1px rgba(218, 165, 32, 0.5), 0 0 18px rgba(218, 165, 32, 0.4);
+  --shadow-modal: 0 4px 20px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+  /* IX. Motion — durations */
+  --default-transition-duration: 240ms;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
 /* --- ГЛОБАЛЬНЫЕ НАСТРОЙКИ ТЕЛА --- */
 body {
   background-color: #000000;
