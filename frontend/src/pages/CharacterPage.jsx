@@ -18,10 +18,10 @@ const maxXpForStatLevel = (lvl) =>
   Math.max(1, Math.round(10 * Math.pow(1.2, Math.max(1, lvl) - 1)));
 
 const STAT_META = [
-  { key: 'strength',  label: 'СИЛА',         labelColor: 'text-red-500',    barClass: 'bg-gradient-to-r from-red-600 to-red-400',       shadow: 'rgba(239,68,68,0.5)' },
-  { key: 'endurance', label: 'ВЫНОСЛИВОСТЬ', labelColor: 'text-green-500',  barClass: 'bg-gradient-to-r from-green-600 to-green-400',   shadow: 'rgba(34,197,94,0.5)' },
-  { key: 'wisdom',    label: 'МУДРОСТЬ',     labelColor: 'text-blue-500',   barClass: 'bg-gradient-to-r from-blue-600 to-blue-400',     shadow: 'rgba(59,130,246,0.5)' },
-  { key: 'charisma',  label: 'ОБАЯНИЕ',      labelColor: 'text-yellow-500', barClass: 'bg-gradient-to-r from-yellow-600 to-yellow-400', shadow: 'rgba(234,179,8,0.5)' },
+  { key: 'strength',  label: 'СИЛА',         labelColor: 'text-crimson', barClass: 'bg-gradient-to-r from-red-600 to-red-400',       shadow: 'rgba(239,68,68,0.5)' },
+  { key: 'endurance', label: 'ВЫНОСЛИВОСТЬ', labelColor: 'text-emerald', barClass: 'bg-gradient-to-r from-green-600 to-green-400',   shadow: 'rgba(34,197,94,0.5)' },
+  { key: 'wisdom',    label: 'МУДРОСТЬ',     labelColor: 'text-azure',   barClass: 'bg-gradient-to-r from-blue-600 to-blue-400',     shadow: 'rgba(59,130,246,0.5)' },
+  { key: 'charisma',  label: 'ОБАЯНИЕ',      labelColor: 'text-gold-1',  barClass: 'bg-gradient-to-r from-yellow-600 to-yellow-400', shadow: 'rgba(234,179,8,0.5)' },
 ];
 
 const TITLES = {
@@ -37,10 +37,7 @@ const AVATARS = [
 ];
 
 const RetroStatus = ({ text }) => (
-  <div
-    className="min-h-screen bg-black flex items-center justify-center font-mono text-yellow-400 text-xs"
-    style={{ fontFamily: "'Press Start 2P', monospace" }}
-  >
+  <div className="min-h-screen bg-bg-base flex items-center justify-center font-display text-gold-1 text-xs">
     {text}
   </div>
 );
@@ -84,8 +81,8 @@ const CharacterPage = () => {
   if (isError || !character) return <RetroStatus text="ОШИБКА ЗАГРУЗКИ" />;
 
   return (
-    <div className="min-h-screen w-full bg-black flex flex-col font-mono relative overflow-hidden">
-      <div className="absolute inset-0 z-0 bg-black">
+    <div className="min-h-screen w-full bg-bg-base flex flex-col font-mono relative overflow-hidden">
+      <div className="absolute inset-0 z-0 bg-bg-base">
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black" />
       </div>
 
@@ -105,7 +102,7 @@ const CharacterPage = () => {
             label="Жизнь"
             value={character.hp}
             max={character.max_hp}
-            labelColor="text-red-500"
+            labelColor="text-crimson"
             barClass="bg-gradient-to-r from-red-600 to-red-400"
             shadowColor="rgba(239,68,68,0.5)"
           />
@@ -113,8 +110,8 @@ const CharacterPage = () => {
             label="Опыт"
             value={character.xp}
             max={character.max_xp}
-            labelColor="text-[#daa520]"
-            barClass="bg-gradient-to-r from-[#b8860b] to-[#ffd700]"
+            labelColor="text-gold-2"
+            barClass="bg-gradient-to-r from-gold-3 to-gold-1"
             shadowColor="rgba(218,165,32,0.5)"
           />
         </div>
@@ -125,10 +122,10 @@ const CharacterPage = () => {
             const xp = character[`stat_${key}_xp`] ?? 0;
             const maxXp = maxXpForStatLevel(level);
             return (
-              <div key={key} className="bg-white/5 border border-white/10 p-2 space-y-1">
+              <div key={key} className="bg-bg-elev-1 border border-border-3 p-2 space-y-1">
                 <div className="flex justify-between text-[9px] font-black uppercase tracking-widest">
                   <span className={labelColor}>{label}</span>
-                  <span className="text-white/60 tabular-nums">LVL {level}</span>
+                  <span className="text-text-3 tabular-nums">LVL {level}</span>
                 </div>
                 <ProgressBar
                   label=""
