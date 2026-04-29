@@ -65,10 +65,10 @@
 
 /* --- ГЛОБАЛЬНЫЕ НАСТРОЙКИ ТЕЛА --- */
 body {
-  background-color: #000000;
-  background-image: radial-gradient(#1a1a1a 1px, transparent 1px);
-  background-size: 20px 20px;
-  color: #ffffff;
+  background-color: var(--color-bg-base);
+  background-image: radial-gradient(rgba(168, 85, 247, 0.06) 1px, transparent 1px);
+  background-size: 18px 18px;
+  color: var(--color-text-2);
   margin: 0;
   padding: 0;
   
@@ -152,8 +152,8 @@ input, textarea {
 
 /* ВМЕСТО backdrop-blur используй этот класс для плашек поверх видео */
 .glass-panel {
-  background: rgba(0, 0, 0, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(180deg, rgba(20, 12, 30, 0.85), rgba(10, 6, 18, 0.95));
+  border: 1px solid var(--color-border-3);
   /* НЕ добавляй backdrop-blur, если хочешь 60 FPS на iOS поверх видео */
 }
 
