@@ -18,3 +18,9 @@ dist/
 
 # Playwright MCP artifacts
 .playwright-mcp/
+
+# Superpowers brainstorming artifacts
+.superpowers/
+
+# Git worktrees
+.worktrees/
