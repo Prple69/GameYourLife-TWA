@@ -14,7 +14,7 @@ const ProgressBar = ({
   return (
     <div className="space-y-1 w-full" role="progressbar" aria-label={label}>
       <div className="flex justify-between text-[9px] font-black uppercase tracking-[0.2em]">
-        <span className="text-white/40">{label}</span>
+        <span className="text-text-4">{label}</span>
         {/* Используем labelColor для цифр */}
         <span className={`${labelColor} tabular-nums`}>{value} / {max}</span>
       </div>
