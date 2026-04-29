@@ -31,16 +31,16 @@
   --color-text-3: rgba(232, 226, 240, 0.65);
   --color-text-4: rgba(232, 226, 240, 0.35);
 
-  /* IV. Borders */
+  /* V. Borders */
   --color-border-1: rgba(218, 165, 32, 0.4);
   --color-border-2: rgba(168, 85, 247, 0.3);
   --color-border-3: rgba(255, 255, 255, 0.08);
 
-  /* V. Fonts */
+  /* VI. Fonts */
   --font-display: "Press Start 2P", monospace;
-  --font-mono: "JetBrains Mono", monospace;
+  --font-jetbrains: "JetBrains Mono", monospace;
 
-  /* VI. Spacing scale (8px-grid; complementary to Tailwind defaults — keeps default spacing utilities working) */
+  /* VII. Spacing scale (8px-grid; complementary to Tailwind defaults — keeps default spacing utilities working) */
   --spacing-sp-1: 4px;
   --spacing-sp-2: 8px;
   --spacing-sp-3: 12px;
@@ -49,7 +49,7 @@
   --spacing-sp-6: 32px;
   --spacing-sp-7: 48px;
 
-  /* VII. Shadows */
+  /* VIII. Shadows */
   --shadow-glow-gold: 0 0 0 1px rgba(218, 165, 32, 0.4), 0 0 24px rgba(218, 165, 32, 0.18);
   --shadow-glow-violet: 0 0 0 1px rgba(168, 85, 247, 0.4), 0 0 24px rgba(168, 85, 247, 0.2);
   --shadow-retro: 6px 6px 0 #000;
