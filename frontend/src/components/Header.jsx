@@ -53,11 +53,11 @@ const Header = ({ title, subtitle, gold }) => {
 
         {/* CENTER */}
         <div className="absolute left-1/2 -translate-x-1/2 text-center w-[60%] pointer-events-none flex flex-col items-center">
-          <h2 className="text-[#daa520] text-[5.2vw] sm:text-2xl font-black uppercase tracking-tighter drop-shadow-[0_2px_2px_rgba(0,0,0,1)] leading-none truncate w-full">
+          <h2 className="text-gold-2 text-[5.2vw] sm:text-2xl font-black uppercase tracking-tighter drop-shadow-[0_2px_2px_rgba(0,0,0,1)] leading-none truncate w-full">
             {title}
           </h2>
           {subtitle && (
-            <p className="text-white/60 text-[2.8vw] sm:text-[12px] uppercase tracking-[0.15em] mt-1 leading-none opacity-80 truncate w-full">
+            <p className="text-text-3 text-[2.8vw] sm:text-[12px] uppercase tracking-[0.15em] mt-1 leading-none opacity-80 truncate w-full">
               {subtitle}
             </p>
           )}
@@ -67,8 +67,8 @@ const Header = ({ title, subtitle, gold }) => {
         <div className="w-16 flex justify-end shrink-0 z-20 gap-1">
           {/* Gems badge */}
           {user?.gems != null && (
-            <div className="relative flex items-center gap-1 bg-[#111]/80 backdrop-blur-md px-2 py-1 border border-[#9966ff]/40 shadow-[2px_2px_0_#000]">
-              <span className="text-[#9966ff] font-bold text-[3.2vw] sm:text-sm tracking-tighter leading-none">
+            <div className="relative flex items-center gap-1 bg-bg-elev-1/80 backdrop-blur-md px-2 py-1 border border-violet-2/40 shadow-[2px_2px_0_#000]">
+              <span className="text-violet-2 font-bold text-[3.2vw] sm:text-sm tracking-tighter leading-none">
                 {user.gems}
               </span>
               <span className="text-[3vw] sm:text-sm leading-none">💎</span>
@@ -76,11 +76,11 @@ const Header = ({ title, subtitle, gold }) => {
           )}
           {/* Gold badge (unchanged) */}
           {gold !== undefined && gold !== null && (
-            <div className="relative flex items-center gap-1.5 bg-[#111]/80 backdrop-blur-md px-2 py-1 border border-[#f7d51d]/40 shadow-[2px_2px_0_#000]">
-              <span className="text-[#f7d51d] font-bold text-[3.2vw] sm:text-sm tracking-tighter leading-none">
+            <div className="relative flex items-center gap-1.5 bg-bg-elev-1/80 backdrop-blur-md px-2 py-1 border border-gold-1/40 shadow-[2px_2px_0_#000]">
+              <span className="text-gold-1 font-bold text-[3.2vw] sm:text-sm tracking-tighter leading-none">
                 {gold}
               </span>
-              <div className="w-2 h-2 bg-[#f7d51d] shadow-[0_0_8px_#f7d51d] animate-pulse rotate-45 shrink-0" />
+              <div className="w-2 h-2 bg-gold-1 shadow-[0_0_8px_#facc15] animate-pulse rotate-45 shrink-0" />
             </div>
           )}
         </div>
@@ -92,9 +92,9 @@ const Header = ({ title, subtitle, gold }) => {
           {activeBoosts.map(boost => (
             <span
               key={boost.key}
-              className="font-mono text-xs border border-[#daa520] px-2 py-0.5 text-[#daa520]"
+              className="font-mono text-xs border border-gold-2 px-2 py-0.5 text-gold-2"
             >
-              {boost.label} <span className="text-white">{boost.timer}</span>
+              {boost.label} <span className="text-text-1">{boost.timer}</span>
             </span>
           ))}
         </div>
